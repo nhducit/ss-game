@@ -310,7 +310,7 @@ export function DotsAndBoxes() {
               const idx = hLineIndex(r, c)
               const owner = lines[idx]
               const x = c * gap + DOT_SIZE
-              const y = r * gap + DOT_SIZE / 2 - LINE_THICKNESS / 2
+              const y = r * gap + DOT_SIZE / 2 - LINE_HIT_AREA / 2
               const w = gap - DOT_SIZE
               const isHovered = hoveredLine === idx && owner === null
 
@@ -318,13 +318,13 @@ export function DotsAndBoxes() {
                 <button
                   key={`h-${idx}`}
                   className={
-                    `absolute border-none p-0 bg-transparent transition-colors duration-150 ` +
+                    `absolute border-none p-0 bg-transparent flex items-center ` +
                     (!owner ? 'cursor-pointer ' : 'cursor-default ')
                   }
                   style={{
-                    left: x - (LINE_HIT_AREA - w) / 2,
-                    top: y - (LINE_HIT_AREA - LINE_THICKNESS) / 2,
-                    width: w + (LINE_HIT_AREA - w),
+                    left: x,
+                    top: y,
+                    width: w,
                     height: LINE_HIT_AREA,
                   }}
                   onClick={() => handleLineClick(idx)}
@@ -335,7 +335,7 @@ export function DotsAndBoxes() {
                 >
                   <div
                     className={
-                      `mx-auto rounded-[1px] transition-colors duration-150 ` +
+                      `w-full rounded-[1px] transition-colors duration-150 ` +
                       (owner === 1
                         ? 'bg-rose-500 '
                         : owner === 2
@@ -345,10 +345,7 @@ export function DotsAndBoxes() {
                             : 'bg-transparent '
                       )
                     }
-                    style={{
-                      width: w,
-                      height: LINE_THICKNESS,
-                    }}
+                    style={{ height: LINE_THICKNESS }}
                   />
                 </button>
               )
@@ -360,7 +357,7 @@ export function DotsAndBoxes() {
             Array.from({ length: COLS }, (_, c) => {
               const idx = vLineIndex(r, c)
               const owner = lines[idx]
-              const x = c * gap + DOT_SIZE / 2 - LINE_THICKNESS / 2
+              const x = c * gap + DOT_SIZE / 2 - LINE_HIT_AREA / 2
               const y = r * gap + DOT_SIZE
               const h = gap - DOT_SIZE
               const isHovered = hoveredLine === idx && owner === null
@@ -369,14 +366,14 @@ export function DotsAndBoxes() {
                 <button
                   key={`v-${idx}`}
                   className={
-                    `absolute border-none p-0 flex items-center justify-center bg-transparent transition-colors duration-150 ` +
+                    `absolute border-none p-0 flex items-center justify-center bg-transparent ` +
                     (!owner ? 'cursor-pointer ' : 'cursor-default ')
                   }
                   style={{
-                    left: x - (LINE_HIT_AREA - LINE_THICKNESS) / 2,
-                    top: y - (LINE_HIT_AREA - h) / 2,
+                    left: x,
+                    top: y,
                     width: LINE_HIT_AREA,
-                    height: h + (LINE_HIT_AREA - h),
+                    height: h,
                   }}
                   onClick={() => handleLineClick(idx)}
                   onMouseEnter={() => setHoveredLine(idx)}
@@ -386,7 +383,7 @@ export function DotsAndBoxes() {
                 >
                   <div
                     className={
-                      `rounded-[1px] transition-colors duration-150 ` +
+                      `h-full rounded-[1px] transition-colors duration-150 ` +
                       (owner === 1
                         ? 'bg-rose-500 '
                         : owner === 2
@@ -396,10 +393,7 @@ export function DotsAndBoxes() {
                             : 'bg-transparent '
                       )
                     }
-                    style={{
-                      width: LINE_THICKNESS,
-                      height: h,
-                    }}
+                    style={{ width: LINE_THICKNESS }}
                   />
                 </button>
               )
