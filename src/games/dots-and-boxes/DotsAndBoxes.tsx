@@ -1,10 +1,10 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { Card } from '@/components/ui/card'
-import { ArrowLeft, RotateCcw, Trash2 } from 'lucide-react'
+import { ArrowLeft, RotateCcw, Trash2, Undo2 } from 'lucide-react'
 
 // ── Constants ──
 const ROWS = 5 // dots per column
@@ -23,17 +23,20 @@ type Player = 1 | 2
 type LineOwner = Player | null
 type BoxOwner = Player | null
 
+interface MoveRecord {
+  lineIdx: number
+  player: Player
+  completedBoxes: number[]
+}
+
 // ── Line indexing helpers ──
-// Horizontal line at row r, between col c and c+1 → index = r * (COLS-1) + c
 function hLineIndex(r: number, c: number): number {
   return r * (COLS - 1) + c
 }
-// Vertical line between row r and r+1 at col c → index = H_LINES + r * COLS + c
 function vLineIndex(r: number, c: number): number {
   return H_LINES + r * COLS + c
 }
 
-// For a box at (r, c), return the 4 line indices: top, bottom, left, right
 function boxLines(r: number, c: number): [number, number, number, number] {
   return [
     hLineIndex(r, c),       // top
@@ -43,17 +46,18 @@ function boxLines(r: number, c: number): [number, number, number, number] {
   ]
 }
 
-// ── Layout constants for rendering ──
-const DOT_SIZE = 12
+// ── Layout constants ──
+const DOT_SIZE = 14
 const LINE_THICKNESS = 8
-const LINE_HIT_AREA = 24
-const GAP = 48 // distance between dots
+const LINE_HIT_AREA = 28
+const MIN_GAP = 48
+const MAX_GAP = 80
 
-function boardWidth(): number {
-  return (COLS - 1) * GAP + DOT_SIZE
+function boardWidth(gap: number): number {
+  return (COLS - 1) * gap + DOT_SIZE
 }
-function boardHeight(): number {
-  return (ROWS - 1) * GAP + DOT_SIZE
+function boardHeight(gap: number): number {
+  return (ROWS - 1) * gap + DOT_SIZE
 }
 
 export function DotsAndBoxes() {
@@ -65,6 +69,28 @@ export function DotsAndBoxes() {
   const [totalScores, setTotalScores] = useState<[number, number]>([0, 0])
   const [recentBoxes, setRecentBoxes] = useState<Set<number>>(new Set())
   const [hoveredLine, setHoveredLine] = useState<number | null>(null)
+  const [moveHistory, setMoveHistory] = useState<MoveRecord[]>([])
+
+  const containerRef = useRef<HTMLDivElement>(null)
+  const [gap, setGap] = useState(64)
+
+  // Responsive gap based on container size
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+    const update = () => {
+      const { width, height } = el.getBoundingClientRect()
+      const padding = 32
+      const availW = width - padding
+      const availH = height - padding
+      const available = Math.min(availW, availH)
+      const computed = Math.floor((available - DOT_SIZE) / (Math.max(COLS, ROWS) - 1))
+      setGap(Math.max(MIN_GAP, Math.min(MAX_GAP, computed)))
+    }
+    const observer = new ResizeObserver(update)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
 
   const linesDrawn = lines.filter(l => l !== null).length
   const gameOver = linesDrawn === TOTAL_LINES
@@ -83,10 +109,10 @@ export function DotsAndBoxes() {
 
     const newBoxes = [...boxes]
     let boxesCompleted = 0
+    const completedBoxIndices: number[] = []
 
     const newRecent = new Set<number>()
 
-    // Check which boxes this line completes
     for (let r = 0; r < BOX_ROWS; r++) {
       for (let c = 0; c < BOX_COLS; c++) {
         const boxIdx = r * BOX_COLS + c
@@ -95,6 +121,7 @@ export function DotsAndBoxes() {
         if (newLines[t] !== null && newLines[b] !== null && newLines[l] !== null && newLines[ri] !== null) {
           newBoxes[boxIdx] = currentPlayer
           boxesCompleted++
+          completedBoxIndices.push(boxIdx)
           newRecent.add(boxIdx)
         }
       }
@@ -103,27 +130,49 @@ export function DotsAndBoxes() {
     setLines(newLines)
     setBoxes(newBoxes)
     setRecentBoxes(newRecent)
+    setMoveHistory(h => [...h, { lineIdx, player: currentPlayer, completedBoxes: completedBoxIndices }])
 
     if (boxesCompleted > 0) {
-      // Player scored: update scores, keep current player's turn
       setScores(s => {
         const next: [number, number] = [...s]
         next[currentPlayer - 1] += boxesCompleted
         return next
       })
     } else {
-      // No box completed: switch player
       setCurrentPlayer(p => p === 1 ? 2 : 1)
     }
   }, [lines, boxes, currentPlayer, gameOver])
 
+  const undo = useCallback(() => {
+    if (moveHistory.length === 0 || gameOver) return
+    const last = moveHistory[moveHistory.length - 1]
+
+    const newLines = [...lines]
+    newLines[last.lineIdx] = null
+
+    const newBoxes = [...boxes]
+    for (const boxIdx of last.completedBoxes) {
+      newBoxes[boxIdx] = null
+    }
+
+    const newScores: [number, number] = [...scores]
+    newScores[last.player - 1] -= last.completedBoxes.length
+
+    setLines(newLines)
+    setBoxes(newBoxes)
+    setScores(newScores)
+    setMoveHistory(h => h.slice(0, -1))
+    setRecentBoxes(new Set())
+    setCurrentPlayer(last.player)
+  }, [moveHistory, lines, boxes, scores, gameOver])
+
   const resetGame = useCallback(() => {
-    // Add current scores to total
     setTotalScores(t => [t[0] + scores[0], t[1] + scores[1]])
     setLines(Array(TOTAL_LINES).fill(null))
     setBoxes(Array(TOTAL_BOXES).fill(null))
     setScores([0, 0])
     setRecentBoxes(new Set())
+    setMoveHistory([])
     setCurrentPlayer(1)
   }, [scores])
 
@@ -133,23 +182,20 @@ export function DotsAndBoxes() {
     setScores([0, 0])
     setTotalScores([0, 0])
     setRecentBoxes(new Set())
+    setMoveHistory([])
     setCurrentPlayer(1)
   }, [])
 
   const p1Total = totalScores[0] + scores[0]
   const p2Total = totalScores[1] + scores[1]
 
-  const bw = boardWidth()
-  const bh = boardHeight()
+  const bw = boardWidth(gap)
+  const bh = boardHeight(gap)
 
   return (
     <div className={`game flex flex-col h-svh overflow-hidden transition-colors duration-300 ${turnClass}`}>
       {/* ── Navbar ── */}
-      <div className={
-        `game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border transition-colors duration-300 ` +
-        (!gameOver && currentPlayer === 1 ? 'bg-rose-500/10 border-b-rose-500/40 ' : '') +
-        (!gameOver && currentPlayer === 2 ? 'bg-sky-500/10 border-b-sky-500/40 ' : '')
-      }>
+      <div className="game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border transition-colors duration-300">
         <div className="flex items-center gap-3.5">
           <Tooltip>
             <TooltipTrigger
@@ -159,7 +205,7 @@ export function DotsAndBoxes() {
             </TooltipTrigger>
             <TooltipContent>Back to menu</TooltipContent>
           </Tooltip>
-          <h1 className="text-lg font-extrabold tracking-tight text-foreground m-0">Dots & Boxes</h1>
+          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">Dots & Boxes</h1>
           <div className="flex items-center gap-1 tabular-nums">
             <Badge
               variant={currentPlayer === 1 && !gameOver ? 'secondary' : 'outline'}
@@ -179,6 +225,21 @@ export function DotsAndBoxes() {
           </div>
         </div>
         <div className="flex items-center gap-1.5">
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={undo}
+                  disabled={moveHistory.length === 0 || gameOver}
+                />
+              }
+            >
+              <Undo2 className="size-4" />
+            </TooltipTrigger>
+            <TooltipContent>Undo</TooltipContent>
+          </Tooltip>
           <Tooltip>
             <TooltipTrigger
               render={
@@ -206,7 +267,7 @@ export function DotsAndBoxes() {
       </div>
 
       {/* ── Board ── */}
-      <div className="flex-1 flex items-center justify-center p-4">
+      <div className="flex-1 flex items-center justify-center p-4" ref={containerRef}>
         <div
           className="relative touch-manipulation"
           style={{ width: bw, height: bh }}
@@ -217,9 +278,9 @@ export function DotsAndBoxes() {
               const boxIdx = r * BOX_COLS + c
               const owner = boxes[boxIdx]
               if (!owner) return null
-              const x = c * GAP + DOT_SIZE / 2
-              const y = r * GAP + DOT_SIZE / 2
-              const size = GAP - DOT_SIZE / 2
+              const x = c * gap + DOT_SIZE / 2
+              const y = r * gap + DOT_SIZE / 2
+              const size = gap - DOT_SIZE / 2
               return (
                 <div
                   key={`box-${boxIdx}`}
@@ -235,7 +296,6 @@ export function DotsAndBoxes() {
                     height: size,
                   }}
                 >
-                  {scores[owner - 1] > 0 ? '' : ''}
                   <span className="select-none">
                     {Array.from(boxes).filter((b, i) => b === owner && i <= boxIdx).length}
                   </span>
@@ -249,9 +309,9 @@ export function DotsAndBoxes() {
             Array.from({ length: COLS - 1 }, (_, c) => {
               const idx = hLineIndex(r, c)
               const owner = lines[idx]
-              const x = c * GAP + DOT_SIZE
-              const y = r * GAP + DOT_SIZE / 2 - LINE_THICKNESS / 2
-              const w = GAP - DOT_SIZE
+              const x = c * gap + DOT_SIZE
+              const y = r * gap + DOT_SIZE / 2 - LINE_THICKNESS / 2
+              const w = gap - DOT_SIZE
               const isHovered = hoveredLine === idx && owner === null
 
               return (
@@ -274,7 +334,6 @@ export function DotsAndBoxes() {
                     top: y - (LINE_HIT_AREA - LINE_THICKNESS) / 2,
                     width: w + (LINE_HIT_AREA - w),
                     height: LINE_HIT_AREA,
-                    // Use clip-path to show thin line but keep large hit area
                   }}
                   onClick={() => handleLineClick(idx)}
                   onMouseEnter={() => setHoveredLine(idx)}
@@ -309,9 +368,9 @@ export function DotsAndBoxes() {
             Array.from({ length: COLS }, (_, c) => {
               const idx = vLineIndex(r, c)
               const owner = lines[idx]
-              const x = c * GAP + DOT_SIZE / 2 - LINE_THICKNESS / 2
-              const y = r * GAP + DOT_SIZE
-              const h = GAP - DOT_SIZE
+              const x = c * gap + DOT_SIZE / 2 - LINE_THICKNESS / 2
+              const y = r * gap + DOT_SIZE
+              const h = gap - DOT_SIZE
               const isHovered = hoveredLine === idx && owner === null
 
               return (
@@ -360,10 +419,12 @@ export function DotsAndBoxes() {
             Array.from({ length: COLS }, (_, c) => (
               <div
                 key={`dot-${r}-${c}`}
-                className="size-3 rounded-full bg-foreground absolute z-10 pointer-events-none"
+                className="rounded-full bg-foreground absolute z-10 pointer-events-none"
                 style={{
-                  left: c * GAP,
-                  top: r * GAP,
+                  width: DOT_SIZE,
+                  height: DOT_SIZE,
+                  left: c * gap,
+                  top: r * gap,
                 }}
               />
             ))

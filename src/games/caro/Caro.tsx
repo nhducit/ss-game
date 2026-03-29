@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
 import { Card } from '@/components/ui/card'
-import { ZoomIn, ZoomOut, Undo2, X, Trash2, ArrowLeft } from 'lucide-react'
+import { ZoomIn, ZoomOut, Undo2, X, Trash2, ArrowLeft, EllipsisVertical } from 'lucide-react'
+import { useIsMobile } from '@/hooks/use-mobile'
 
 type Player = 'X' | 'O'
 type Cell = Player | null
@@ -46,6 +48,7 @@ function checkWin(board: Cell[], row: number, col: number, player: Player): numb
 
 export function Caro() {
   const navigate = useNavigate()
+  const isMobile = useIsMobile()
   const [board, setBoard] = useState<Cell[]>(() => Array(SIZE * SIZE).fill(null))
   const [currentPlayer, setCurrentPlayer] = useState<Player>('X')
   const [winLine, setWinLine] = useState<Set<number> | null>(null)
@@ -131,7 +134,7 @@ export function Caro() {
             </TooltipTrigger>
             <TooltipContent>Back to menu</TooltipContent>
           </Tooltip>
-          <h1 className="text-lg font-extrabold tracking-tight text-foreground m-0">Caro</h1>
+          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">Caro</h1>
           <div className="flex items-center gap-1 tabular-nums">
             <Badge
               variant={currentPlayer === 'X' && !winner && !isDraw ? 'secondary' : 'outline'}
@@ -159,22 +162,80 @@ export function Caro() {
             )}
           </Badge>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="flex gap-1">
+        {isMobile ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+              <EllipsisVertical className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side="bottom" sideOffset={4}>
+              <DropdownMenuItem onClick={() => setCellSize(s => Math.max(20, s - 4))} disabled={cellSize <= 20}>
+                <ZoomOut className="size-4" /> Smaller cells
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setCellSize(s => Math.min(56, s + 4))} disabled={cellSize >= 56}>
+                <ZoomIn className="size-4" /> Larger cells
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={undo} disabled={history.length === 0 || !!winner}>
+                <Undo2 className="size-4" /> Undo
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={resetGame} disabled={history.length === 0}>
+                <X className="size-4" /> New game
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={fullReset}>
+                <Trash2 className="size-4" /> Reset scores
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <div className="flex gap-1">
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setCellSize(s => Math.max(20, s - 4))}
+                      disabled={cellSize <= 20}
+                    />
+                  }
+                >
+                  <ZoomOut className="size-4" />
+                </TooltipTrigger>
+                <TooltipContent>Smaller cells</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setCellSize(s => Math.min(56, s + 4))}
+                      disabled={cellSize >= 56}
+                    />
+                  }
+                >
+                  <ZoomIn className="size-4" />
+                </TooltipTrigger>
+                <TooltipContent>Larger cells</TooltipContent>
+              </Tooltip>
+            </div>
+            <Separator orientation="vertical" className="mx-1 h-5" />
             <Tooltip>
               <TooltipTrigger
                 render={
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setCellSize(s => Math.max(20, s - 4))}
-                    disabled={cellSize <= 20}
+                    onClick={undo}
+                    disabled={history.length === 0 || !!winner}
                   />
                 }
               >
-                <ZoomOut className="size-4" />
+                <Undo2 className="size-4" />
               </TooltipTrigger>
-              <TooltipContent>Smaller cells</TooltipContent>
+              <TooltipContent>Undo</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger
@@ -182,56 +243,25 @@ export function Caro() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setCellSize(s => Math.min(56, s + 4))}
-                    disabled={cellSize >= 56}
+                    onClick={resetGame}
+                    disabled={history.length === 0}
                   />
                 }
               >
-                <ZoomIn className="size-4" />
+                <X className="size-4" />
               </TooltipTrigger>
-              <TooltipContent>Larger cells</TooltipContent>
+              <TooltipContent>New game</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger
+                render={<Button variant="ghost" size="icon" onClick={fullReset} />}
+              >
+                <Trash2 className="size-4" />
+              </TooltipTrigger>
+              <TooltipContent>Reset scores</TooltipContent>
             </Tooltip>
           </div>
-          <Separator orientation="vertical" className="mx-1 h-5" />
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={undo}
-                  disabled={history.length === 0 || !!winner}
-                />
-              }
-            >
-              <Undo2 className="size-4" />
-            </TooltipTrigger>
-            <TooltipContent>Undo</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={resetGame}
-                  disabled={history.length === 0}
-                />
-              }
-            >
-              <X className="size-4" />
-            </TooltipTrigger>
-            <TooltipContent>New game</TooltipContent>
-          </Tooltip>
-          <Tooltip>
-            <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={fullReset} />}
-            >
-              <Trash2 className="size-4" />
-            </TooltipTrigger>
-            <TooltipContent>Reset scores</TooltipContent>
-          </Tooltip>
-        </div>
+        )}
       </div>
 
       <div className="flex-1 overflow-auto w-full overscroll-contain" ref={boardRef}>

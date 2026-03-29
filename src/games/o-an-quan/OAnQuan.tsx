@@ -258,7 +258,7 @@ export function OAnQuan() {
             </TooltipTrigger>
             <TooltipContent>Back to menu</TooltipContent>
           </Tooltip>
-          <h1 className="text-lg font-extrabold tracking-tight text-foreground m-0">Ô Ăn Quan</h1>
+          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">Ô Ăn Quan</h1>
           <div className="flex items-center gap-1">
             <Badge
               variant={currentPlayer === 0 && !gameOver ? 'secondary' : 'outline'}

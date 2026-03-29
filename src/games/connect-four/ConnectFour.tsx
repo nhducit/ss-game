@@ -151,7 +151,7 @@ export function ConnectFour() {
             </TooltipTrigger>
             <TooltipContent>Back to menu</TooltipContent>
           </Tooltip>
-          <h1 className="text-lg font-extrabold tracking-tight text-foreground m-0">Connect Four</h1>
+          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">Connect Four</h1>
           <div className="flex items-center gap-1 tabular-nums">
             <Badge
               variant={currentPlayer === 'X' && !winner && !isDraw ? 'secondary' : 'outline'}
