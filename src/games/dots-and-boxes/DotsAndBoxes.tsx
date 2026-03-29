@@ -48,7 +48,7 @@ function boxLines(r: number, c: number): [number, number, number, number] {
 
 // ── Layout constants ──
 const DOT_SIZE = 14
-const LINE_THICKNESS = 8
+const LINE_THICKNESS = 5
 const LINE_HIT_AREA = 28
 const MIN_GAP = 48
 const MAX_GAP = 80
@@ -335,7 +335,7 @@ export function DotsAndBoxes() {
                 >
                   <div
                     className={
-                      `mx-auto rounded-sm transition-colors duration-150 ` +
+                      `mx-auto rounded-[1px] transition-colors duration-150 ` +
                       (owner === 1
                         ? 'bg-rose-500 '
                         : owner === 2
@@ -386,7 +386,7 @@ export function DotsAndBoxes() {
                 >
                   <div
                     className={
-                      `rounded-sm transition-colors duration-150 ` +
+                      `rounded-[1px] transition-colors duration-150 ` +
                       (owner === 1
                         ? 'bg-rose-500 '
                         : owner === 2
