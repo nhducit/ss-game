@@ -318,16 +318,8 @@ export function DotsAndBoxes() {
                 <button
                   key={`h-${idx}`}
                   className={
-                    `absolute border-none p-0 transition-colors duration-150 rounded-full ` +
-                    (owner === 1
-                      ? 'bg-rose-500 cursor-default '
-                      : owner === 2
-                        ? 'bg-sky-500 cursor-default '
-                        : isHovered
-                          ? (currentPlayer === 1 ? 'bg-rose-500/40 ' : 'bg-sky-500/40 ')
-                          : 'bg-transparent hover:bg-muted-foreground/20 '
-                    ) +
-                    (!owner ? 'cursor-pointer ' : '')
+                    `absolute border-none p-0 bg-transparent transition-colors duration-150 ` +
+                    (!owner ? 'cursor-pointer ' : 'cursor-default ')
                   }
                   style={{
                     left: x - (LINE_HIT_AREA - w) / 2,
@@ -343,7 +335,7 @@ export function DotsAndBoxes() {
                 >
                   <div
                     className={
-                      `mx-auto rounded-full transition-colors duration-150 ` +
+                      `mx-auto rounded-sm transition-colors duration-150 ` +
                       (owner === 1
                         ? 'bg-rose-500 '
                         : owner === 2
@@ -377,7 +369,7 @@ export function DotsAndBoxes() {
                 <button
                   key={`v-${idx}`}
                   className={
-                    `absolute border-none p-0 flex items-center justify-center transition-colors duration-150 rounded-full ` +
+                    `absolute border-none p-0 flex items-center justify-center bg-transparent transition-colors duration-150 ` +
                     (!owner ? 'cursor-pointer ' : 'cursor-default ')
                   }
                   style={{
@@ -394,7 +386,7 @@ export function DotsAndBoxes() {
                 >
                   <div
                     className={
-                      `rounded-full transition-colors duration-150 ` +
+                      `rounded-sm transition-colors duration-150 ` +
                       (owner === 1
                         ? 'bg-rose-500 '
                         : owner === 2
