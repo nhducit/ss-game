@@ -15,6 +15,7 @@ import { Reversi } from '@/games/reversi/Reversi'
 import { SpellingBee } from '@/games/spelling-bee/SpellingBee'
 import { WordMatch } from '@/games/word-match/WordMatch'
 import { ListenPick } from '@/games/listen-pick/ListenPick'
+import { GamesMenu } from '@/games/GamesMenu'
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -84,8 +85,15 @@ const listenPickRoute = createRoute({
   component: ListenPick,
 })
 
+const gamesMenuRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/games',
+  component: GamesMenu,
+})
+
 const routeTree = rootRoute.addChildren([
   menuRoute,
+  gamesMenuRoute,
   caroRoute,
   ticTacToeRoute,
   oAnQuanRoute,
