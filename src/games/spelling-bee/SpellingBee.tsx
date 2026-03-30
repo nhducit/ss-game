@@ -23,6 +23,7 @@ export function SpellingBee() {
   const [streak, setStreak] = useState(0)
   const [result, setResult] = useState<Result>('pending')
   const [skipped, setSkipped] = useState(0)
+  const [nextDisabled, setNextDisabled] = useState(false)
   const hasSpoken = useRef(false)
 
   const currentWord = words[wordIndex] ?? null
@@ -72,13 +73,17 @@ export function SpellingBee() {
         const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
         setScore(s => s + points)
         // Speak the word, then each example sentence
+        setNextDisabled(true)
         speakSequence([
           { text: currentWord.english, rate: 0.8 },
           ...currentWord.sentences.map(s => ({ text: s, rate: 0.75, pause: 400 })),
         ])
+        setTimeout(() => setNextDisabled(false), 3000)
       } else {
         setResult('wrong')
         setStreak(0)
+        setNextDisabled(true)
+        setTimeout(() => setNextDisabled(false), 3000)
       }
     }
   }, [selected, currentWord, result, availableIndices, scrambled, streak])
@@ -317,16 +322,16 @@ export function SpellingBee() {
               </>
             )}
             {result === 'correct' && (
-              <Button className="gap-2 text-lg" onClick={advanceWord}>
+              <Button className="gap-2 text-lg" onClick={advanceWord} disabled={nextDisabled}>
                 ✓ Next word
               </Button>
             )}
             {result === 'wrong' && (
               <div className="flex gap-3">
-                <Button variant="outline" className="gap-2" onClick={retryWord}>
+                <Button variant="outline" className="gap-2" onClick={retryWord} disabled={nextDisabled}>
                   <RotateCcw className="size-4" /> Try again
                 </Button>
-                <Button className="gap-2" onClick={advanceWord}>
+                <Button className="gap-2" onClick={advanceWord} disabled={nextDisabled}>
                   Next word
                 </Button>
               </div>
