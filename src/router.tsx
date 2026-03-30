@@ -13,6 +13,8 @@ import { ConnectFour } from '@/games/connect-four/ConnectFour'
 import { DotsAndBoxes } from '@/games/dots-and-boxes/DotsAndBoxes'
 import { Reversi } from '@/games/reversi/Reversi'
 import { SpellingBee } from '@/games/spelling-bee/SpellingBee'
+import { WordMatch } from '@/games/word-match/WordMatch'
+import { ListenPick } from '@/games/listen-pick/ListenPick'
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -70,6 +72,18 @@ const spellingBeeRoute = createRoute({
   component: SpellingBee,
 })
 
+const wordMatchRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/word-match',
+  component: WordMatch,
+})
+
+const listenPickRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/listen-pick',
+  component: ListenPick,
+})
+
 const routeTree = rootRoute.addChildren([
   menuRoute,
   caroRoute,
@@ -79,6 +93,8 @@ const routeTree = rootRoute.addChildren([
   dotsAndBoxesRoute,
   reversiRoute,
   spellingBeeRoute,
+  wordMatchRoute,
+  listenPickRoute,
 ])
 
 export const router = createRouter({ routeTree })

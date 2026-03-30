@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Grid3X3, Hash, Circle, Disc, SquareDot, CircleDot, BookOpen } from 'lucide-react'
+import { Grid3X3, Hash, Circle, Disc, SquareDot, CircleDot, BookOpen, Brain, Ear } from 'lucide-react'
 
 const games = [
   {
@@ -51,6 +51,20 @@ const games = [
     description: 'Listen & spell English words',
     icon: BookOpen,
     to: '/spelling-bee' as const,
+  },
+  {
+    id: 'word-match',
+    title: 'Word Match 🧠',
+    description: 'Flip cards, match emoji to words',
+    icon: Brain,
+    to: '/word-match' as const,
+  },
+  {
+    id: 'listen-pick',
+    title: 'Listen & Pick 👂',
+    description: 'Hear a word, pick the picture',
+    icon: Ear,
+    to: '/listen-pick' as const,
   },
 ]
 

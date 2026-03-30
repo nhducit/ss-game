@@ -2,17 +2,10 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy } from 'lucide-react'
-import { categories, shuffle, type Category, type Word } from './words'
-
-function speak(text: string, rate = 0.7) {
-  window.speechSynthesis.cancel()
-  const u = new SpeechSynthesisUtterance(text)
-  u.lang = 'en-US'
-  u.rate = rate
-  window.speechSynthesis.speak(u)
-}
+import { shuffle, type Category, type Word } from '@/games/english/words'
+import { speak } from '@/games/english/speak'
+import { CategoryPicker } from '@/games/english/CategoryPicker'
 
 type Screen = 'categories' | 'playing' | 'results'
 
@@ -117,29 +110,11 @@ export function SpellingBee() {
 
   if (screen === 'categories') {
     return (
-      <div className="flex min-h-svh flex-col items-center justify-center gap-8 p-6">
-        <div className="text-center">
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Spelling Bee 🐝</h1>
-          <p className="mt-1 text-muted-foreground">Pick a topic to practice</p>
-        </div>
-        <div className="grid w-full max-w-md gap-3">
-          {categories.map((cat) => (
-            <button key={cat.id} onClick={() => startCategory(cat)} className="text-left w-full">
-              <Card className="cursor-pointer transition-colors hover:bg-muted/50">
-                <CardHeader className="flex-row items-center gap-4">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted text-xl">
-                    {cat.emoji}
-                  </div>
-                  <div>
-                    <CardTitle>{cat.name}</CardTitle>
-                    <CardDescription>{cat.words.length} words</CardDescription>
-                  </div>
-                </CardHeader>
-              </Card>
-            </button>
-          ))}
-        </div>
-      </div>
+      <CategoryPicker
+        title="Spelling Bee 🐝"
+        subtitle="Pick a topic to practice"
+        onSelect={startCategory}
+      />
     )
   }
 
