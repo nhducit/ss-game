@@ -48,7 +48,7 @@ const games = [
   {
     id: 'spelling-bee',
     title: 'Spelling Bee 🐝',
-    description: 'Listen & spell English words — Đánh vần',
+    description: 'Listen & spell English words',
     icon: BookOpen,
     to: '/spelling-bee' as const,
   },

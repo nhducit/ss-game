@@ -59,7 +59,6 @@ export function SpellingBee() {
   useEffect(() => {
     if (screen === 'playing' && currentWord && !hasSpoken.current) {
       hasSpoken.current = true
-      // Small delay to let the UI render first
       const t = setTimeout(() => speak(currentWord.english), 300)
       return () => clearTimeout(t)
     }
@@ -79,7 +78,6 @@ export function SpellingBee() {
       setSelected(newSelected)
 
       if (newSelected.length === currentWord.english.length) {
-        // Word completed!
         setCompleted(true)
         const newStreak = streak + 1
         setStreak(newStreak)
@@ -87,7 +85,6 @@ export function SpellingBee() {
         setScore(s => s + points)
         speak(currentWord.english, 0.8)
 
-        // Auto-advance after a delay
         setTimeout(() => {
           if (wordIndex + 1 < words.length) {
             const nextIdx = wordIndex + 1
@@ -99,7 +96,6 @@ export function SpellingBee() {
         }, 1500)
       }
     } else {
-      // Wrong letter - shake
       setShakeIndex(scrambledIdx)
       setStreak(0)
       setTimeout(() => setShakeIndex(null), 400)
@@ -124,7 +120,7 @@ export function SpellingBee() {
       <div className="flex min-h-svh flex-col items-center justify-center gap-8 p-6">
         <div className="text-center">
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Spelling Bee 🐝</h1>
-          <p className="mt-1 text-muted-foreground">Chọn chủ đề để học — Pick a topic</p>
+          <p className="mt-1 text-muted-foreground">Pick a topic to practice</p>
         </div>
         <div className="grid w-full max-w-md gap-3">
           {categories.map((cat) => (
@@ -136,7 +132,7 @@ export function SpellingBee() {
                   </div>
                   <div>
                     <CardTitle>{cat.name}</CardTitle>
-                    <CardDescription>{cat.nameVi} — {cat.words.length} words</CardDescription>
+                    <CardDescription>{cat.words.length} words</CardDescription>
                   </div>
                 </CardHeader>
               </Card>
@@ -157,28 +153,28 @@ export function SpellingBee() {
         </div>
         <div className="text-center">
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-            {score >= total * 8 ? 'Giỏi lắm! 🌟' : 'Tốt lắm! 👏'}
+            {score >= total * 8 ? 'Great job! 🌟' : 'Well done! 👏'}
           </h1>
           <p className="mt-2 text-lg text-muted-foreground">
-            {category?.name} — {category?.nameVi}
+            {category?.name}
           </p>
         </div>
         <div className="flex gap-4 text-center">
           <div className="flex flex-col items-center gap-1">
             <span className="text-3xl font-bold text-foreground">{score}</span>
-            <span className="text-sm text-muted-foreground">Điểm</span>
+            <span className="text-sm text-muted-foreground">Score</span>
           </div>
           <div className="flex flex-col items-center gap-1">
             <span className="text-3xl font-bold text-foreground">{answered}/{total}</span>
-            <span className="text-sm text-muted-foreground">Từ</span>
+            <span className="text-sm text-muted-foreground">Words</span>
           </div>
         </div>
         <div className="flex gap-3">
           <Button variant="outline" onClick={() => startCategory(category!)}>
-            <RotateCcw className="size-4 mr-2" /> Chơi lại
+            <RotateCcw className="size-4 mr-2" /> Play again
           </Button>
           <Button onClick={() => setScreen('categories')}>
-            Chủ đề khác
+            Other topics
           </Button>
         </div>
       </div>
@@ -200,7 +196,7 @@ export function SpellingBee() {
             >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>
-            <TooltipContent>Quay lại</TooltipContent>
+            <TooltipContent>Back</TooltipContent>
           </Tooltip>
           <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">
             {category?.emoji} {category?.name}
@@ -225,11 +221,6 @@ export function SpellingBee() {
           {/* Emoji */}
           <div className="text-7xl sm:text-8xl">{currentWord.emoji}</div>
 
-          {/* Vietnamese hint */}
-          <p className="text-xl sm:text-2xl font-semibold text-muted-foreground">
-            {currentWord.vietnamese}
-          </p>
-
           {/* Speaker button */}
           <Button
             variant="outline"
@@ -237,7 +228,7 @@ export function SpellingBee() {
             className="gap-2 text-lg"
             onClick={() => speak(currentWord.english)}
           >
-            <Volume2 className="size-5" /> Nghe lại
+            <Volume2 className="size-5" /> Listen
           </Button>
 
           {/* Answer slots */}
@@ -292,14 +283,14 @@ export function SpellingBee() {
               className="text-muted-foreground gap-2 mt-2"
               onClick={skipWord}
             >
-              <SkipForward className="size-4" /> Bỏ qua
+              <SkipForward className="size-4" /> Skip
             </Button>
           )}
 
           {/* Completion message */}
           {completed && (
             <div className="spelling-correct text-2xl font-bold text-green-600 dark:text-green-400 animate-bounce">
-              ✓ Đúng rồi!
+              ✓ Correct!
             </div>
           )}
         </div>
