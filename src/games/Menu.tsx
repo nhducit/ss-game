@@ -92,6 +92,9 @@ export function Menu() {
           </Link>
         ))}
       </div>
+      <p className="text-xs text-muted-foreground/50 mt-4">
+        Updated {new Date(__COMMIT_TIME__).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+      </p>
     </div>
   )
 }

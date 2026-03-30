@@ -95,6 +95,7 @@ export function WordMatch() {
       <CategoryPicker
         title="Word Match 🧠"
         subtitle="Match emoji with words"
+        gamePath="/word-match"
         onSelect={startCategory}
       />
     )
