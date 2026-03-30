@@ -1,50 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Grid3X3, Hash, Circle, Disc, SquareDot, CircleDot, BookOpen, Brain, Ear } from 'lucide-react'
+import { BookOpen, Brain, Ear } from 'lucide-react'
 
 const games = [
-  {
-    id: 'caro',
-    title: 'Caro (Gomoku)',
-    description: 'Get 5 in a row on a 30x30 board',
-    icon: Hash,
-    to: '/caro' as const,
-  },
-  {
-    id: 'tic-tac-toe',
-    title: 'Tic Tac Toe',
-    description: 'Classic 3x3 — get 3 in a row',
-    icon: Grid3X3,
-    to: '/tic-tac-toe' as const,
-  },
-  {
-    id: 'o-an-quan',
-    title: 'Ô Ăn Quan',
-    description: 'Vietnamese mancala — capture stones',
-    icon: Circle,
-    to: '/o-an-quan' as const,
-  },
-  {
-    id: 'connect-four',
-    title: 'Connect Four',
-    description: 'Drop discs, get 4 in a row',
-    icon: Disc,
-    to: '/connect-four' as const,
-  },
-  {
-    id: 'dots-and-boxes',
-    title: 'Dots & Boxes',
-    description: 'Draw lines, complete boxes to score',
-    icon: SquareDot,
-    to: '/dots-and-boxes' as const,
-  },
-  {
-    id: 'reversi',
-    title: 'Reversi',
-    description: 'Flip discs by outflanking — Othello',
-    icon: CircleDot,
-    to: '/reversi' as const,
-  },
   {
     id: 'spelling-bee',
     title: 'Spelling Bee 🐝',
