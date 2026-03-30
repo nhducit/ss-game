@@ -79,8 +79,8 @@ export function Menu() {
         {games.map((game) => (
           <Link key={game.id} to={game.to} className="no-underline">
             <Card className="cursor-pointer transition-colors hover:bg-muted/50 h-full">
-              <CardHeader className="flex-col items-center text-center gap-2 p-4">
-                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-muted">
+              <CardHeader className="flex flex-col items-center text-center gap-2 p-4">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-muted mx-auto">
                   <game.icon className="size-6 text-foreground" />
                 </div>
                 <div>
