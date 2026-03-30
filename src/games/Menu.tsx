@@ -51,7 +51,7 @@ export function Menu() {
         ))}
       </div>
       <p className="text-xs text-muted-foreground/50 mt-4">
-        Updated {new Date(__COMMIT_TIME__).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+        Updated {new Date(__COMMIT_TIME__).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
       </p>
     </div>
   )
