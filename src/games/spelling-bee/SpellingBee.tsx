@@ -6,6 +6,7 @@ import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy, Undo2 } from 'lucid
 import { shuffle, getWords, type Category, type Level, type Word } from '@/games/english/words'
 import { speak, speakSequence } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
+import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/english/progress'
 
 type Screen = 'categories' | 'playing' | 'results'
 type Result = 'pending' | 'correct' | 'wrong'
@@ -40,7 +41,7 @@ export function SpellingBee() {
 
   const startCategory = useCallback((cat: Category, lvl: Level) => {
     const levelWords = getWords(cat, lvl)
-    const shuffledWords = shuffle(levelWords)
+    const shuffledWords = getSmartWordOrder(cat.id, lvl, levelWords)
     setCategory(cat)
     setLevel(lvl)
     setWords(shuffledWords)
@@ -68,11 +69,11 @@ export function SpellingBee() {
       const userAnswer = selected.map(si => scrambled[availableIndices[si]]).join('')
       if (userAnswer === currentWord.english) {
         setResult('correct')
+        recordCorrect(category!.id, level, currentWord.english)
         const newStreak = streak + 1
         setStreak(newStreak)
         const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
         setScore(s => s + points)
-        // Speak the word, then each example sentence
         setNextDisabled(true)
         speakSequence([
           { text: currentWord.english, rate: 0.8 },
@@ -81,6 +82,7 @@ export function SpellingBee() {
         setTimeout(() => setNextDisabled(false), 3000)
       } else {
         setResult('wrong')
+        recordWrong(category!.id, level, currentWord.english)
         setStreak(0)
         setNextDisabled(true)
         setTimeout(() => setNextDisabled(false), 3000)

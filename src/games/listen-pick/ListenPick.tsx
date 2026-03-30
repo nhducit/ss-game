@@ -6,6 +6,7 @@ import { ArrowLeft, Volume2, RotateCcw, Trophy } from 'lucide-react'
 import { shuffle, getWords, type Category, type Level, type Word } from '@/games/english/words'
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
+import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/english/progress'
 
 type Screen = 'categories' | 'playing' | 'results'
 
@@ -16,10 +17,9 @@ interface Round {
   options: Word[]
 }
 
-function buildRounds(words: Word[]): Round[] {
-  const shuffled = shuffle(words)
-  return shuffled.map((correct) => {
-    const distractors = shuffle(words.filter(w => w.english !== correct.english)).slice(0, OPTIONS_COUNT - 1)
+function buildRounds(orderedWords: Word[], allWords: Word[]): Round[] {
+  return orderedWords.map((correct) => {
+    const distractors = shuffle(allWords.filter(w => w.english !== correct.english)).slice(0, OPTIONS_COUNT - 1)
     const options = shuffle([correct, ...distractors])
     return { correct, options }
   })
@@ -42,7 +42,8 @@ export function ListenPick() {
 
   const startCategory = useCallback((cat: Category, lvl: Level) => {
     const levelWords = getWords(cat, lvl)
-    const newRounds = buildRounds(levelWords)
+    const smartOrder = getSmartWordOrder(cat.id, lvl, levelWords)
+    const newRounds = buildRounds(smartOrder, levelWords)
     setCategory(cat)
     setLevel(lvl)
     setRounds(newRounds)
@@ -69,6 +70,7 @@ export function ListenPick() {
     if (word.english === currentRound.correct.english) {
       setCorrect(true)
       setShowWord(true)
+      recordCorrect(category!.id, level, currentRound.correct.english)
       const newStreak = streak + 1
       setStreak(newStreak)
       const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
@@ -87,10 +89,11 @@ export function ListenPick() {
       }, 1500)
     } else {
       setShakeIndex(optionIndex)
+      recordWrong(category!.id, level, currentRound.correct.english)
       setStreak(0)
       setTimeout(() => setShakeIndex(null), 400)
     }
-  }, [currentRound, correct, streak, roundIndex, rounds])
+  }, [currentRound, correct, streak, roundIndex, rounds, category, level])
 
   if (screen === 'categories') {
     return (

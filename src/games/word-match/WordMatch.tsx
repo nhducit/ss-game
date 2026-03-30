@@ -6,6 +6,7 @@ import { ArrowLeft, RotateCcw, Trophy } from 'lucide-react'
 import { shuffle, getWords, type Category, type Level, type Word } from '@/games/english/words'
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
+import { recordCorrect, getSmartWordOrder } from '@/games/english/progress'
 
 interface MatchCard {
   id: number
@@ -30,7 +31,7 @@ export function WordMatch() {
 
   const startCategory = useCallback((cat: Category, lvl: Level) => {
     const levelWords = getWords(cat, lvl)
-    const selectedWords = shuffle(levelWords).slice(0, PAIR_COUNT)
+    const selectedWords = getSmartWordOrder(cat.id, lvl, levelWords).slice(0, PAIR_COUNT)
     const cardPairs: MatchCard[] = []
     selectedWords.forEach((word, i) => {
       cardPairs.push({ id: i * 2, word, type: 'emoji', matched: false })
@@ -67,6 +68,7 @@ export function WordMatch() {
 
       if (card1.word.english === card2.word.english && card1.type !== card2.type) {
         speak(card1.word.english, 0.8)
+        recordCorrect(category!.id, level, card1.word.english)
         setTimeout(() => {
           setCards(prev => prev.map((c, i) =>
             i === first || i === second ? { ...c, matched: true } : c
