@@ -12,6 +12,7 @@ import { OAnQuan } from '@/games/o-an-quan/OAnQuan'
 import { ConnectFour } from '@/games/connect-four/ConnectFour'
 import { DotsAndBoxes } from '@/games/dots-and-boxes/DotsAndBoxes'
 import { Reversi } from '@/games/reversi/Reversi'
+import { SpellingBee } from '@/games/spelling-bee/SpellingBee'
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -63,6 +64,12 @@ const reversiRoute = createRoute({
   component: Reversi,
 })
 
+const spellingBeeRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/spelling-bee',
+  component: SpellingBee,
+})
+
 const routeTree = rootRoute.addChildren([
   menuRoute,
   caroRoute,
@@ -71,6 +78,7 @@ const routeTree = rootRoute.addChildren([
   connectFourRoute,
   dotsAndBoxesRoute,
   reversiRoute,
+  spellingBeeRoute,
 ])
 
 export const router = createRouter({ routeTree })

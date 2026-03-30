@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Grid3X3, Hash, Circle, Disc, SquareDot, CircleDot } from 'lucide-react'
+import { Grid3X3, Hash, Circle, Disc, SquareDot, CircleDot, BookOpen } from 'lucide-react'
 
 const games = [
   {
@@ -44,6 +44,13 @@ const games = [
     description: 'Flip discs by outflanking — Othello',
     icon: CircleDot,
     to: '/reversi' as const,
+  },
+  {
+    id: 'spelling-bee',
+    title: 'Spelling Bee 🐝',
+    description: 'Listen & spell English words — Đánh vần',
+    icon: BookOpen,
+    to: '/spelling-bee' as const,
   },
 ]
 

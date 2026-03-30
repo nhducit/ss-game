@@ -298,3 +298,15 @@ body {
 .modal-card {
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12);
 }
+
+/* ── Spelling Bee ── */
+@keyframes spelling-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+.spelling-shake {
+  animation: spelling-shake 0.4s ease-out;
+}
