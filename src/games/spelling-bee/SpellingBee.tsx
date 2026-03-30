@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy, Undo2 } from 'lucide-react'
 import { shuffle, getWords, type Category, type Level, type Word } from '@/games/english/words'
-import { speak } from '@/games/english/speak'
+import { speak, speakSequence } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 
 type Screen = 'categories' | 'playing' | 'results'
@@ -64,7 +64,6 @@ export function SpellingBee() {
   useEffect(() => {
     if (!currentWord || result !== 'pending') return
     if (selected.length === currentWord.english.length) {
-      // Build the user's answer from selected scrambled indices
       const userAnswer = selected.map(si => scrambled[availableIndices[si]]).join('')
       if (userAnswer === currentWord.english) {
         setResult('correct')
@@ -72,7 +71,11 @@ export function SpellingBee() {
         setStreak(newStreak)
         const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
         setScore(s => s + points)
-        speak(currentWord.english, 0.8)
+        // Speak the word, then each example sentence
+        speakSequence([
+          { text: currentWord.english, rate: 0.8 },
+          ...currentWord.sentences.map(s => ({ text: s, rate: 0.75, pause: 400 })),
+        ])
       } else {
         setResult('wrong')
         setStreak(0)
@@ -205,28 +208,28 @@ export function SpellingBee() {
           <div className="text-6xl sm:text-7xl">{currentWord.emoji}</div>
 
           {/* Speaker button for word */}
-          <Button
-            variant="outline"
-            size="lg"
-            className="gap-2 text-lg"
+          <button
+            className="flex items-center justify-center size-16 sm:size-20 rounded-full bg-primary/10 hover:bg-primary/20 active:scale-95 transition-all touch-manipulation cursor-pointer"
             onClick={() => speak(currentWord.english)}
           >
-            <Volume2 className="size-5" /> Listen
-          </Button>
+            <Volume2 className="size-8 sm:size-10 text-primary" />
+          </button>
 
-          {/* Example sentences */}
-          <div className="flex flex-col gap-1.5 items-center max-w-sm">
-            {currentWord.sentences.map((sentence, i) => (
-              <button
-                key={i}
-                onClick={() => speak(sentence, 0.75)}
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer touch-manipulation"
-              >
-                <Volume2 className="size-3.5 shrink-0" />
-                <span className="italic text-left">&ldquo;{sentence}&rdquo;</span>
-              </button>
-            ))}
-          </div>
+          {/* Example sentences — only shown after answering */}
+          {result !== 'pending' && (
+            <div className="flex flex-col gap-2 items-center max-w-sm animate-in fade-in duration-300">
+              {currentWord.sentences.map((sentence, i) => (
+                <button
+                  key={i}
+                  onClick={() => speak(sentence, 0.75)}
+                  className="flex items-center gap-2.5 text-sm sm:text-base text-muted-foreground hover:text-foreground transition-colors cursor-pointer touch-manipulation"
+                >
+                  <Volume2 className="size-4 shrink-0" />
+                  <span className="italic text-left">&ldquo;{sentence}&rdquo;</span>
+                </button>
+              ))}
+            </div>
+          )}
 
           {/* Answer slots */}
           <div className="flex gap-2 justify-center flex-wrap">
