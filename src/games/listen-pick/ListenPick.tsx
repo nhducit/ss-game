@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { ArrowLeft, Volume2, RotateCcw, Trophy } from 'lucide-react'
-import { shuffle, type Category, type Word } from '@/games/english/words'
+import { shuffle, getWords, type Category, type Level, type Word } from '@/games/english/words'
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 
@@ -28,6 +28,7 @@ function buildRounds(words: Word[]): Round[] {
 export function ListenPick() {
   const [screen, setScreen] = useState<Screen>('categories')
   const [category, setCategory] = useState<Category | null>(null)
+  const [level, setLevel] = useState<Level>('starters')
   const [rounds, setRounds] = useState<Round[]>([])
   const [roundIndex, setRoundIndex] = useState(0)
   const [score, setScore] = useState(0)
@@ -39,9 +40,11 @@ export function ListenPick() {
 
   const currentRound = rounds[roundIndex] ?? null
 
-  const startCategory = useCallback((cat: Category) => {
-    const newRounds = buildRounds(cat.words)
+  const startCategory = useCallback((cat: Category, lvl: Level) => {
+    const levelWords = getWords(cat, lvl)
+    const newRounds = buildRounds(levelWords)
     setCategory(cat)
+    setLevel(lvl)
     setRounds(newRounds)
     setRoundIndex(0)
     setScore(0)
@@ -52,7 +55,6 @@ export function ListenPick() {
     hasSpoken.current = false
   }, [])
 
-  // Speak the word when round changes
   useEffect(() => {
     if (screen === 'playing' && currentRound && !hasSpoken.current) {
       hasSpoken.current = true
@@ -126,7 +128,7 @@ export function ListenPick() {
           </div>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => startCategory(category!)}>
+          <Button variant="outline" onClick={() => startCategory(category!, level)}>
             <RotateCcw className="size-4 mr-2" /> Play again
           </Button>
           <Button onClick={() => setScreen('categories')}>
@@ -139,7 +141,6 @@ export function ListenPick() {
 
   return (
     <div className="game flex flex-col h-svh overflow-hidden">
-      {/* Nav bar */}
       <div className="game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border">
         <div className="flex items-center gap-3.5">
           <Tooltip>
@@ -167,10 +168,8 @@ export function ListenPick() {
         </Badge>
       </div>
 
-      {/* Main game area */}
       {currentRound && (
         <div className="flex-1 flex flex-col items-center justify-center gap-8 p-6">
-          {/* Speaker button */}
           <Button
             variant="outline"
             size="lg"
@@ -180,14 +179,12 @@ export function ListenPick() {
             <Volume2 className="size-6" /> Listen
           </Button>
 
-          {/* Show word after correct answer */}
           {showWord && (
             <div className="text-2xl sm:text-3xl font-bold text-green-600 dark:text-green-400 animate-bounce">
               {currentRound.correct.english}
             </div>
           )}
 
-          {/* 2x2 emoji grid */}
           <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full max-w-xs">
             {currentRound.options.map((word, i) => {
               const isCorrectPick = correct && word.english === currentRound.correct.english

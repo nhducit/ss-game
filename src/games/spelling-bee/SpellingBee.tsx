@@ -2,16 +2,18 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy } from 'lucide-react'
-import { shuffle, type Category, type Word } from '@/games/english/words'
+import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy, Undo2 } from 'lucide-react'
+import { shuffle, getWords, type Category, type Level, type Word } from '@/games/english/words'
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 
 type Screen = 'categories' | 'playing' | 'results'
+type Result = 'pending' | 'correct' | 'wrong'
 
 export function SpellingBee() {
   const [screen, setScreen] = useState<Screen>('categories')
   const [category, setCategory] = useState<Category | null>(null)
+  const [level, setLevel] = useState<Level>('starters')
   const [words, setWords] = useState<Word[]>([])
   const [wordIndex, setWordIndex] = useState(0)
   const [selected, setSelected] = useState<number[]>([])
@@ -19,8 +21,7 @@ export function SpellingBee() {
   const [scrambled, setScrambled] = useState<string[]>([])
   const [score, setScore] = useState(0)
   const [streak, setStreak] = useState(0)
-  const [shakeIndex, setShakeIndex] = useState<number | null>(null)
-  const [completed, setCompleted] = useState(false)
+  const [result, setResult] = useState<Result>('pending')
   const [skipped, setSkipped] = useState(0)
   const hasSpoken = useRef(false)
 
@@ -32,13 +33,15 @@ export function SpellingBee() {
     setScrambled(letters)
     setAvailableIndices(shuffled)
     setSelected([])
-    setCompleted(false)
+    setResult('pending')
     hasSpoken.current = false
   }, [])
 
-  const startCategory = useCallback((cat: Category) => {
-    const shuffledWords = shuffle(cat.words)
+  const startCategory = useCallback((cat: Category, lvl: Level) => {
+    const levelWords = getWords(cat, lvl)
+    const shuffledWords = shuffle(levelWords)
     setCategory(cat)
+    setLevel(lvl)
     setWords(shuffledWords)
     setWordIndex(0)
     setScore(0)
@@ -48,7 +51,7 @@ export function SpellingBee() {
     setupWord(shuffledWords[0])
   }, [setupWord])
 
-  // Speak the word when it changes (after user has interacted)
+  // Speak the word when it changes
   useEffect(() => {
     if (screen === 'playing' && currentWord && !hasSpoken.current) {
       hasSpoken.current = true
@@ -57,48 +60,39 @@ export function SpellingBee() {
     }
   }, [screen, currentWord, wordIndex])
 
-  const handleLetterTap = useCallback((scrambledIdx: number) => {
-    if (!currentWord || completed) return
-    const letterIndex = availableIndices[scrambledIdx]
-    if (letterIndex === undefined) return
-
-    const nextPos = selected.length
-    const expectedLetter = currentWord.english[nextPos]
-    const tappedLetter = scrambled[letterIndex]
-
-    if (tappedLetter === expectedLetter) {
-      const newSelected = [...selected, scrambledIdx]
-      setSelected(newSelected)
-
-      if (newSelected.length === currentWord.english.length) {
-        setCompleted(true)
+  // Check answer when all letters are placed
+  useEffect(() => {
+    if (!currentWord || result !== 'pending') return
+    if (selected.length === currentWord.english.length) {
+      // Build the user's answer from selected scrambled indices
+      const userAnswer = selected.map(si => scrambled[availableIndices[si]]).join('')
+      if (userAnswer === currentWord.english) {
+        setResult('correct')
         const newStreak = streak + 1
         setStreak(newStreak)
         const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
         setScore(s => s + points)
         speak(currentWord.english, 0.8)
-
-        setTimeout(() => {
-          if (wordIndex + 1 < words.length) {
-            const nextIdx = wordIndex + 1
-            setWordIndex(nextIdx)
-            setupWord(words[nextIdx])
-          } else {
-            setScreen('results')
-          }
-        }, 1500)
+      } else {
+        setResult('wrong')
+        setStreak(0)
       }
-    } else {
-      setShakeIndex(scrambledIdx)
-      setStreak(0)
-      setTimeout(() => setShakeIndex(null), 400)
     }
-  }, [currentWord, completed, availableIndices, selected, scrambled, streak, wordIndex, words, setupWord])
+  }, [selected, currentWord, result, availableIndices, scrambled, streak])
 
-  const skipWord = useCallback(() => {
-    if (!currentWord || completed) return
-    setStreak(0)
-    setSkipped(s => s + 1)
+  const handleLetterTap = useCallback((scrambledIdx: number) => {
+    if (!currentWord || result !== 'pending') return
+    if (selected.includes(scrambledIdx)) return
+    if (selected.length >= currentWord.english.length) return
+    setSelected(prev => [...prev, scrambledIdx])
+  }, [currentWord, result, selected])
+
+  const undoLetter = useCallback(() => {
+    if (result !== 'pending' || selected.length === 0) return
+    setSelected(prev => prev.slice(0, -1))
+  }, [result, selected])
+
+  const advanceWord = useCallback(() => {
     if (wordIndex + 1 < words.length) {
       const nextIdx = wordIndex + 1
       setWordIndex(nextIdx)
@@ -106,7 +100,19 @@ export function SpellingBee() {
     } else {
       setScreen('results')
     }
-  }, [currentWord, completed, wordIndex, words, setupWord])
+  }, [wordIndex, words, setupWord])
+
+  const retryWord = useCallback(() => {
+    if (!currentWord) return
+    setupWord(currentWord)
+  }, [currentWord, setupWord])
+
+  const skipWord = useCallback(() => {
+    if (!currentWord || result !== 'pending') return
+    setStreak(0)
+    setSkipped(s => s + 1)
+    advanceWord()
+  }, [currentWord, result, advanceWord])
 
   if (screen === 'categories') {
     return (
@@ -145,7 +151,7 @@ export function SpellingBee() {
           </div>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => startCategory(category!)}>
+          <Button variant="outline" onClick={() => startCategory(category!, level)}>
             <RotateCcw className="size-4 mr-2" /> Play again
           </Button>
           <Button onClick={() => setScreen('categories')}>
@@ -159,6 +165,8 @@ export function SpellingBee() {
   // Playing screen
   const answerSlots = currentWord ? currentWord.english.split('') : []
   const selectedSet = new Set(selected)
+  // Build user's current answer
+  const userLetters = selected.map(si => scrambled[availableIndices[si]])
 
   return (
     <div className="game flex flex-col h-svh overflow-hidden">
@@ -192,11 +200,11 @@ export function SpellingBee() {
 
       {/* Main game area */}
       {currentWord && (
-        <div className="flex-1 flex flex-col items-center justify-center gap-6 p-6">
+        <div className="flex-1 flex flex-col items-center justify-center gap-5 p-6 overflow-y-auto">
           {/* Emoji */}
-          <div className="text-7xl sm:text-8xl">{currentWord.emoji}</div>
+          <div className="text-6xl sm:text-7xl">{currentWord.emoji}</div>
 
-          {/* Speaker button */}
+          {/* Speaker button for word */}
           <Button
             variant="outline"
             size="lg"
@@ -206,68 +214,120 @@ export function SpellingBee() {
             <Volume2 className="size-5" /> Listen
           </Button>
 
+          {/* Example sentences */}
+          <div className="flex flex-col gap-1.5 items-center max-w-sm">
+            {currentWord.sentences.map((sentence, i) => (
+              <button
+                key={i}
+                onClick={() => speak(sentence, 0.75)}
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer touch-manipulation"
+              >
+                <Volume2 className="size-3.5 shrink-0" />
+                <span className="italic text-left">&ldquo;{sentence}&rdquo;</span>
+              </button>
+            ))}
+          </div>
+
           {/* Answer slots */}
           <div className="flex gap-2 justify-center flex-wrap">
-            {answerSlots.map((letter, i) => {
-              const filled = i < selected.length
+            {answerSlots.map((correctLetter, i) => {
+              const filled = i < userLetters.length
+              const userLetter = filled ? userLetters[i] : null
+              const slotClass = result === 'pending'
+                ? (filled
+                    ? ' border-primary bg-primary/10 text-foreground scale-105'
+                    : ' border-muted-foreground/30 bg-muted/30 text-transparent')
+                : result === 'correct'
+                  ? ' border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
+                  : (filled && userLetter === correctLetter
+                      ? ' border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
+                      : filled
+                        ? ' border-red-500 bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'
+                        : ' border-muted-foreground/30 bg-muted/30 text-transparent')
               return (
                 <div
                   key={i}
                   className={
                     `spelling-slot flex items-center justify-center w-12 h-14 sm:w-14 sm:h-16 rounded-lg border-2 text-2xl sm:text-3xl font-bold uppercase transition-all duration-200` +
-                    (filled
-                      ? ' border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300 scale-105'
-                      : ' border-muted-foreground/30 bg-muted/30 text-transparent')
+                    slotClass
                   }
                 >
-                  {filled ? letter : '_'}
+                  {filled ? userLetter : '_'}
                 </div>
               )
             })}
           </div>
 
-          {/* Scrambled letter tiles */}
-          <div className="flex gap-2 justify-center flex-wrap mt-2">
-            {availableIndices.map((letterIdx, scrambledIdx) => {
-              const used = selectedSet.has(scrambledIdx)
-              const isShaking = shakeIndex === scrambledIdx
-              return (
-                <button
-                  key={scrambledIdx}
-                  className={
-                    `spelling-tile flex items-center justify-center w-12 h-14 sm:w-14 sm:h-16 rounded-xl text-2xl sm:text-3xl font-bold uppercase transition-all duration-150 touch-manipulation select-none` +
-                    (used
-                      ? ' opacity-0 scale-75 pointer-events-none'
-                      : ' bg-foreground text-background hover:scale-110 active:scale-95 cursor-pointer shadow-md') +
-                    (isShaking ? ' spelling-shake' : '') +
-                    (completed ? ' pointer-events-none' : '')
-                  }
-                  onClick={() => handleLetterTap(scrambledIdx)}
-                  disabled={used || completed}
-                >
-                  {scrambled[letterIdx]}
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Skip button */}
-          {!completed && (
-            <Button
-              variant="ghost"
-              className="text-muted-foreground gap-2 mt-2"
-              onClick={skipWord}
-            >
-              <SkipForward className="size-4" /> Skip
-            </Button>
-          )}
-
-          {/* Completion message */}
-          {completed && (
-            <div className="spelling-correct text-2xl font-bold text-green-600 dark:text-green-400 animate-bounce">
-              ✓ Correct!
+          {/* Show correct answer when wrong */}
+          {result === 'wrong' && (
+            <div className="text-center">
+              <p className="text-lg font-bold text-red-500">
+                Correct spelling: <span className="text-2xl uppercase tracking-widest">{currentWord.english}</span>
+              </p>
             </div>
           )}
+
+          {/* Scrambled letter tiles */}
+          {result === 'pending' && (
+            <div className="flex gap-2 justify-center flex-wrap mt-1">
+              {availableIndices.map((letterIdx, scrambledIdx) => {
+                const used = selectedSet.has(scrambledIdx)
+                return (
+                  <button
+                    key={scrambledIdx}
+                    className={
+                      `spelling-tile flex items-center justify-center w-12 h-14 sm:w-14 sm:h-16 rounded-xl text-2xl sm:text-3xl font-bold uppercase transition-all duration-150 touch-manipulation select-none` +
+                      (used
+                        ? ' opacity-0 scale-75 pointer-events-none'
+                        : ' bg-foreground text-background hover:scale-110 active:scale-95 cursor-pointer shadow-md')
+                    }
+                    onClick={() => handleLetterTap(scrambledIdx)}
+                    disabled={used}
+                  >
+                    {scrambled[letterIdx]}
+                  </button>
+                )
+              })}
+            </div>
+          )}
+
+          {/* Action buttons */}
+          <div className="flex gap-3 mt-1">
+            {result === 'pending' && (
+              <>
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={undoLetter}
+                  disabled={selected.length === 0}
+                >
+                  <Undo2 className="size-4" /> Undo
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-muted-foreground gap-2"
+                  onClick={skipWord}
+                >
+                  <SkipForward className="size-4" /> Skip
+                </Button>
+              </>
+            )}
+            {result === 'correct' && (
+              <Button className="gap-2 text-lg" onClick={advanceWord}>
+                ✓ Next word
+              </Button>
+            )}
+            {result === 'wrong' && (
+              <div className="flex gap-3">
+                <Button variant="outline" className="gap-2" onClick={retryWord}>
+                  <RotateCcw className="size-4" /> Try again
+                </Button>
+                <Button className="gap-2" onClick={advanceWord}>
+                  Next word
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

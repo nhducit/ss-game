@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { ArrowLeft, RotateCcw, Trophy } from 'lucide-react'
-import { shuffle, type Category, type Word } from '@/games/english/words'
+import { shuffle, getWords, type Category, type Level, type Word } from '@/games/english/words'
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 
-interface Card {
+interface MatchCard {
   id: number
   word: Word
   type: 'emoji' | 'word'
@@ -21,20 +21,23 @@ const PAIR_COUNT = 6
 export function WordMatch() {
   const [screen, setScreen] = useState<Screen>('categories')
   const [category, setCategory] = useState<Category | null>(null)
-  const [cards, setCards] = useState<Card[]>([])
+  const [level, setLevel] = useState<Level>('starters')
+  const [cards, setCards] = useState<MatchCard[]>([])
   const [flipped, setFlipped] = useState<number[]>([])
   const [locked, setLocked] = useState(false)
   const [moves, setMoves] = useState(0)
   const [matches, setMatches] = useState(0)
 
-  const startCategory = useCallback((cat: Category) => {
-    const selectedWords = shuffle(cat.words).slice(0, PAIR_COUNT)
-    const cardPairs: Card[] = []
+  const startCategory = useCallback((cat: Category, lvl: Level) => {
+    const levelWords = getWords(cat, lvl)
+    const selectedWords = shuffle(levelWords).slice(0, PAIR_COUNT)
+    const cardPairs: MatchCard[] = []
     selectedWords.forEach((word, i) => {
       cardPairs.push({ id: i * 2, word, type: 'emoji', matched: false })
       cardPairs.push({ id: i * 2 + 1, word, type: 'word', matched: false })
     })
     setCategory(cat)
+    setLevel(lvl)
     setCards(shuffle(cardPairs))
     setFlipped([])
     setLocked(false)
@@ -48,7 +51,6 @@ export function WordMatch() {
     const card = cards[index]
     if (card.matched || flipped.includes(index)) return
 
-    // Speak the word when flipping a word card
     if (card.type === 'word') {
       speak(card.word.english)
     }
@@ -64,7 +66,6 @@ export function WordMatch() {
       const card2 = cards[second]
 
       if (card1.word.english === card2.word.english && card1.type !== card2.type) {
-        // Match found
         speak(card1.word.english, 0.8)
         setTimeout(() => {
           setCards(prev => prev.map((c, i) =>
@@ -75,7 +76,6 @@ export function WordMatch() {
           setMatches(m => m + 1)
         }, 600)
       } else {
-        // No match — flip back
         setTimeout(() => {
           setFlipped([])
           setLocked(false)
@@ -84,7 +84,6 @@ export function WordMatch() {
     }
   }, [cards, flipped, locked])
 
-  // Check for game completion
   useEffect(() => {
     if (matches === PAIR_COUNT && matches > 0) {
       setTimeout(() => setScreen('results'), 500)
@@ -127,7 +126,7 @@ export function WordMatch() {
           </div>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={() => startCategory(category!)}>
+          <Button variant="outline" onClick={() => startCategory(category!, level)}>
             <RotateCcw className="size-4 mr-2" /> Play again
           </Button>
           <Button onClick={() => setScreen('categories')}>
@@ -140,7 +139,6 @@ export function WordMatch() {
 
   return (
     <div className="game flex flex-col h-svh overflow-hidden">
-      {/* Nav bar */}
       <div className="game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border">
         <div className="flex items-center gap-3.5">
           <Tooltip>
@@ -163,7 +161,6 @@ export function WordMatch() {
         </div>
       </div>
 
-      {/* Card grid */}
       <div className="flex-1 flex items-center justify-center p-4">
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3 w-full max-w-lg">
           {cards.map((card, index) => {
