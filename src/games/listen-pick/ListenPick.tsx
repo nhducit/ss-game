@@ -100,7 +100,6 @@ export function ListenPick() {
       <CategoryPicker
         title="Listen & Pick 👂"
         subtitle="Hear a word, pick the picture"
-        gamePath="/listen-pick"
         onSelect={startCategory}
       />
     )

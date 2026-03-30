@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { BookOpen, Brain, Ear } from 'lucide-react'
+import { levels } from '@/games/english/words'
+import { useLevel } from '@/games/english/use-level'
 
 const games = [
   {
@@ -27,12 +29,34 @@ const games = [
 ]
 
 export function Menu() {
+  const [level, setLevel] = useLevel()
+
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-8 p-6">
       <div className="text-center">
         <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Games</h1>
         <p className="mt-1 text-muted-foreground">Pick a game to play</p>
       </div>
+
+      {/* Level selector */}
+      <div className="flex gap-2">
+        {levels.map((l) => (
+          <button
+            key={l.id}
+            onClick={() => setLevel(l.id)}
+            className={
+              `flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all touch-manipulation` +
+              (level === l.id
+                ? ' bg-foreground text-background shadow-md'
+                : ' bg-muted text-muted-foreground hover:bg-muted/80')
+            }
+          >
+            <span>{l.emoji}</span>
+            <span>{l.name}</span>
+          </button>
+        ))}
+      </div>
+
       <div className="grid w-full max-w-2xl grid-cols-2 sm:grid-cols-3 gap-3">
         {games.map((game) => (
           <Link key={game.id} to={game.to} className="no-underline">

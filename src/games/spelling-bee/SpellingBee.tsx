@@ -129,7 +129,6 @@ export function SpellingBee() {
       <CategoryPicker
         title="Spelling Bee 🐝"
         subtitle="Pick a topic to practice"
-        gamePath="/spelling-bee"
         onSelect={startCategory}
       />
     )
