@@ -75,17 +75,17 @@ export function Menu() {
         <h1 className="text-3xl font-extrabold tracking-tight text-foreground">Games</h1>
         <p className="mt-1 text-muted-foreground">Pick a game to play</p>
       </div>
-      <div className="grid w-full max-w-md gap-3">
+      <div className="grid w-full max-w-2xl grid-cols-2 sm:grid-cols-3 gap-3">
         {games.map((game) => (
           <Link key={game.id} to={game.to} className="no-underline">
-            <Card className="cursor-pointer transition-colors hover:bg-muted/50">
-              <CardHeader className="flex-row items-center gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                  <game.icon className="size-5 text-foreground" />
+            <Card className="cursor-pointer transition-colors hover:bg-muted/50 h-full">
+              <CardHeader className="flex-col items-center text-center gap-2 p-4">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-muted">
+                  <game.icon className="size-6 text-foreground" />
                 </div>
                 <div>
-                  <CardTitle>{game.title}</CardTitle>
-                  <CardDescription>{game.description}</CardDescription>
+                  <CardTitle className="text-sm">{game.title}</CardTitle>
+                  <CardDescription className="text-xs mt-0.5">{game.description}</CardDescription>
                 </div>
               </CardHeader>
             </Card>
