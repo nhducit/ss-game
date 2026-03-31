@@ -16,6 +16,9 @@ import { SpellingBee } from '@/games/spelling-bee/SpellingBee'
 import { WordMatch } from '@/games/word-match/WordMatch'
 import { ListenPick } from '@/games/listen-pick/ListenPick'
 import { GamesMenu } from '@/games/GamesMenu'
+import { PinyinSpell } from '@/games/pinyin-spell/PinyinSpell'
+import { CharacterMatch } from '@/games/character-match/CharacterMatch'
+import { ChineseListenPick } from '@/games/chinese-listen-pick/ChineseListenPick'
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -91,6 +94,24 @@ const gamesMenuRoute = createRoute({
   component: GamesMenu,
 })
 
+const pinyinSpellRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/pinyin-spell',
+  component: PinyinSpell,
+})
+
+const characterMatchRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/character-match',
+  component: CharacterMatch,
+})
+
+const chineseListenPickRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/chinese-listen-pick',
+  component: ChineseListenPick,
+})
+
 const routeTree = rootRoute.addChildren([
   menuRoute,
   gamesMenuRoute,
@@ -103,6 +124,9 @@ const routeTree = rootRoute.addChildren([
   spellingBeeRoute,
   wordMatchRoute,
   listenPickRoute,
+  pinyinSpellRoute,
+  characterMatchRoute,
+  chineseListenPickRoute,
 ])
 
 export const router = createRouter({ routeTree })
