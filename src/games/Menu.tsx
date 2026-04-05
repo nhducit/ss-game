@@ -6,7 +6,7 @@ import { levels } from '@/games/english/words'
 import { levels as chineseLevels } from '@/games/chinese/words'
 import { useLevel } from '@/games/english/use-level'
 import { useChineseLevel } from '@/games/chinese/use-level'
-import { getStreak, getGamification, getLevel, ALL_ACHIEVEMENTS, type LevelInfo as GamLevelInfo } from '@/games/english/gamification'
+import { getStreak, getGamification, getLevel, ALL_ACHIEVEMENTS } from '@/games/english/gamification'
 
 const englishGames = [
   {
