@@ -81,14 +81,14 @@ export function SentenceBuilder() {
     setupWord(shuffledWords[0])
   }, [setupWord])
 
-  // Speak the word when it changes
+  // Speak the sentence when it changes
   useEffect(() => {
-    if (screen === 'playing' && currentWord && !hasSpoken.current) {
+    if (screen === 'playing' && sentence && !hasSpoken.current) {
       hasSpoken.current = true
-      const t = setTimeout(() => speak(currentWord.english), 300)
+      const t = setTimeout(() => speak(sentence, 0.8), 300)
       return () => clearTimeout(t)
     }
-  }, [screen, currentWord, wordIndex])
+  }, [screen, sentence, wordIndex])
 
   // Check correctness when all words are placed
   useEffect(() => {
@@ -254,7 +254,7 @@ export function SentenceBuilder() {
             </span>
             <button
               className="flex items-center justify-center size-10 rounded-full bg-primary/10 hover:bg-primary/20 active:scale-95 transition-all touch-manipulation cursor-pointer"
-              onClick={() => speak(currentWord.english)}
+              onClick={() => speak(sentence, 0.8)}
             >
               <Volume2 className="size-5 text-primary" />
             </button>
