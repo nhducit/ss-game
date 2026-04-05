@@ -1,9 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useNavigate } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { ArrowLeft } from 'lucide-react'
 import {
   getProfile,
   saveProfile,
@@ -191,7 +188,6 @@ function HistoryTable({ history }: { history: GameHistoryEntry[] }) {
 }
 
 export function Profile() {
-  const navigate = useNavigate()
   const [profile, setProfile] = useState(getProfile)
   const [editName, setEditName] = useState(profile.name)
   const gam = getGamification()
@@ -219,14 +215,9 @@ export function Profile() {
   }
 
   return (
-    <div className="flex min-h-svh flex-col items-center gap-6 p-6 pt-4 pb-12 max-w-lg mx-auto">
+    <div className="flex min-h-svh flex-col items-center gap-6 p-6 pt-2 pb-12 max-w-2xl mx-auto">
       {/* Header */}
-      <div className="flex items-center gap-3 w-full">
-        <Button variant="ghost" size="icon" onClick={() => navigate({ to: '/' })}>
-          <ArrowLeft className="size-4" />
-        </Button>
-        <h1 className="text-xl font-extrabold tracking-tight text-foreground">My Profile</h1>
-      </div>
+      <h1 className="text-xl font-extrabold tracking-tight text-foreground w-full">My Profile</h1>
 
       {/* Avatar + Name */}
       <div className="flex flex-col items-center gap-4 w-full">

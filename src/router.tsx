@@ -5,6 +5,7 @@ import {
   Outlet,
 } from '@tanstack/react-router'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { NavBar } from '@/games/NavBar'
 import { Menu } from '@/games/Menu'
 import { Caro } from '@/games/caro/Caro'
 import { TicTacToe } from '@/games/tic-tac-toe/TicTacToe'
@@ -26,6 +27,7 @@ import { Profile } from '@/games/Profile'
 const rootRoute = createRootRoute({
   component: () => (
     <TooltipProvider>
+      <NavBar />
       <Outlet />
     </TooltipProvider>
   ),
