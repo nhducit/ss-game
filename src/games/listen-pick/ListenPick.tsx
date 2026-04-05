@@ -62,7 +62,7 @@ export function ListenPick() {
   useEffect(() => {
     if (screen === 'results' && !resultsRecorded.current) {
       resultsRecorded.current = true
-      recordGameCompletion(level)
+      recordGameCompletion(level, 'Listen & Pick')
     }
   }, [screen, score])
 

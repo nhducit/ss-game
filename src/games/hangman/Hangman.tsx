@@ -141,7 +141,7 @@ export function Hangman() {
     } else {
       if (!gameCompletionRecorded.current) {
         gameCompletionRecorded.current = true
-        recordGameCompletion(level)
+        recordGameCompletion(level, 'Hangman')
       }
       setScreen('results')
     }

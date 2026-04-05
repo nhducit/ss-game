@@ -89,7 +89,7 @@ export function CharacterMatch() {
 
   useEffect(() => {
     if (matches === PAIR_COUNT && matches > 0) {
-      recordGameCompletion(level)
+      recordGameCompletion(level, 'Character Match')
       setTimeout(() => setScreen('results'), 500)
     }
   }, [matches, level])

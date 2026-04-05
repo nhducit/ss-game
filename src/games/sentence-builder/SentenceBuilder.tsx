@@ -129,7 +129,7 @@ export function SentenceBuilder() {
   useEffect(() => {
     if (screen === 'results' && !resultsRecorded.current) {
       resultsRecorded.current = true
-      recordGameCompletion(level)
+      recordGameCompletion(level, 'Sentence Builder')
     }
   }, [screen, score])
 

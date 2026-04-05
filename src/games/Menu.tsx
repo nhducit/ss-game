@@ -6,7 +6,7 @@ import { levels } from '@/games/english/words'
 import { levels as chineseLevels } from '@/games/chinese/words'
 import { useLevel } from '@/games/english/use-level'
 import { useChineseLevel } from '@/games/chinese/use-level'
-import { getStreak, getGamification, getPlayerLevel, ALL_ACHIEVEMENTS } from '@/games/gamification'
+import { getStreak, getGamification, getPlayerLevel, getProfile } from '@/games/gamification'
 
 const englishGames = [
   {
@@ -118,57 +118,31 @@ function GameGrid({ games }: { games: { id: string; title: string; description: 
   )
 }
 
-function GamificationBar() {
-  const [data, setData] = useState({ streak: 0, stars: 0, achievements: [] as string[] })
+function NavBar() {
+  const [data, setData] = useState({ stars: 0, streak: 0, emoji: '🧒', name: '' })
 
   useEffect(() => {
-    const s = getStreak()
     const g = getGamification()
-    setData({ streak: s.currentStreak, stars: g.totalStars, achievements: g.achievements })
+    const s = getStreak()
+    const p = getProfile()
+    setData({ stars: g.totalStars, streak: s.currentStreak, emoji: p.emoji, name: p.name })
   }, [])
 
   const lvl = getPlayerLevel(data.stars)
 
-  if (data.stars === 0 && data.streak === 0) return null
-
   return (
-    <div className="flex flex-col items-center gap-3 w-full max-w-md">
-      <div className="flex items-center gap-4 flex-wrap justify-center">
+    <div className="flex items-center justify-between px-4 py-3 w-full max-w-2xl">
+      <div className="flex items-center gap-3">
         {data.streak > 0 && (
-          <div className="flex items-center gap-1.5 text-sm font-bold text-orange-500">
-            🔥 {data.streak} day{data.streak !== 1 ? 's' : ''}
-          </div>
+          <span className="text-sm font-bold text-orange-500">🔥 {data.streak}</span>
         )}
-        <div className="flex items-center gap-1.5 text-sm font-bold text-foreground">
-          {lvl.emoji} {lvl.name}
-        </div>
-        <div className="text-sm text-muted-foreground tabular-nums">
-          ⭐ {data.stars} stars
-        </div>
+        <span className="text-sm font-bold tabular-nums">⭐ {data.stars}</span>
+        <span className="text-xs text-muted-foreground">{lvl.emoji} {lvl.name}</span>
       </div>
-      {lvl.nextLevel && (
-        <div className="flex items-center gap-2 w-full max-w-xs">
-          <div className="h-1.5 flex-1 rounded-full bg-muted overflow-hidden">
-            <div
-              className="h-full rounded-full bg-primary transition-all duration-300"
-              style={{ width: `${Math.round(lvl.progress * 100)}%` }}
-            />
-          </div>
-          <span className="text-xs text-muted-foreground tabular-nums">{lvl.nextLevel.emoji} {lvl.nextLevel.name}</span>
-        </div>
-      )}
-      {data.achievements.length > 0 && (
-        <div className="flex gap-1.5 flex-wrap justify-center">
-          {data.achievements.map(id => {
-            const a = ALL_ACHIEVEMENTS.find(a => a.id === id)
-            return a ? (
-              <span key={id} className="text-lg" title={`${a.name}: ${a.description}`}>
-                {a.emoji}
-              </span>
-            ) : null
-          })}
-        </div>
-      )}
+      <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+        <span className="text-2xl">{data.emoji}</span>
+        {data.name && <span className="text-sm font-medium text-foreground hidden sm:inline">{data.name}</span>}
+      </Link>
     </div>
   )
 }
@@ -178,9 +152,9 @@ export function Menu() {
   const [chnLevel, setChnLevel] = useChineseLevel()
 
   return (
-    <div className="flex min-h-svh flex-col items-center gap-10 p-6 pt-12">
-      {/* Gamification stats */}
-      <GamificationBar />
+    <div className="flex min-h-svh flex-col items-center gap-8 p-6 pt-4">
+      {/* Nav bar */}
+      <NavBar />
 
       {/* English section */}
       <section className="flex flex-col items-center gap-5 w-full">

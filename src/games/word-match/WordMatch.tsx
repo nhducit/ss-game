@@ -89,7 +89,7 @@ export function WordMatch() {
 
   useEffect(() => {
     if (matches === PAIR_COUNT && matches > 0) {
-      recordGameCompletion(level)
+      recordGameCompletion(level, 'Word Match')
       setTimeout(() => setScreen('results'), 500)
     }
   }, [matches, moves])

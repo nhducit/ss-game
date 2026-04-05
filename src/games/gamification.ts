@@ -1,5 +1,7 @@
 const STREAK_KEY = 'daily-streak'
 const GAMIFICATION_KEY = 'gamification'
+const PROFILE_KEY = 'player-profile'
+const HISTORY_KEY = 'game-history'
 
 export type DifficultyLevel = 'starters' | 'movers' | 'flyers'
 
@@ -49,7 +51,9 @@ export function getStreak(): StreakData {
 }
 
 /** Call when a game session is completed. Stars awarded based on difficulty level. */
-export function recordGameCompletion(level: DifficultyLevel): string[] {
+export function recordGameCompletion(level: DifficultyLevel, game?: string): string[] {
+  // Record history
+  if (game) recordHistory(game, level)
   const stars = STARS_PER_LEVEL[level]
 
   // Update streak
@@ -178,4 +182,61 @@ function checkAchievements(streak: StreakData, gam: GamificationData): string[] 
   }
 
   return newlyUnlocked
+}
+
+// ── Profile ──
+
+export interface PlayerProfile {
+  name: string
+  emoji: string
+}
+
+export function getProfile(): PlayerProfile {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch { /* corrupted */ }
+  return { name: '', emoji: '🧒' }
+}
+
+export function saveProfile(profile: PlayerProfile) {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile))
+}
+
+// ── Game History ──
+
+export interface GameHistoryEntry {
+  date: string
+  game: string
+  level: DifficultyLevel
+  stars: number
+}
+
+function loadHistory(): GameHistoryEntry[] {
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch { /* corrupted */ }
+  return []
+}
+
+function saveHistory(history: GameHistoryEntry[]) {
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history))
+}
+
+export function getHistory(): GameHistoryEntry[] {
+  return loadHistory()
+}
+
+export function recordHistory(game: string, level: DifficultyLevel) {
+  const history = loadHistory()
+  history.push({
+    date: new Date().toISOString(),
+    game,
+    level,
+    stars: STARS_PER_LEVEL[level],
+  })
+  // Keep last 200 entries
+  if (history.length > 200) history.splice(0, history.length - 200)
+  saveHistory(history)
 }

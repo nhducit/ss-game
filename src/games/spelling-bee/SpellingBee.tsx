@@ -59,7 +59,7 @@ export function SpellingBee() {
   useEffect(() => {
     if (screen === 'results' && !resultsRecorded.current) {
       resultsRecorded.current = true
-      recordGameCompletion(level)
+      recordGameCompletion(level, 'Spelling Bee')
     }
   }, [screen, score])
 

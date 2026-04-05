@@ -21,6 +21,7 @@ import { CharacterMatch } from '@/games/character-match/CharacterMatch'
 import { ChineseListenPick } from '@/games/chinese-listen-pick/ChineseListenPick'
 import { SentenceBuilder } from '@/games/sentence-builder/SentenceBuilder'
 import { Hangman } from '@/games/hangman/Hangman'
+import { Profile } from '@/games/Profile'
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -126,6 +127,12 @@ const hangmanRoute = createRoute({
   component: Hangman,
 })
 
+const profileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/profile',
+  component: Profile,
+})
+
 const routeTree = rootRoute.addChildren([
   menuRoute,
   gamesMenuRoute,
@@ -143,6 +150,7 @@ const routeTree = rootRoute.addChildren([
   chineseListenPickRoute,
   sentenceBuilderRoute,
   hangmanRoute,
+  profileRoute,
 ])
 
 export const router = createRouter({ routeTree })

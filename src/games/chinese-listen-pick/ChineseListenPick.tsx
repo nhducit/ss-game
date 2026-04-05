@@ -85,7 +85,7 @@ export function ChineseListenPick() {
           setShowWord(false)
           hasSpoken.current = false
         } else {
-          recordGameCompletion(level)
+          recordGameCompletion(level, 'Listen & Pick CN')
           setScreen('results')
         }
       }, 1500)

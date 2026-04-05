@@ -107,7 +107,7 @@ export function PinyinSpell() {
       setWordIndex(nextIdx)
       setupWord(words[nextIdx])
     } else {
-      recordGameCompletion(level)
+      recordGameCompletion(level, 'Pinyin Spell')
       setScreen('results')
     }
   }, [wordIndex, words, setupWord, level])
