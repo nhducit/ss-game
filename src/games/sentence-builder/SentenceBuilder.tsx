@@ -44,7 +44,7 @@ export function SentenceBuilder() {
   const [tokens, setTokens] = useState<Token[]>([])
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([])
   const [placedOrder, setPlacedOrder] = useState<number[]>([]) // indices into shuffledIndices
-  const [autoAdvanceTimer, setAutoAdvanceTimer] = useState<ReturnType<typeof setTimeout> | null>(null)
+
 
   const hasSpoken = useRef(false)
   const resultsRecorded = useRef(false)
@@ -107,8 +107,6 @@ export function SentenceBuilder() {
       const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
       setScore(s => s + points)
       speak(sentence, 0.8)
-      const timer = setTimeout(() => advanceWord(), 2500)
-      setAutoAdvanceTimer(timer)
     } else {
       setResult('wrong')
       recordWrong(category.id, level, currentWord.english)
@@ -118,10 +116,6 @@ export function SentenceBuilder() {
   }, [allPlaced])
 
   const advanceWord = useCallback(() => {
-    if (autoAdvanceTimer) {
-      clearTimeout(autoAdvanceTimer)
-      setAutoAdvanceTimer(null)
-    }
     if (wordIndex + 1 < words.length) {
       const nextIdx = wordIndex + 1
       setWordIndex(nextIdx)
@@ -129,7 +123,7 @@ export function SentenceBuilder() {
     } else {
       setScreen('results')
     }
-  }, [wordIndex, words, setupWord, autoAdvanceTimer])
+  }, [wordIndex, words, setupWord])
 
   // Record game completion when entering results
   useEffect(() => {
