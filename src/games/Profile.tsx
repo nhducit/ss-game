@@ -22,45 +22,129 @@ const AVATAR_OPTIONS = [
   '🌟', '🚀', '🎨', '⚽', '🎸', '🌈',
 ]
 
-function StarsPerDayChart({ history }: { history: GameHistoryEntry[] }) {
-  const dailyData = useMemo(() => {
+function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
+  const { weeks, maxStars, months } = useMemo(() => {
+    // Build a map of date -> star count
     const map = new Map<string, number>()
     for (const entry of history) {
       const day = entry.date.slice(0, 10)
       map.set(day, (map.get(day) ?? 0) + entry.stars)
     }
-    // Last 14 days
-    const days: { date: string; label: string; stars: number }[] = []
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date()
-      d.setDate(d.getDate() - i)
+
+    // Generate last 20 weeks of days, aligned to weeks (Sun-Sat columns)
+    const today = new Date()
+    const todayDay = today.getDay() // 0=Sun
+    // End date is today, start from 19 weeks + remaining days before
+    const totalDays = 20 * 7 + todayDay + 1
+    const startDate = new Date(today)
+    startDate.setDate(startDate.getDate() - totalDays + 1)
+
+    const weeks: { date: string; stars: number; dayOfWeek: number }[][] = []
+    let currentWeek: { date: string; stars: number; dayOfWeek: number }[] = []
+    const monthLabels: { label: string; weekIndex: number }[] = []
+    let lastMonth = -1
+
+    for (let i = 0; i < totalDays; i++) {
+      const d = new Date(startDate)
+      d.setDate(d.getDate() + i)
       const key = d.toISOString().slice(0, 10)
-      const label = d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' })
-      days.push({ date: key, label, stars: map.get(key) ?? 0 })
+      const dayOfWeek = d.getDay()
+      const month = d.getMonth()
+
+      if (dayOfWeek === 0 && currentWeek.length > 0) {
+        weeks.push(currentWeek)
+        currentWeek = []
+      }
+
+      currentWeek.push({ date: key, stars: map.get(key) ?? 0, dayOfWeek })
+
+      if (month !== lastMonth && dayOfWeek <= 1) {
+        monthLabels.push({
+          label: d.toLocaleDateString('en-US', { month: 'short' }),
+          weekIndex: weeks.length,
+        })
+        lastMonth = month
+      }
     }
-    return days
+    if (currentWeek.length > 0) weeks.push(currentWeek)
+
+    const allStars = [...map.values()]
+    const maxStars = Math.max(...allStars, 1)
+
+    return { weeks, maxStars, months: monthLabels }
   }, [history])
 
-  const maxStars = Math.max(...dailyData.map(d => d.stars), 1)
+  function getColor(stars: number): string {
+    if (stars === 0) return 'bg-muted'
+    const ratio = stars / maxStars
+    if (ratio <= 0.25) return 'bg-green-200 dark:bg-green-900'
+    if (ratio <= 0.5) return 'bg-green-400 dark:bg-green-700'
+    if (ratio <= 0.75) return 'bg-green-500 dark:bg-green-500'
+    return 'bg-green-600 dark:bg-green-400'
+  }
+
+  const CELL = 11
+  const GAP = 2
 
   return (
     <div className="w-full">
-      <h3 className="text-sm font-semibold text-foreground mb-3">Stars per day (last 2 weeks)</h3>
-      <div className="flex items-end gap-1 h-28">
-        {dailyData.map(d => (
-          <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
-            <div className="w-full flex flex-col items-center justify-end h-20">
-              {d.stars > 0 && (
-                <span className="text-[10px] text-muted-foreground tabular-nums mb-0.5">{d.stars}</span>
-              )}
-              <div
-                className="w-full rounded-t bg-primary/80 transition-all duration-300"
-                style={{ height: `${d.stars > 0 ? Math.max((d.stars / maxStars) * 100, 8) : 0}%` }}
-              />
-            </div>
-            <span className="text-[9px] text-muted-foreground leading-tight text-center">{d.label.split(' ')[0]}</span>
+      <h3 className="text-sm font-semibold text-foreground mb-3">Activity</h3>
+      <div className="overflow-x-auto">
+        <div className="inline-block">
+          {/* Month labels */}
+          <div className="flex mb-1" style={{ paddingLeft: 28 }}>
+            {months.map((m, i) => (
+              <span
+                key={i}
+                className="text-[10px] text-muted-foreground"
+                style={{ position: 'relative', left: m.weekIndex * (CELL + GAP) }}
+              >
+                {m.label}
+              </span>
+            ))}
           </div>
-        ))}
+          <div className="flex gap-0.5">
+            {/* Day labels */}
+            <div className="flex flex-col justify-between pr-1" style={{ height: 7 * (CELL + GAP) - GAP }}>
+              {['', 'Mon', '', 'Wed', '', 'Fri', ''].map((label, i) => (
+                <span key={i} className="text-[10px] text-muted-foreground leading-none" style={{ height: CELL }}>
+                  {label}
+                </span>
+              ))}
+            </div>
+            {/* Grid */}
+            <div className="flex" style={{ gap: GAP }}>
+              {weeks.map((week, wi) => (
+                <div key={wi} className="flex flex-col" style={{ gap: GAP }}>
+                  {/* Pad first week if it doesn't start on Sunday */}
+                  {wi === 0 && week[0].dayOfWeek > 0 && (
+                    Array.from({ length: week[0].dayOfWeek }).map((_, pi) => (
+                      <div key={`pad-${pi}`} style={{ width: CELL, height: CELL }} />
+                    ))
+                  )}
+                  {week.map(day => (
+                    <div
+                      key={day.date}
+                      className={`rounded-sm ${getColor(day.stars)}`}
+                      style={{ width: CELL, height: CELL }}
+                      title={`${day.date}: ${day.stars} star${day.stars !== 1 ? 's' : ''}`}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Legend */}
+          <div className="flex items-center gap-1.5 mt-2 justify-end">
+            <span className="text-[10px] text-muted-foreground">Less</span>
+            <div className="rounded-sm bg-muted" style={{ width: CELL, height: CELL }} />
+            <div className="rounded-sm bg-green-200 dark:bg-green-900" style={{ width: CELL, height: CELL }} />
+            <div className="rounded-sm bg-green-400 dark:bg-green-700" style={{ width: CELL, height: CELL }} />
+            <div className="rounded-sm bg-green-500 dark:bg-green-500" style={{ width: CELL, height: CELL }} />
+            <div className="rounded-sm bg-green-600 dark:bg-green-400" style={{ width: CELL, height: CELL }} />
+            <span className="text-[10px] text-muted-foreground">More</span>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -251,7 +335,7 @@ export function Profile() {
       </div>
 
       {/* Chart */}
-      <StarsPerDayChart history={history} />
+      <ContributionChart history={history} />
 
       {/* History table */}
       <HistoryTable history={history} />
