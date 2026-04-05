@@ -280,7 +280,7 @@ export function SentenceBuilder() {
                     key={pos}
                     className={`px-4 py-2.5 rounded-xl text-lg font-semibold transition-all duration-150 touch-manipulation select-none ${chipClass}`}
                   >
-                    {placedToken.original}
+                    {result === 'pending' ? placedToken.original.toLowerCase() : placedToken.original}
                   </span>
                 )
               }
@@ -290,7 +290,7 @@ export function SentenceBuilder() {
                   key={pos}
                   className="px-4 py-2.5 rounded-xl text-lg font-semibold transition-all duration-150 select-none bg-muted/40 text-muted-foreground/30 border border-dashed border-muted-foreground/20"
                 >
-                  {token.original.replace(/[a-zA-Z0-9]/g, '\u00A0')}
+                  {token.original.toLowerCase().replace(/[a-zA-Z0-9]/g, '\u00A0')}
                 </span>
               )
             })}
@@ -346,7 +346,7 @@ export function SentenceBuilder() {
                     onClick={() => handleChipTap(shuffledIdx)}
                     disabled={used}
                   >
-                    {tokens[tokenIdx].original}
+                    {tokens[tokenIdx].original.toLowerCase()}
                   </button>
                 )
               })}
