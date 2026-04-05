@@ -75,6 +75,9 @@ export function recordGameCompletion(level: DifficultyLevel, game?: string): str
   gam.totalStars += stars
   saveGamification(gam)
 
+  // Notify UI
+  window.dispatchEvent(new CustomEvent('stars-earned', { detail: { stars, totalStars: gam.totalStars } }))
+
   // Check achievements
   return checkAchievements(streak, gam)
 }
