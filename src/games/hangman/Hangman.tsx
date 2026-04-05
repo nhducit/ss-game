@@ -252,6 +252,14 @@ export function Hangman() {
           {/* Emoji hint */}
           <div className="text-5xl sm:text-6xl">{currentWord.emoji}</div>
 
+          {/* Speaker button - always visible */}
+          <button
+            className="flex items-center justify-center size-12 sm:size-14 rounded-full bg-primary/10 hover:bg-primary/20 active:scale-95 transition-all touch-manipulation cursor-pointer"
+            onClick={() => speak(currentWord.english)}
+          >
+            <Volume2 className="size-6 sm:size-7 text-primary" />
+          </button>
+
           {/* Hangman drawing */}
           <HangmanDrawing wrongCount={wrongCount} />
 

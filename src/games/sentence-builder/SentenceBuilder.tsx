@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy } from 'lucide-react'
+import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy, Undo2 } from 'lucide-react'
 import { shuffle, getWords, type Category, type Level, type Word } from '@/games/english/words'
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
@@ -44,14 +44,15 @@ export function SentenceBuilder() {
   const [tokens, setTokens] = useState<Token[]>([])
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([])
   const [placedOrder, setPlacedOrder] = useState<number[]>([]) // indices into shuffledIndices
-  const [shakingIdx, setShakingIdx] = useState<number | null>(null)
   const [autoAdvanceTimer, setAutoAdvanceTimer] = useState<ReturnType<typeof setTimeout> | null>(null)
 
   const hasSpoken = useRef(false)
   const resultsRecorded = useRef(false)
 
+  const [result, setResult] = useState<'pending' | 'correct' | 'wrong'>('pending')
+
   const currentWord = words[wordIndex] ?? null
-  const isComplete = tokens.length > 0 && placedOrder.length === tokens.length
+  const allPlaced = tokens.length > 0 && placedOrder.length === tokens.length
 
   const setupWord = useCallback((word: Word) => {
     const sentenceText = word.sentences[Math.floor(Math.random() * word.sentences.length)]
@@ -61,7 +62,7 @@ export function SentenceBuilder() {
     setTokens(toks)
     setShuffledIndices(indices)
     setPlacedOrder([])
-    setShakingIdx(null)
+    setResult('pending')
     hasSpoken.current = false
   }, [])
 
@@ -89,26 +90,32 @@ export function SentenceBuilder() {
     }
   }, [screen, currentWord, wordIndex])
 
-  // Handle completion
+  // Check correctness when all words are placed
   useEffect(() => {
-    if (!isComplete || !currentWord || !category) return
+    if (!allPlaced || result !== 'pending' || !currentWord || !category) return
 
-    recordCorrect(category.id, level, currentWord.english)
-    const newStreak = streak + 1
-    setStreak(newStreak)
-    const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
-    setScore(s => s + points)
+    // Build the user's sentence and compare normalized forms
+    const userNormalized = placedOrder.map(si => tokens[shuffledIndices[si]].normalized)
+    const correctNormalized = tokens.map(t => t.normalized)
+    const isCorrect = userNormalized.every((w, i) => w === correctNormalized[i])
 
-    speak(sentence, 0.8)
-
-    const timer = setTimeout(() => {
-      advanceWord()
-    }, 2500)
-    setAutoAdvanceTimer(timer)
-
-    return () => clearTimeout(timer)
+    if (isCorrect) {
+      setResult('correct')
+      recordCorrect(category.id, level, currentWord.english)
+      const newStreak = streak + 1
+      setStreak(newStreak)
+      const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
+      setScore(s => s + points)
+      speak(sentence, 0.8)
+      const timer = setTimeout(() => advanceWord(), 2500)
+      setAutoAdvanceTimer(timer)
+    } else {
+      setResult('wrong')
+      recordWrong(category.id, level, currentWord.english)
+      setStreak(0)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isComplete])
+  }, [allPlaced])
 
   const advanceWord = useCallback(() => {
     if (autoAdvanceTimer) {
@@ -133,39 +140,23 @@ export function SentenceBuilder() {
   }, [screen, score])
 
   const handleChipTap = useCallback((shuffledIdx: number) => {
-    if (isComplete) return
-    // Already placed?
+    if (allPlaced || result !== 'pending') return
     if (placedOrder.includes(shuffledIdx)) return
-
-    const tokenIdx = shuffledIndices[shuffledIdx]
-    const tappedToken = tokens[tokenIdx]
-    const nextExpectedPos = placedOrder.length
-
-    // Find which token indices are still expected at this position
-    // We need to match by normalized form, handling duplicates
-    const expectedToken = tokens[nextExpectedPos]
-
-    if (tappedToken.normalized === expectedToken.normalized) {
-      setPlacedOrder(prev => [...prev, shuffledIdx])
-    } else {
-      // Wrong - shake the chip
-      setShakingIdx(shuffledIdx)
-      setTimeout(() => setShakingIdx(null), 500)
-    }
-  }, [isComplete, placedOrder, shuffledIndices, tokens])
+    setPlacedOrder(prev => [...prev, shuffledIdx])
+  }, [allPlaced, result, placedOrder])
 
   const skipWord = useCallback(() => {
-    if (!currentWord || isComplete) return
+    if (!currentWord || result !== 'pending') return
     recordWrong(category!.id, level, currentWord.english)
     setStreak(0)
     setSkipped(s => s + 1)
     advanceWord()
-  }, [currentWord, isComplete, category, level, advanceWord])
+  }, [currentWord, result, category, level, advanceWord])
 
-  const resetSentence = useCallback(() => {
-    if (isComplete) return
-    setPlacedOrder([])
-  }, [isComplete])
+  const undoLastWord = useCallback(() => {
+    if (result !== 'pending' || placedOrder.length === 0) return
+    setPlacedOrder(prev => prev.slice(0, -1))
+  }, [result, placedOrder])
 
   // Categories screen
   if (screen === 'categories') {
@@ -270,18 +261,31 @@ export function SentenceBuilder() {
           </div>
 
           {/* Built sentence area */}
-          <div className="flex gap-2 justify-center flex-wrap min-h-[52px] px-2">
+          <div className="flex gap-2 justify-center flex-wrap min-h-13 px-2">
             {tokens.map((token, pos) => {
               const isPlaced = pos < placedOrder.length
               if (isPlaced) {
                 const shuffledIdx = placedOrder[pos]
                 const tokenIdx = shuffledIndices[shuffledIdx]
+                const placedToken = tokens[tokenIdx]
+                // Color based on result
+                let chipClass: string
+                if (result === 'correct') {
+                  chipClass = 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700'
+                } else if (result === 'wrong') {
+                  const isWordCorrect = placedToken.normalized === token.normalized
+                  chipClass = isWordCorrect
+                    ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700'
+                    : 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 border border-red-300 dark:border-red-700'
+                } else {
+                  chipClass = 'bg-primary/10 text-foreground border border-primary/30'
+                }
                 return (
                   <span
                     key={pos}
-                    className="px-4 py-2.5 rounded-xl text-lg font-semibold transition-all duration-150 touch-manipulation select-none bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700"
+                    className={`px-4 py-2.5 rounded-xl text-lg font-semibold transition-all duration-150 touch-manipulation select-none ${chipClass}`}
                   >
-                    {tokens[tokenIdx].original}
+                    {placedToken.original}
                   </span>
                 )
               }
@@ -297,8 +301,28 @@ export function SentenceBuilder() {
             })}
           </div>
 
-          {/* Completion message */}
-          {isComplete && (
+          {/* Speaker for built sentence (when words are placed but not yet checked, or after result) */}
+          {placedOrder.length > 0 && (
+            <button
+              onClick={() => {
+                const builtText = placedOrder.map(si => tokens[shuffledIndices[si]].original).join(' ')
+                speak(builtText, 0.8)
+              }}
+              className={`flex items-center gap-2 text-sm sm:text-base transition-colors cursor-pointer touch-manipulation ${
+                result === 'correct'
+                  ? 'text-green-600 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300'
+                  : result === 'wrong'
+                    ? 'text-red-500 hover:text-red-600'
+                    : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Volume2 className="size-4 shrink-0" />
+              {result !== 'pending' && <span className="italic">&ldquo;{placedOrder.map(si => tokens[shuffledIndices[si]].original).join(' ')}&rdquo;</span>}
+            </button>
+          )}
+
+          {/* Show correct sentence when wrong */}
+          {result === 'wrong' && (
             <div className="flex items-center gap-2 text-green-600 dark:text-green-400 animate-in fade-in duration-300">
               <button
                 onClick={() => speak(sentence, 0.8)}
@@ -311,11 +335,10 @@ export function SentenceBuilder() {
           )}
 
           {/* Available word chips */}
-          {!isComplete && (
+          {result === 'pending' && (
             <div className="flex gap-2 justify-center flex-wrap mt-1">
               {shuffledIndices.map((tokenIdx, shuffledIdx) => {
                 const used = placedSet.has(shuffledIdx)
-                const isShaking = shakingIdx === shuffledIdx
                 return (
                   <button
                     key={shuffledIdx}
@@ -323,8 +346,7 @@ export function SentenceBuilder() {
                       `px-4 py-2.5 rounded-xl text-lg font-semibold transition-all duration-150 touch-manipulation select-none` +
                       (used
                         ? ' opacity-0 scale-75 pointer-events-none'
-                        : ' bg-foreground text-background hover:scale-105 active:scale-95 cursor-pointer shadow-md') +
-                      (isShaking ? ' spelling-shake' : '')
+                        : ' bg-foreground text-background hover:scale-105 active:scale-95 cursor-pointer shadow-md')
                     }
                     onClick={() => handleChipTap(shuffledIdx)}
                     disabled={used}
@@ -338,15 +360,15 @@ export function SentenceBuilder() {
 
           {/* Action buttons */}
           <div className="flex gap-3 mt-1">
-            {!isComplete && (
+            {result === 'pending' && (
               <>
                 <Button
                   variant="outline"
                   className="gap-2"
-                  onClick={resetSentence}
+                  onClick={undoLastWord}
                   disabled={placedOrder.length === 0}
                 >
-                  <RotateCcw className="size-4" /> Reset
+                  <Undo2 className="size-4" /> Undo
                 </Button>
                 <Button
                   variant="ghost"
@@ -357,10 +379,20 @@ export function SentenceBuilder() {
                 </Button>
               </>
             )}
-            {isComplete && (
+            {result === 'correct' && (
               <Button className="gap-2 text-lg" onClick={advanceWord}>
                 ✓ Next word
               </Button>
+            )}
+            {result === 'wrong' && (
+              <div className="flex gap-3">
+                <Button variant="outline" className="gap-2" onClick={() => setupWord(currentWord!)}>
+                  <RotateCcw className="size-4" /> Try again
+                </Button>
+                <Button className="gap-2" onClick={advanceWord}>
+                  Next word
+                </Button>
+              </div>
             )}
           </div>
         </div>
