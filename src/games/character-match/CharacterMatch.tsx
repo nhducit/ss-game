@@ -7,6 +7,7 @@ import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord }
 import { speakChinese } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
 import { recordCorrect, getSmartWordOrder } from '@/games/chinese/progress'
+import { recordGameCompletion } from '@/games/gamification'
 
 interface MatchCard {
   id: number
@@ -88,9 +89,10 @@ export function CharacterMatch() {
 
   useEffect(() => {
     if (matches === PAIR_COUNT && matches > 0) {
+      recordGameCompletion(level)
       setTimeout(() => setScreen('results'), 500)
     }
-  }, [matches])
+  }, [matches, level])
 
   if (screen === 'categories') {
     return (

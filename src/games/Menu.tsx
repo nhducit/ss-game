@@ -6,7 +6,7 @@ import { levels } from '@/games/english/words'
 import { levels as chineseLevels } from '@/games/chinese/words'
 import { useLevel } from '@/games/english/use-level'
 import { useChineseLevel } from '@/games/chinese/use-level'
-import { getStreak, getGamification, getLevel, ALL_ACHIEVEMENTS } from '@/games/english/gamification'
+import { getStreak, getGamification, getPlayerLevel, ALL_ACHIEVEMENTS } from '@/games/gamification'
 
 const englishGames = [
   {
@@ -119,17 +119,17 @@ function GameGrid({ games }: { games: { id: string; title: string; description: 
 }
 
 function GamificationBar() {
-  const [data, setData] = useState({ streak: 0, xp: 0, achievements: [] as string[] })
+  const [data, setData] = useState({ streak: 0, stars: 0, achievements: [] as string[] })
 
   useEffect(() => {
     const s = getStreak()
     const g = getGamification()
-    setData({ streak: s.currentStreak, xp: g.totalXP, achievements: g.achievements })
+    setData({ streak: s.currentStreak, stars: g.totalStars, achievements: g.achievements })
   }, [])
 
-  const lvl = getLevel(data.xp)
+  const lvl = getPlayerLevel(data.stars)
 
-  if (data.xp === 0 && data.streak === 0) return null
+  if (data.stars === 0 && data.streak === 0) return null
 
   return (
     <div className="flex flex-col items-center gap-3 w-full max-w-md">
@@ -143,7 +143,7 @@ function GamificationBar() {
           {lvl.emoji} {lvl.name}
         </div>
         <div className="text-sm text-muted-foreground tabular-nums">
-          ⭐ {data.xp} XP
+          ⭐ {data.stars} stars
         </div>
       </div>
       {lvl.nextLevel && (

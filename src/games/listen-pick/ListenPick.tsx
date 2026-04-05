@@ -7,7 +7,7 @@ import { shuffle, getWords, type Category, type Level, type Word } from '@/games
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/english/progress'
-import { recordGameCompletion } from '@/games/english/gamification'
+import { recordGameCompletion } from '@/games/gamification'
 
 type Screen = 'categories' | 'playing' | 'results'
 
@@ -62,7 +62,7 @@ export function ListenPick() {
   useEffect(() => {
     if (screen === 'results' && !resultsRecorded.current) {
       resultsRecorded.current = true
-      recordGameCompletion(score)
+      recordGameCompletion(level)
     }
   }, [screen, score])
 

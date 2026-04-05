@@ -7,6 +7,7 @@ import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord }
 import { speakChinese, speakChineseSequence } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/chinese/progress'
+import { recordGameCompletion } from '@/games/gamification'
 
 type Screen = 'categories' | 'playing' | 'results'
 type Result = 'pending' | 'correct' | 'wrong'
@@ -106,9 +107,10 @@ export function PinyinSpell() {
       setWordIndex(nextIdx)
       setupWord(words[nextIdx])
     } else {
+      recordGameCompletion(level)
       setScreen('results')
     }
-  }, [wordIndex, words, setupWord])
+  }, [wordIndex, words, setupWord, level])
 
   const retryWord = useCallback(() => {
     if (!currentWord) return

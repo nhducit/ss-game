@@ -7,7 +7,7 @@ import { getWords, type Category, type Level, type Word } from '@/games/english/
 import { speak, speakSequence } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/english/progress'
-import { recordGameCompletion } from '@/games/english/gamification'
+import { recordGameCompletion } from '@/games/gamification'
 
 type Screen = 'categories' | 'playing' | 'results'
 
@@ -141,7 +141,7 @@ export function Hangman() {
     } else {
       if (!gameCompletionRecorded.current) {
         gameCompletionRecorded.current = true
-        recordGameCompletion(score)
+        recordGameCompletion(level)
       }
       setScreen('results')
     }

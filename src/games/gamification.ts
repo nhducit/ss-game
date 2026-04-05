@@ -1,6 +1,14 @@
 const STREAK_KEY = 'daily-streak'
 const GAMIFICATION_KEY = 'gamification'
 
+export type DifficultyLevel = 'starters' | 'movers' | 'flyers'
+
+const STARS_PER_LEVEL: Record<DifficultyLevel, number> = {
+  starters: 1,
+  movers: 2,
+  flyers: 3,
+}
+
 interface StreakData {
   currentStreak: number
   lastPlayDate: string
@@ -8,7 +16,7 @@ interface StreakData {
 }
 
 interface GamificationData {
-  totalXP: number
+  totalStars: number
   achievements: string[]
 }
 
@@ -40,8 +48,10 @@ export function getStreak(): StreakData {
   return loadStreak()
 }
 
-/** Call when a game session is completed (results screen reached) */
-export function recordGameCompletion(scoreEarned: number): string[] {
+/** Call when a game session is completed. Stars awarded based on difficulty level. */
+export function recordGameCompletion(level: DifficultyLevel): string[] {
+  const stars = STARS_PER_LEVEL[level]
+
   // Update streak
   const streak = loadStreak()
   const t = today()
@@ -56,23 +66,30 @@ export function recordGameCompletion(scoreEarned: number): string[] {
     saveStreak(streak)
   }
 
-  // Update XP
+  // Update stars
   const gam = loadGamification()
-  gam.totalXP += scoreEarned
+  gam.totalStars += stars
   saveGamification(gam)
 
   // Check achievements
   return checkAchievements(streak, gam)
 }
 
-// ── Gamification / XP ──
+// ── Gamification / Stars ──
 
 function loadGamification(): GamificationData {
   try {
     const raw = localStorage.getItem(GAMIFICATION_KEY)
-    if (raw) return JSON.parse(raw)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      // Migrate from old XP format
+      if ('totalXP' in parsed && !('totalStars' in parsed)) {
+        return { totalStars: parsed.totalXP, achievements: parsed.achievements ?? [] }
+      }
+      return parsed
+    }
   } catch { /* corrupted */ }
-  return { totalXP: 0, achievements: [] }
+  return { totalStars: 0, achievements: [] }
 }
 
 function saveGamification(data: GamificationData) {
@@ -83,27 +100,27 @@ export function getGamification(): GamificationData {
   return loadGamification()
 }
 
-export interface LevelInfo {
+export interface PlayerLevel {
   name: string
-  minXP: number
+  minStars: number
   emoji: string
 }
 
-const LEVELS: LevelInfo[] = [
-  { name: 'Beginner', minXP: 0, emoji: '🌱' },
-  { name: 'Explorer', minXP: 100, emoji: '🗺️' },
-  { name: 'Learner', minXP: 300, emoji: '📖' },
-  { name: 'Scholar', minXP: 600, emoji: '🎓' },
-  { name: 'Champion', minXP: 1000, emoji: '🏆' },
-  { name: 'Master', minXP: 2000, emoji: '👑' },
-  { name: 'Legend', minXP: 5000, emoji: '⭐' },
+const LEVELS: PlayerLevel[] = [
+  { name: 'Beginner', minStars: 0, emoji: '🌱' },
+  { name: 'Explorer', minStars: 20, emoji: '🗺️' },
+  { name: 'Learner', minStars: 50, emoji: '📖' },
+  { name: 'Scholar', minStars: 100, emoji: '🎓' },
+  { name: 'Champion', minStars: 200, emoji: '🏆' },
+  { name: 'Master', minStars: 500, emoji: '👑' },
+  { name: 'Legend', minStars: 1000, emoji: '⭐' },
 ]
 
-export function getLevel(xp: number): LevelInfo & { nextLevel: LevelInfo | null; progress: number } {
+export function getPlayerLevel(stars: number): PlayerLevel & { nextLevel: PlayerLevel | null; progress: number } {
   let current = LEVELS[0]
   let nextIdx = 1
   for (let i = LEVELS.length - 1; i >= 0; i--) {
-    if (xp >= LEVELS[i].minXP) {
+    if (stars >= LEVELS[i].minStars) {
       current = LEVELS[i]
       nextIdx = i + 1
       break
@@ -111,7 +128,7 @@ export function getLevel(xp: number): LevelInfo & { nextLevel: LevelInfo | null;
   }
   const next = nextIdx < LEVELS.length ? LEVELS[nextIdx] : null
   const progress = next
-    ? (xp - current.minXP) / (next.minXP - current.minXP)
+    ? (stars - current.minStars) / (next.minStars - current.minStars)
     : 1
   return { ...current, nextLevel: next, progress }
 }
@@ -130,9 +147,9 @@ export const ALL_ACHIEVEMENTS: Achievement[] = [
   { id: 'streak-3', name: 'On Fire', emoji: '🔥', description: '3-day streak' },
   { id: 'streak-7', name: 'Week Warrior', emoji: '⚔️', description: '7-day streak' },
   { id: 'streak-30', name: 'Monthly Master', emoji: '📅', description: '30-day streak' },
-  { id: 'score-100', name: 'Century', emoji: '💯', description: 'Earn 100 total XP' },
-  { id: 'score-1000', name: 'Grand', emoji: '🏅', description: 'Earn 1000 total XP' },
-  { id: 'score-5000', name: 'Legendary', emoji: '🌟', description: 'Earn 5000 total XP' },
+  { id: 'stars-50', name: 'Rising Star', emoji: '💫', description: 'Earn 50 stars' },
+  { id: 'stars-200', name: 'Superstar', emoji: '🏅', description: 'Earn 200 stars' },
+  { id: 'stars-1000', name: 'Legendary', emoji: '🌟', description: 'Earn 1000 stars' },
 ]
 
 function checkAchievements(streak: StreakData, gam: GamificationData): string[] {
@@ -144,9 +161,9 @@ function checkAchievements(streak: StreakData, gam: GamificationData): string[] 
     ['streak-3', streak.currentStreak >= 3],
     ['streak-7', streak.currentStreak >= 7],
     ['streak-30', streak.currentStreak >= 30],
-    ['score-100', gam.totalXP >= 100],
-    ['score-1000', gam.totalXP >= 1000],
-    ['score-5000', gam.totalXP >= 5000],
+    ['stars-50', gam.totalStars >= 50],
+    ['stars-200', gam.totalStars >= 200],
+    ['stars-1000', gam.totalStars >= 1000],
   ]
 
   for (const [id, condition] of checks) {

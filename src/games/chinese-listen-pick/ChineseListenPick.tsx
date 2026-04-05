@@ -7,6 +7,7 @@ import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord }
 import { speakChinese } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/chinese/progress'
+import { recordGameCompletion } from '@/games/gamification'
 
 type Screen = 'categories' | 'playing' | 'results'
 
@@ -84,6 +85,7 @@ export function ChineseListenPick() {
           setShowWord(false)
           hasSpoken.current = false
         } else {
+          recordGameCompletion(level)
           setScreen('results')
         }
       }, 1500)
