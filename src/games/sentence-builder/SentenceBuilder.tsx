@@ -247,18 +247,13 @@ export function SentenceBuilder() {
           {/* Emoji */}
           <div className="text-6xl sm:text-7xl">{currentWord.emoji}</div>
 
-          {/* Target word + speaker */}
-          <div className="flex items-center gap-3">
-            <span className="text-2xl sm:text-3xl font-bold text-foreground">
-              {currentWord.english}
-            </span>
-            <button
-              className="flex items-center justify-center size-10 rounded-full bg-primary/10 hover:bg-primary/20 active:scale-95 transition-all touch-manipulation cursor-pointer"
-              onClick={() => speak(sentence, 0.8)}
-            >
-              <Volume2 className="size-5 text-primary" />
-            </button>
-          </div>
+          {/* Speaker button */}
+          <button
+            className="flex items-center justify-center size-14 sm:size-16 rounded-full bg-primary/10 hover:bg-primary/20 active:scale-95 transition-all touch-manipulation cursor-pointer"
+            onClick={() => speak(sentence, 0.8)}
+          >
+            <Volume2 className="size-7 sm:size-8 text-primary" />
+          </button>
 
           {/* Built sentence area */}
           <div className="flex gap-2 justify-center flex-wrap min-h-13 px-2">
