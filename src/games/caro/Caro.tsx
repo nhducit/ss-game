@@ -28,6 +28,7 @@ const DIRECTIONS = [
 ]
 
 function checkWin(board: Cell[], row: number, col: number, player: Player): number[] | null {
+  const opponent = player === 'X' ? 'O' : 'X'
   for (const [dr, dc] of DIRECTIONS) {
     const cells: number[] = []
     const r = row - dr * (WIN_LENGTH - 1)
@@ -37,7 +38,24 @@ function checkWin(board: Cell[], row: number, col: number, player: Player): numb
       const cc = c + dc * start
       if (cr >= 0 && cr < SIZE && cc >= 0 && cc < SIZE && board[cr * SIZE + cc] === player) {
         cells.push(cr * SIZE + cc)
-        if (cells.length === WIN_LENGTH) return cells
+        if (cells.length === WIN_LENGTH) {
+          // Blocked-five rule: 5-in-a-row with both ends blocked doesn't count
+          const firstIdx = cells[0]
+          const fr = Math.floor(firstIdx / SIZE)
+          const fc = firstIdx % SIZE
+          const br = fr - dr
+          const bc = fc - dc
+          const blockedBefore = br < 0 || br >= SIZE || bc < 0 || bc >= SIZE || board[br * SIZE + bc] === opponent
+          const lastIdx = cells[cells.length - 1]
+          const lr = Math.floor(lastIdx / SIZE)
+          const lc = lastIdx % SIZE
+          const ar = lr + dr
+          const ac = lc + dc
+          const blockedAfter = ar < 0 || ar >= SIZE || ac < 0 || ac >= SIZE || board[ar * SIZE + ac] === opponent
+          if (!blockedBefore || !blockedAfter) return cells
+          // Both ends blocked — not a win, keep searching
+          cells.shift()
+        }
       } else {
         cells.length = 0
       }
