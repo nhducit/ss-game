@@ -1,10 +1,12 @@
+import { useState, useEffect } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { BookOpen, Brain, Ear } from 'lucide-react'
+import { BookOpen, Brain, Ear, Puzzle, Skull } from 'lucide-react'
 import { levels } from '@/games/english/words'
 import { levels as chineseLevels } from '@/games/chinese/words'
 import { useLevel } from '@/games/english/use-level'
 import { useChineseLevel } from '@/games/chinese/use-level'
+import { getStreak, getGamification, getLevel, ALL_ACHIEVEMENTS, type LevelInfo as GamLevelInfo } from '@/games/english/gamification'
 
 const englishGames = [
   {
@@ -27,6 +29,20 @@ const englishGames = [
     description: 'Hear a word, pick the picture',
     icon: Ear,
     to: '/listen-pick' as const,
+  },
+  {
+    id: 'sentence-builder',
+    title: 'Sentence Builder 📝',
+    description: 'Build sentences word by word',
+    icon: Puzzle,
+    to: '/sentence-builder' as const,
+  },
+  {
+    id: 'hangman',
+    title: 'Hangman 🪢',
+    description: 'Guess the word letter by letter',
+    icon: Skull,
+    to: '/hangman' as const,
   },
 ]
 
@@ -102,12 +118,70 @@ function GameGrid({ games }: { games: { id: string; title: string; description: 
   )
 }
 
+function GamificationBar() {
+  const [data, setData] = useState({ streak: 0, xp: 0, achievements: [] as string[] })
+
+  useEffect(() => {
+    const s = getStreak()
+    const g = getGamification()
+    setData({ streak: s.currentStreak, xp: g.totalXP, achievements: g.achievements })
+  }, [])
+
+  const lvl = getLevel(data.xp)
+
+  if (data.xp === 0 && data.streak === 0) return null
+
+  return (
+    <div className="flex flex-col items-center gap-3 w-full max-w-md">
+      <div className="flex items-center gap-4 flex-wrap justify-center">
+        {data.streak > 0 && (
+          <div className="flex items-center gap-1.5 text-sm font-bold text-orange-500">
+            🔥 {data.streak} day{data.streak !== 1 ? 's' : ''}
+          </div>
+        )}
+        <div className="flex items-center gap-1.5 text-sm font-bold text-foreground">
+          {lvl.emoji} {lvl.name}
+        </div>
+        <div className="text-sm text-muted-foreground tabular-nums">
+          ⭐ {data.xp} XP
+        </div>
+      </div>
+      {lvl.nextLevel && (
+        <div className="flex items-center gap-2 w-full max-w-xs">
+          <div className="h-1.5 flex-1 rounded-full bg-muted overflow-hidden">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-300"
+              style={{ width: `${Math.round(lvl.progress * 100)}%` }}
+            />
+          </div>
+          <span className="text-xs text-muted-foreground tabular-nums">{lvl.nextLevel.emoji} {lvl.nextLevel.name}</span>
+        </div>
+      )}
+      {data.achievements.length > 0 && (
+        <div className="flex gap-1.5 flex-wrap justify-center">
+          {data.achievements.map(id => {
+            const a = ALL_ACHIEVEMENTS.find(a => a.id === id)
+            return a ? (
+              <span key={id} className="text-lg" title={`${a.name}: ${a.description}`}>
+                {a.emoji}
+              </span>
+            ) : null
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function Menu() {
   const [engLevel, setEngLevel] = useLevel()
   const [chnLevel, setChnLevel] = useChineseLevel()
 
   return (
     <div className="flex min-h-svh flex-col items-center gap-10 p-6 pt-12">
+      {/* Gamification stats */}
+      <GamificationBar />
+
       {/* English section */}
       <section className="flex flex-col items-center gap-5 w-full">
         <div className="text-center">
