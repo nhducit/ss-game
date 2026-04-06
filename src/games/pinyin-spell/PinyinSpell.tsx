@@ -7,12 +7,13 @@ import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord }
 import { speakChinese, speakChineseSequence } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/chinese/progress'
-import { recordGameCompletion } from '@/games/gamification'
+import { useRecordGame } from '@/games/useRecordGame'
 
 type Screen = 'categories' | 'playing' | 'results'
 type Result = 'pending' | 'correct' | 'wrong'
 
 export function PinyinSpell() {
+  const { record: recordGame, reset: resetRecordGame } = useRecordGame()
   const [screen, setScreen] = useState<Screen>('categories')
   const [category, setCategory] = useState<ChineseCategory | null>(null)
   const [level, setLevel] = useState<Level>('starters')
@@ -51,8 +52,9 @@ export function PinyinSpell() {
     setStreak(0)
     setSkipped(0)
     setScreen('playing')
+    resetRecordGame()
     setupWord(smartWords[0])
-  }, [setupWord])
+  }, [setupWord, resetRecordGame])
 
   useEffect(() => {
     if (screen === 'playing' && currentWord && !hasSpoken.current) {
@@ -107,10 +109,10 @@ export function PinyinSpell() {
       setWordIndex(nextIdx)
       setupWord(words[nextIdx])
     } else {
-      recordGameCompletion(level, 'Pinyin Spell')
+      recordGame(level, 'Pinyin Spell')
       setScreen('results')
     }
-  }, [wordIndex, words, setupWord, level])
+  }, [wordIndex, words, setupWord, level, recordGame])
 
   const retryWord = useCallback(() => {
     if (!currentWord) return

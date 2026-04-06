@@ -7,7 +7,7 @@ import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord }
 import { speakChinese } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/chinese/progress'
-import { recordGameCompletion } from '@/games/gamification'
+import { useRecordGame } from '@/games/useRecordGame'
 
 type Screen = 'categories' | 'playing' | 'results'
 
@@ -27,6 +27,7 @@ function buildRounds(orderedWords: ChineseWord[], allWords: ChineseWord[]): Roun
 }
 
 export function ChineseListenPick() {
+  const { record: recordGame, reset: resetRecordGame } = useRecordGame()
   const [screen, setScreen] = useState<Screen>('categories')
   const [category, setCategory] = useState<ChineseCategory | null>(null)
   const [level, setLevel] = useState<Level>('starters')
@@ -55,7 +56,8 @@ export function ChineseListenPick() {
     setShowWord(false)
     setScreen('playing')
     hasSpoken.current = false
-  }, [])
+    resetRecordGame()
+  }, [resetRecordGame])
 
   useEffect(() => {
     if (screen === 'playing' && currentRound && !hasSpoken.current) {
@@ -85,7 +87,7 @@ export function ChineseListenPick() {
           setShowWord(false)
           hasSpoken.current = false
         } else {
-          recordGameCompletion(level, 'Listen & Pick CN')
+          recordGame(level, 'Listen & Pick CN')
           setScreen('results')
         }
       }, 1500)

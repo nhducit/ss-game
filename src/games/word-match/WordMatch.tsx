@@ -7,7 +7,7 @@ import { shuffle, getWords, type Category, type Level, type Word } from '@/games
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 import { recordCorrect, getSmartWordOrder } from '@/games/english/progress'
-import { recordGameCompletion } from '@/games/gamification'
+import { useRecordGame } from '@/games/useRecordGame'
 
 interface MatchCard {
   id: number
@@ -21,6 +21,7 @@ type Screen = 'categories' | 'playing' | 'results'
 const PAIR_COUNT = 6
 
 export function WordMatch() {
+  const { record: recordGame, reset: resetRecordGame } = useRecordGame()
   const [screen, setScreen] = useState<Screen>('categories')
   const [category, setCategory] = useState<Category | null>(null)
   const [level, setLevel] = useState<Level>('starters')
@@ -46,7 +47,8 @@ export function WordMatch() {
     setMoves(0)
     setMatches(0)
     setScreen('playing')
-  }, [])
+    resetRecordGame()
+  }, [resetRecordGame])
 
   const handleCardClick = useCallback((index: number) => {
     if (locked) return
@@ -89,7 +91,7 @@ export function WordMatch() {
 
   useEffect(() => {
     if (matches === PAIR_COUNT && matches > 0) {
-      recordGameCompletion(level, 'Word Match')
+      recordGame(level, 'Word Match')
       setTimeout(() => setScreen('results'), 500)
     }
   }, [matches, moves])

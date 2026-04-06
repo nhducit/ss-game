@@ -7,7 +7,7 @@ import { getWords, type Category, type Level, type Word } from '@/games/english/
 import { speak, speakSequence } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/english/progress'
-import { recordGameCompletion } from '@/games/gamification'
+import { useRecordGame } from '@/games/useRecordGame'
 
 type Screen = 'categories' | 'playing' | 'results'
 
@@ -56,7 +56,7 @@ export function Hangman() {
   const [won, setWon] = useState<boolean | null>(null) // null = playing, true = won, false = lost
   const [nextDisabled, setNextDisabled] = useState(false)
   const hasSpoken = useRef(false)
-  const gameCompletionRecorded = useRef(false)
+  const { record: recordGame, reset: resetRecordGame } = useRecordGame()
 
   const currentWord = words[wordIndex] ?? null
 
@@ -78,12 +78,12 @@ export function Hangman() {
     setStreak(0)
     setSkipped(0)
     setScreen('playing')
-    gameCompletionRecorded.current = false
+    resetRecordGame()
     setGuessedLetters(new Set())
     setWrongCount(0)
     setWon(null)
     hasSpoken.current = false
-  }, [])
+  }, [resetRecordGame])
 
   // Speak the word when it changes
   useEffect(() => {
@@ -143,13 +143,10 @@ export function Hangman() {
       setWordIndex(nextIdx)
       resetWord()
     } else {
-      if (!gameCompletionRecorded.current) {
-        gameCompletionRecorded.current = true
-        recordGameCompletion(level, 'Hangman')
-      }
+      recordGame(level, 'Hangman')
       setScreen('results')
     }
-  }, [wordIndex, words, resetWord, score])
+  }, [wordIndex, words, resetWord, recordGame, level])
 
   const skipWord = useCallback(() => {
     if (!currentWord || won !== null) return

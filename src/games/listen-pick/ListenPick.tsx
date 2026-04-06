@@ -7,7 +7,7 @@ import { shuffle, getWords, type Category, type Level, type Word } from '@/games
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/english/progress'
-import { recordGameCompletion } from '@/games/gamification'
+import { useRecordGame } from '@/games/useRecordGame'
 
 type Screen = 'categories' | 'playing' | 'results'
 
@@ -38,7 +38,7 @@ export function ListenPick() {
   const [correct, setCorrect] = useState(false)
   const [showWord, setShowWord] = useState(false)
   const hasSpoken = useRef(false)
-  const resultsRecorded = useRef(false)
+  const { record: recordGame, reset: resetRecordGame } = useRecordGame()
 
   const currentRound = rounds[roundIndex] ?? null
 
@@ -56,15 +56,8 @@ export function ListenPick() {
     setShowWord(false)
     setScreen('playing')
     hasSpoken.current = false
-    resultsRecorded.current = false
-  }, [])
-
-  useEffect(() => {
-    if (screen === 'results' && !resultsRecorded.current) {
-      resultsRecorded.current = true
-      recordGameCompletion(level, 'Listen & Pick')
-    }
-  }, [screen, score])
+    resetRecordGame()
+  }, [resetRecordGame])
 
   useEffect(() => {
     if (screen === 'playing' && currentRound && !hasSpoken.current) {
@@ -94,6 +87,7 @@ export function ListenPick() {
           setShowWord(false)
           hasSpoken.current = false
         } else {
+          recordGame(level, 'Listen & Pick')
           setScreen('results')
         }
       }, 1500)

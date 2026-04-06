@@ -7,7 +7,7 @@ import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord }
 import { speakChinese } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
 import { recordCorrect, getSmartWordOrder } from '@/games/chinese/progress'
-import { recordGameCompletion } from '@/games/gamification'
+import { useRecordGame } from '@/games/useRecordGame'
 
 interface MatchCard {
   id: number
@@ -21,6 +21,7 @@ type Screen = 'categories' | 'playing' | 'results'
 const PAIR_COUNT = 6
 
 export function CharacterMatch() {
+  const { record: recordGame, reset: resetRecordGame } = useRecordGame()
   const [screen, setScreen] = useState<Screen>('categories')
   const [category, setCategory] = useState<ChineseCategory | null>(null)
   const [level, setLevel] = useState<Level>('starters')
@@ -46,7 +47,8 @@ export function CharacterMatch() {
     setMoves(0)
     setMatches(0)
     setScreen('playing')
-  }, [])
+    resetRecordGame()
+  }, [resetRecordGame])
 
   const handleCardClick = useCallback((index: number) => {
     if (locked) return
@@ -89,7 +91,7 @@ export function CharacterMatch() {
 
   useEffect(() => {
     if (matches === PAIR_COUNT && matches > 0) {
-      recordGameCompletion(level, 'Character Match')
+      recordGame(level, 'Character Match')
       setTimeout(() => setScreen('results'), 500)
     }
   }, [matches, level])

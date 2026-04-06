@@ -7,7 +7,7 @@ import { shuffle, getWords, type Category, type Level, type Word } from '@/games
 import { speak } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/english/progress'
-import { recordGameCompletion } from '@/games/gamification'
+import { useRecordGame } from '@/games/useRecordGame'
 
 type Screen = 'categories' | 'playing' | 'results'
 
@@ -47,7 +47,7 @@ export function SentenceBuilder() {
 
 
   const hasSpoken = useRef(false)
-  const resultsRecorded = useRef(false)
+  const { record: recordGame, reset: resetRecordGame } = useRecordGame()
 
   const [result, setResult] = useState<'pending' | 'correct' | 'wrong'>('pending')
 
@@ -77,9 +77,9 @@ export function SentenceBuilder() {
     setStreak(0)
     setSkipped(0)
     setScreen('playing')
-    resultsRecorded.current = false
+    resetRecordGame()
     setupWord(shuffledWords[0])
-  }, [setupWord])
+  }, [setupWord, resetRecordGame])
 
   // Speak the sentence when it changes
   useEffect(() => {
@@ -121,17 +121,10 @@ export function SentenceBuilder() {
       setWordIndex(nextIdx)
       setupWord(words[nextIdx])
     } else {
+      recordGame(level, 'Sentence Builder')
       setScreen('results')
     }
-  }, [wordIndex, words, setupWord])
-
-  // Record game completion when entering results
-  useEffect(() => {
-    if (screen === 'results' && !resultsRecorded.current) {
-      resultsRecorded.current = true
-      recordGameCompletion(level, 'Sentence Builder')
-    }
-  }, [screen, score])
+  }, [wordIndex, words, setupWord, recordGame, level])
 
   const handleChipTap = useCallback((shuffledIdx: number) => {
     if (allPlaced || result !== 'pending') return
