@@ -4,8 +4,11 @@ import {
   createRoute,
   Outlet,
 } from '@tanstack/react-router'
+import { useState } from 'react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { NavBar } from '@/games/NavBar'
+import { SetupProfile } from '@/games/SetupProfile'
+import { getProfile } from '@/games/gamification'
 import { Menu } from '@/games/Menu'
 import { Caro } from '@/games/caro/Caro'
 import { TicTacToe } from '@/games/tic-tac-toe/TicTacToe'
@@ -24,13 +27,27 @@ import { SentenceBuilder } from '@/games/sentence-builder/SentenceBuilder'
 import { Hangman } from '@/games/hangman/Hangman'
 import { Profile } from '@/games/Profile'
 
-const rootRoute = createRootRoute({
-  component: () => (
+function RootComponent() {
+  const [ready, setReady] = useState(() => !!getProfile().name)
+
+  if (!ready) {
+    return (
+      <TooltipProvider>
+        <SetupProfile onComplete={() => setReady(true)} />
+      </TooltipProvider>
+    )
+  }
+
+  return (
     <TooltipProvider>
       <NavBar />
       <Outlet />
     </TooltipProvider>
-  ),
+  )
+}
+
+const rootRoute = createRootRoute({
+  component: RootComponent,
 })
 
 const menuRoute = createRoute({
