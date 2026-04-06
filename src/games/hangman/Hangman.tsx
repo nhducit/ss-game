@@ -11,7 +11,11 @@ import { recordGameCompletion } from '@/games/gamification'
 
 type Screen = 'categories' | 'playing' | 'results'
 
-const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+const KEYBOARD_ROWS = [
+  'QWERTYUIOP'.split(''),
+  'ASDFGHJKL'.split(''),
+  'ZXCVBNM'.split(''),
+]
 const MAX_WRONG = 6
 
 function HangmanDrawing({ wrongCount }: { wrongCount: number }) {
@@ -302,31 +306,35 @@ export function Hangman() {
             </div>
           )}
 
-          {/* Alphabet grid */}
+          {/* Keyboard layout */}
           {won === null && (
-            <div className="grid grid-cols-9 gap-1.5 sm:gap-2 mt-1">
-              {ALPHABET.map(letter => {
-                const isGuessed = guessedLetters.has(letter)
-                const isCorrect = isGuessed && wordUpper.includes(letter)
-                const isWrong = isGuessed && !wordUpper.includes(letter)
-                return (
-                  <button
-                    key={letter}
-                    className={
-                      `font-bold rounded-lg w-9 h-10 sm:w-10 sm:h-11 transition-all duration-150 touch-manipulation select-none ` +
-                      (isCorrect
-                        ? 'bg-green-500 text-white cursor-default'
-                        : isWrong
-                          ? 'bg-red-500/20 text-red-500 line-through cursor-default'
-                          : 'bg-muted hover:bg-muted/80 text-foreground cursor-pointer active:scale-95')
-                    }
-                    onClick={() => handleGuess(letter)}
-                    disabled={isGuessed}
-                  >
-                    {letter}
-                  </button>
-                )
-              })}
+            <div className="flex flex-col items-center gap-1.5 sm:gap-2 mt-1">
+              {KEYBOARD_ROWS.map((row, ri) => (
+                <div key={ri} className="flex gap-1.5 sm:gap-2">
+                  {row.map(letter => {
+                    const isGuessed = guessedLetters.has(letter)
+                    const isCorrect = isGuessed && wordUpper.includes(letter)
+                    const isWrong = isGuessed && !wordUpper.includes(letter)
+                    return (
+                      <button
+                        key={letter}
+                        className={
+                          `font-bold rounded-lg w-9 h-10 sm:w-10 sm:h-11 transition-all duration-150 touch-manipulation select-none ` +
+                          (isCorrect
+                            ? 'bg-green-500 text-white cursor-default'
+                            : isWrong
+                              ? 'bg-red-500/20 text-red-500 line-through cursor-default'
+                              : 'bg-muted hover:bg-muted/80 text-foreground cursor-pointer active:scale-95')
+                        }
+                        onClick={() => handleGuess(letter)}
+                        disabled={isGuessed}
+                      >
+                        {letter}
+                      </button>
+                    )
+                  })}
+                </div>
+              ))}
             </div>
           )}
 
