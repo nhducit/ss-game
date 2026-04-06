@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link, useLocation } from '@tanstack/react-router'
-import { getGamification, getStreak, getPlayerLevel, getProfile } from '@/games/gamification'
+import { getPlayer } from '@/games/convex-sync'
+import { getPlayerLevel } from '@/games/gamification'
 
 const CELEBRATIONS = [
   '🎉', '🥳', '🎊', '✨', '💪', '👏', '🌟', '💫', '🏅', '🎯',
@@ -22,7 +23,6 @@ function StarNotification({ stars, onDone }: { stars: number; onDone: () => void
 
   return (
     <div className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center">
-      {/* Flying stars */}
       {Array.from({ length: 8 }).map((_, i) => (
         <span
           key={i}
@@ -35,7 +35,6 @@ function StarNotification({ stars, onDone }: { stars: number; onDone: () => void
           ⭐
         </span>
       ))}
-      {/* Central notification */}
       <div className="animate-star-pop flex flex-col items-center gap-1">
         <span className="text-5xl">{emoji}</span>
         <div className="bg-foreground text-background px-4 py-2 rounded-full font-bold text-lg shadow-lg">
@@ -55,10 +54,16 @@ export function NavBar() {
   const keyRef = useRef(0)
 
   const refresh = useCallback(() => {
-    const g = getGamification()
-    const s = getStreak()
-    const p = getProfile()
-    setData({ stars: g.totalStars, streak: s.currentStreak, emoji: p.emoji, name: p.name })
+    getPlayer().then(player => {
+      if (player) {
+        setData({
+          stars: player.totalStars,
+          streak: player.currentStreak,
+          emoji: player.emoji,
+          name: player.name,
+        })
+      }
+    }).catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -71,7 +76,6 @@ export function NavBar() {
       keyRef.current++
       setNotification({ stars, key: keyRef.current })
       setBounce(true)
-      // Refresh data to update count
       setTimeout(refresh, 300)
       setTimeout(() => setBounce(false), 600)
     }
@@ -85,7 +89,6 @@ export function NavBar() {
 
   const lvl = getPlayerLevel(data.stars)
 
-  // Hide on board games
   const hiddenPaths = ['/caro', '/tic-tac-toe', '/o-an-quan', '/connect-four', '/dots-and-boxes', '/reversi', '/games']
   if (hiddenPaths.includes(location.pathname)) return null
 

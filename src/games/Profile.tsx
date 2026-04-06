@@ -1,16 +1,8 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import {
-  getProfile,
-  saveProfile,
-  getGamification,
-  getStreak,
-  getPlayerLevel,
-  getHistory,
-  ALL_ACHIEVEMENTS,
-  type GameHistoryEntry,
-} from '@/games/gamification'
+import { getPlayer, updateProfile, getGameHistory, type PlayerData, type GameHistoryEntry } from '@/games/convex-sync'
+import { getPlayerLevel, ALL_ACHIEVEMENTS } from '@/games/gamification'
 
 const AVATAR_OPTIONS = [
   '🧒', '👦', '👧', '🧒🏻', '👦🏻', '👧🏻',
@@ -21,17 +13,14 @@ const AVATAR_OPTIONS = [
 
 function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
   const { weeks, maxStars, months } = useMemo(() => {
-    // Build a map of date -> star count
     const map = new Map<string, number>()
     for (const entry of history) {
       const day = entry.date.slice(0, 10)
       map.set(day, (map.get(day) ?? 0) + entry.stars)
     }
 
-    // Generate last 20 weeks of days, aligned to weeks (Sun-Sat columns)
     const today = new Date()
-    const todayDay = today.getDay() // 0=Sun
-    // End date is today, start from 19 weeks + remaining days before
+    const todayDay = today.getDay()
     const totalDays = 20 * 7 + todayDay + 1
     const startDate = new Date(today)
     startDate.setDate(startDate.getDate() - totalDays + 1)
@@ -88,7 +77,6 @@ function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
       <h3 className="text-sm font-semibold text-foreground mb-3">Activity</h3>
       <div className="overflow-x-auto">
         <div className="inline-block">
-          {/* Month labels */}
           <div className="flex mb-1" style={{ paddingLeft: 28 }}>
             {months.map((m, i) => (
               <span
@@ -101,7 +89,6 @@ function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
             ))}
           </div>
           <div className="flex gap-0.5">
-            {/* Day labels */}
             <div className="flex flex-col justify-between pr-1" style={{ height: 7 * (CELL + GAP) - GAP }}>
               {['', 'Mon', '', 'Wed', '', 'Fri', ''].map((label, i) => (
                 <span key={i} className="text-[10px] text-muted-foreground leading-none" style={{ height: CELL }}>
@@ -109,11 +96,9 @@ function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
                 </span>
               ))}
             </div>
-            {/* Grid */}
             <div className="flex" style={{ gap: GAP }}>
               {weeks.map((week, wi) => (
                 <div key={wi} className="flex flex-col" style={{ gap: GAP }}>
-                  {/* Pad first week if it doesn't start on Sunday */}
                   {wi === 0 && week[0].dayOfWeek > 0 && (
                     Array.from({ length: week[0].dayOfWeek }).map((_, pi) => (
                       <div key={`pad-${pi}`} style={{ width: CELL, height: CELL }} />
@@ -131,7 +116,6 @@ function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
               ))}
             </div>
           </div>
-          {/* Legend */}
           <div className="flex items-center gap-1.5 mt-2 justify-end">
             <span className="text-[10px] text-muted-foreground">Less</span>
             <div className="rounded-sm bg-muted" style={{ width: CELL, height: CELL }} />
@@ -188,40 +172,51 @@ function HistoryTable({ history }: { history: GameHistoryEntry[] }) {
 }
 
 export function Profile() {
-  const [profile, setProfile] = useState(getProfile)
-  const [editName, setEditName] = useState(profile.name)
-  const gam = getGamification()
-  const streak = getStreak()
-  const lvl = getPlayerLevel(gam.totalStars)
-  const history = getHistory()
-
-  const totalGames = history.length
+  const [player, setPlayer] = useState<PlayerData | null>(null)
+  const [history, setHistory] = useState<GameHistoryEntry[]>([])
+  const [editName, setEditName] = useState('')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setEditName(profile.name)
-  }, [profile.name])
+    Promise.all([getPlayer(), getGameHistory()])
+      .then(([p, h]) => {
+        setPlayer(p)
+        setHistory(h)
+        if (p) setEditName(p.name)
+      })
+      .finally(() => setLoading(false))
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="flex min-h-svh items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    )
+  }
+
+  if (!player) return null
+
+  const lvl = getPlayerLevel(player.totalStars)
 
   const handleSaveName = () => {
     const trimmed = editName.trim()
-    const updated = { ...profile, name: trimmed }
-    saveProfile(updated)
-    setProfile(updated)
+    if (!trimmed || trimmed === player.name) return
+    updateProfile(trimmed, player.emoji).catch(() => {})
+    setPlayer({ ...player, name: trimmed })
   }
 
   const handlePickEmoji = (emoji: string) => {
-    const updated = { ...profile, emoji }
-    saveProfile(updated)
-    setProfile(updated)
+    updateProfile(player.name, emoji).catch(() => {})
+    setPlayer({ ...player, emoji })
   }
 
   return (
     <div className="flex min-h-svh flex-col items-center gap-6 p-6 pt-2 pb-12 max-w-2xl mx-auto">
-      {/* Header */}
       <h1 className="text-xl font-extrabold tracking-tight text-foreground w-full">My Profile</h1>
 
-      {/* Avatar + Name */}
       <div className="flex flex-col items-center gap-4 w-full">
-        <div className="text-7xl">{profile.emoji}</div>
+        <div className="text-7xl">{player.emoji}</div>
         <div className="flex gap-2 w-full max-w-xs">
           <Input
             value={editName}
@@ -234,7 +229,6 @@ export function Profile() {
         </div>
       </div>
 
-      {/* Avatar picker */}
       <div className="w-full">
         <h3 className="text-sm font-semibold text-foreground mb-2">Choose avatar</h3>
         <div className="grid grid-cols-8 gap-2">
@@ -243,7 +237,7 @@ export function Profile() {
               key={emoji}
               onClick={() => handlePickEmoji(emoji)}
               className={`text-2xl rounded-lg p-1.5 transition-all touch-manipulation ${
-                profile.emoji === emoji
+                player.emoji === emoji
                   ? 'bg-primary/20 ring-2 ring-primary scale-110'
                   : 'hover:bg-muted active:scale-95'
               }`}
@@ -254,11 +248,10 @@ export function Profile() {
         </div>
       </div>
 
-      {/* Stats cards */}
       <div className="grid grid-cols-2 gap-3 w-full">
         <Card>
           <CardHeader className="p-4 text-center">
-            <div className="text-2xl font-bold tabular-nums">{gam.totalStars}</div>
+            <div className="text-2xl font-bold tabular-nums">{player.totalStars}</div>
             <CardTitle className="text-xs text-muted-foreground font-normal">Total Stars</CardTitle>
           </CardHeader>
         </Card>
@@ -270,19 +263,18 @@ export function Profile() {
         </Card>
         <Card>
           <CardHeader className="p-4 text-center">
-            <div className="text-2xl font-bold tabular-nums">{streak.currentStreak}</div>
+            <div className="text-2xl font-bold tabular-nums">{player.currentStreak}</div>
             <CardTitle className="text-xs text-muted-foreground font-normal">Day Streak</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="p-4 text-center">
-            <div className="text-2xl font-bold tabular-nums">{totalGames}</div>
+            <div className="text-2xl font-bold tabular-nums">{history.length}</div>
             <CardTitle className="text-xs text-muted-foreground font-normal">Games Played</CardTitle>
           </CardHeader>
         </Card>
       </div>
 
-      {/* Level progress */}
       {lvl.nextLevel && (
         <div className="w-full">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
@@ -296,17 +288,16 @@ export function Profile() {
             />
           </div>
           <p className="text-xs text-muted-foreground mt-1 text-center">
-            {gam.totalStars} / {lvl.nextLevel.minStars} stars
+            {player.totalStars} / {lvl.nextLevel.minStars} stars
           </p>
         </div>
       )}
 
-      {/* Achievements */}
       <div className="w-full">
         <h3 className="text-sm font-semibold text-foreground mb-3">Achievements</h3>
         <div className="grid grid-cols-2 gap-2">
           {ALL_ACHIEVEMENTS.map(a => {
-            const earned = gam.achievements.includes(a.id)
+            const earned = player.achievements.includes(a.id)
             return (
               <div
                 key={a.id}
@@ -325,10 +316,7 @@ export function Profile() {
         </div>
       </div>
 
-      {/* Chart */}
       <ContributionChart history={history} />
-
-      {/* History table */}
       <HistoryTable history={history} />
     </div>
   )

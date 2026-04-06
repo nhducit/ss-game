@@ -7,7 +7,7 @@ import { shuffle, getWords, type Category, type Level, type Word } from '@/games
 import { speak, speakSequence } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/english/progress'
-import { recordGameCompletion } from '@/games/gamification'
+import { useRecordGame } from '@/games/useRecordGame'
 
 type Screen = 'categories' | 'playing' | 'results'
 type Result = 'pending' | 'correct' | 'wrong'
@@ -27,7 +27,7 @@ export function SpellingBee() {
   const [skipped, setSkipped] = useState(0)
   const [nextDisabled, setNextDisabled] = useState(false)
   const hasSpoken = useRef(false)
-  const resultsRecorded = useRef(false)
+  const { record: recordGame, reset: resetRecordGame } = useRecordGame()
 
   const currentWord = words[wordIndex] ?? null
 
@@ -52,16 +52,9 @@ export function SpellingBee() {
     setStreak(0)
     setSkipped(0)
     setScreen('playing')
-    resultsRecorded.current = false
+    resetRecordGame()
     setupWord(shuffledWords[0])
-  }, [setupWord])
-
-  useEffect(() => {
-    if (screen === 'results' && !resultsRecorded.current) {
-      resultsRecorded.current = true
-      recordGameCompletion(level, 'Spelling Bee')
-    }
-  }, [screen, score])
+  }, [setupWord, resetRecordGame])
 
   // Speak the word when it changes
   useEffect(() => {
@@ -118,9 +111,10 @@ export function SpellingBee() {
       setWordIndex(nextIdx)
       setupWord(words[nextIdx])
     } else {
+      recordGame(level, 'Spelling Bee')
       setScreen('results')
     }
-  }, [wordIndex, words, setupWord])
+  }, [wordIndex, words, setupWord, level, recordGame])
 
   const retryWord = useCallback(() => {
     if (!currentWord) return

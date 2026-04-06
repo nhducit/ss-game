@@ -4,11 +4,11 @@ import {
   createRoute,
   Outlet,
 } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { NavBar } from '@/games/NavBar'
 import { SetupProfile } from '@/games/SetupProfile'
-import { getProfile } from '@/games/gamification'
+import { getPlayer } from '@/games/convex-sync'
 import { Menu } from '@/games/Menu'
 import { Caro } from '@/games/caro/Caro'
 import { TicTacToe } from '@/games/tic-tac-toe/TicTacToe'
@@ -28,12 +28,28 @@ import { Hangman } from '@/games/hangman/Hangman'
 import { Profile } from '@/games/Profile'
 
 function RootComponent() {
-  const [ready, setReady] = useState(() => !!getProfile().name)
+  const [state, setState] = useState<'loading' | 'setup' | 'ready'>('loading')
 
-  if (!ready) {
+  useEffect(() => {
+    getPlayer()
+      .then(player => setState(player?.name ? 'ready' : 'setup'))
+      .catch(() => setState('setup'))
+  }, [])
+
+  if (state === 'loading') {
     return (
       <TooltipProvider>
-        <SetupProfile onComplete={() => setReady(true)} />
+        <div className="flex min-h-svh items-center justify-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </TooltipProvider>
+    )
+  }
+
+  if (state === 'setup') {
+    return (
+      <TooltipProvider>
+        <SetupProfile onComplete={() => setState('ready')} />
       </TooltipProvider>
     )
   }

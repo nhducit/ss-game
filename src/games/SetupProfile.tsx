@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { saveProfile } from '@/games/gamification'
+import { createProfile } from '@/games/convex-sync'
 
 const AVATAR_OPTIONS = [
   '🧒', '👦', '👧', '🧒🏻', '👦🏻', '👧🏻',
@@ -13,12 +13,18 @@ const AVATAR_OPTIONS = [
 export function SetupProfile({ onComplete }: { onComplete: () => void }) {
   const [name, setName] = useState('')
   const [emoji, setEmoji] = useState('🧒')
+  const [saving, setSaving] = useState(false)
 
-  const handleStart = () => {
+  const handleStart = async () => {
     const trimmed = name.trim()
-    if (!trimmed) return
-    saveProfile({ name: trimmed, emoji })
-    onComplete()
+    if (!trimmed || saving) return
+    setSaving(true)
+    try {
+      await createProfile(trimmed, emoji)
+      onComplete()
+    } catch {
+      setSaving(false)
+    }
   }
 
   return (
@@ -59,9 +65,9 @@ export function SetupProfile({ onComplete }: { onComplete: () => void }) {
         size="lg"
         className="text-lg px-8"
         onClick={handleStart}
-        disabled={!name.trim()}
+        disabled={!name.trim() || saving}
       >
-        Let's go!
+        {saving ? 'Setting up...' : "Let's go!"}
       </Button>
     </div>
   )

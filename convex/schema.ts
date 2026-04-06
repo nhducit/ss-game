@@ -3,7 +3,6 @@ import { v } from "convex/values";
 
 export default defineSchema({
   players: defineTable({
-    // Unique device/browser identifier
     deviceId: v.string(),
     name: v.string(),
     emoji: v.string(),
