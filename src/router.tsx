@@ -42,16 +42,20 @@ function isWithinSchedule(schedule: AppConfig['schedule']): boolean {
   )
 }
 
+function computeLocked(config: AppConfig): boolean {
+  if (config.locked) return true
+  return !isWithinSchedule(config.schedule)
+}
+
 function RootComponent() {
   const [state, setState] = useState<'loading' | 'setup' | 'ready'>('loading')
-  const [appConfig, setAppConfig] = useState<AppConfig | null>(null)
-  const [locked, setLocked] = useState(false)
+  const [locked, setLocked] = useState(true) // locked by default until proven otherwise
   const location = useLocation()
 
   useEffect(() => {
     Promise.all([getPlayer(), getAppConfig()])
       .then(([player, config]) => {
-        setAppConfig(config)
+        setLocked(computeLocked(config))
         setState(player?.name ? 'ready' : 'setup')
       })
       .catch(() => setState('setup'))
@@ -60,7 +64,7 @@ function RootComponent() {
   // Re-check lock state every 30 seconds + on route change
   const checkLock = useCallback(() => {
     getAppConfig().then(config => {
-      setAppConfig(config)
+      setLocked(computeLocked(config))
     }).catch(() => {})
   }, [])
 
@@ -69,16 +73,6 @@ function RootComponent() {
     const interval = setInterval(checkLock, 30_000)
     return () => clearInterval(interval)
   }, [checkLock, location.pathname])
-
-  // Determine if locked
-  useEffect(() => {
-    if (!appConfig) return
-    if (appConfig.locked) {
-      setLocked(true)
-    } else {
-      setLocked(!isWithinSchedule(appConfig.schedule))
-    }
-  }, [appConfig])
 
   // Admin page bypasses lock
   const isAdminPage = location.pathname === '/admin'
