@@ -1,3 +1,5 @@
+import { syncToConvex, syncProfileToConvex, syncGameHistoryToConvex } from './convex-sync'
+
 const STREAK_KEY = 'daily-streak'
 const GAMIFICATION_KEY = 'gamification'
 const PROFILE_KEY = 'player-profile'
@@ -77,6 +79,10 @@ export function recordGameCompletion(level: DifficultyLevel, game?: string): str
 
   // Notify UI
   window.dispatchEvent(new CustomEvent('stars-earned', { detail: { stars, totalStars: gam.totalStars } }))
+
+  // Sync to Convex (fire-and-forget)
+  if (game) syncGameHistoryToConvex(game, level, stars)
+  syncToConvex()
 
   // Check achievements
   return checkAchievements(streak, gam)
@@ -204,6 +210,7 @@ export function getProfile(): PlayerProfile {
 
 export function saveProfile(profile: PlayerProfile) {
   localStorage.setItem(PROFILE_KEY, JSON.stringify(profile))
+  syncProfileToConvex(profile)
 }
 
 // ── Game History ──
