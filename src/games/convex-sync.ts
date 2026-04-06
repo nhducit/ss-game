@@ -115,3 +115,32 @@ export async function getGameHistory(): Promise<GameHistoryEntry[]> {
     stars: h.stars,
   }))
 }
+
+// ── App Config ──
+
+export interface ScheduleSlot {
+  day: number
+  startHour: number
+  startMin: number
+  endHour: number
+  endMin: number
+}
+
+export interface AppConfig {
+  locked: boolean
+  schedule: ScheduleSlot[]
+}
+
+export async function getAppConfig(): Promise<AppConfig> {
+  const result = await convexQuery('appConfig:get', {})
+  if (!result) return { locked: false, schedule: [] }
+  return { locked: result.locked, schedule: result.schedule }
+}
+
+export async function setAppLocked(locked: boolean): Promise<void> {
+  await convexMutation('appConfig:setLocked', { locked })
+}
+
+export async function setAppSchedule(schedule: ScheduleSlot[]): Promise<void> {
+  await convexMutation('appConfig:setSchedule', { schedule })
+}

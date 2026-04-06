@@ -3,12 +3,14 @@ import {
   createRootRoute,
   createRoute,
   Outlet,
+  useLocation,
 } from '@tanstack/react-router'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { NavBar } from '@/games/NavBar'
 import { SetupProfile } from '@/games/SetupProfile'
-import { getPlayer } from '@/games/convex-sync'
+import { LockScreen } from '@/games/LockScreen'
+import { getPlayer, getAppConfig, type AppConfig } from '@/games/convex-sync'
 import { Menu } from '@/games/Menu'
 import { Caro } from '@/games/caro/Caro'
 import { TicTacToe } from '@/games/tic-tac-toe/TicTacToe'
@@ -26,15 +28,60 @@ import { ChineseListenPick } from '@/games/chinese-listen-pick/ChineseListenPick
 import { SentenceBuilder } from '@/games/sentence-builder/SentenceBuilder'
 import { Hangman } from '@/games/hangman/Hangman'
 import { Profile } from '@/games/Profile'
+import { Admin } from '@/games/Admin'
+
+function isWithinSchedule(schedule: AppConfig['schedule']): boolean {
+  if (schedule.length === 0) return true // no schedule = always allowed
+  const now = new Date()
+  const day = now.getDay()
+  const mins = now.getHours() * 60 + now.getMinutes()
+  return schedule.some(slot =>
+    slot.day === day &&
+    mins >= slot.startHour * 60 + slot.startMin &&
+    mins < slot.endHour * 60 + slot.endMin
+  )
+}
 
 function RootComponent() {
   const [state, setState] = useState<'loading' | 'setup' | 'ready'>('loading')
+  const [appConfig, setAppConfig] = useState<AppConfig | null>(null)
+  const [locked, setLocked] = useState(false)
+  const location = useLocation()
 
   useEffect(() => {
-    getPlayer()
-      .then(player => setState(player?.name ? 'ready' : 'setup'))
+    Promise.all([getPlayer(), getAppConfig()])
+      .then(([player, config]) => {
+        setAppConfig(config)
+        setState(player?.name ? 'ready' : 'setup')
+      })
       .catch(() => setState('setup'))
   }, [])
+
+  // Re-check lock state every 30 seconds + on route change
+  const checkLock = useCallback(() => {
+    getAppConfig().then(config => {
+      setAppConfig(config)
+    }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    checkLock()
+    const interval = setInterval(checkLock, 30_000)
+    return () => clearInterval(interval)
+  }, [checkLock, location.pathname])
+
+  // Determine if locked
+  useEffect(() => {
+    if (!appConfig) return
+    if (appConfig.locked) {
+      setLocked(true)
+    } else {
+      setLocked(!isWithinSchedule(appConfig.schedule))
+    }
+  }, [appConfig])
+
+  // Admin page bypasses lock
+  const isAdminPage = location.pathname === '/admin'
 
   if (state === 'loading') {
     return (
@@ -56,6 +103,7 @@ function RootComponent() {
 
   return (
     <TooltipProvider>
+      {locked && !isAdminPage && <LockScreen />}
       <NavBar />
       <Outlet />
     </TooltipProvider>
@@ -168,6 +216,12 @@ const profileRoute = createRoute({
   component: Profile,
 })
 
+const adminRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/admin',
+  component: Admin,
+})
+
 const routeTree = rootRoute.addChildren([
   menuRoute,
   gamesMenuRoute,
@@ -186,6 +240,7 @@ const routeTree = rootRoute.addChildren([
   sentenceBuilderRoute,
   hangmanRoute,
   profileRoute,
+  adminRoute,
 ])
 
 export const router = createRouter({ routeTree })
