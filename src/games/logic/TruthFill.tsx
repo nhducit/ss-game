@@ -5,7 +5,8 @@ import { ArrowRight, Check, RotateCcw, Trophy, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
-import { AND, OR, NOT, V, evalExpr, variables, allAssignments, type Expr } from './expr'
+import { AND, OR, NOT, V, evalExpr, variables, allAssignments, speakExpr, type Expr } from './expr'
+import { Speaker } from './Speaker'
 
 const EASY: Expr[] = [
   AND(V('A'), V('B')),
@@ -138,7 +139,10 @@ export function TruthFill({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
         <div className="w-16" />
       </div>
 
-      <p className="text-sm text-muted-foreground text-center">Fill in the bulb column — tap a cell to toggle on/off 💡</p>
+      <div className="flex items-center justify-center gap-2">
+        <Speaker text={`Truth Fill. Fill in the output for each row. The expression is: ${speakExpr(expr)}.`} />
+        <p className="text-sm text-muted-foreground text-center">Fill in the bulb column — tap a cell to toggle on/off 💡</p>
+      </div>
 
       <div className="flex flex-wrap items-center justify-center gap-2 py-2">
         <RenderExpr e={expr} />

@@ -5,7 +5,8 @@ import { ArrowRight, Check, RotateCcw, Trophy, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
-import { AND, OR, NOT, V, evalExpr, variables, allAssignments, type Expr } from './expr'
+import { AND, OR, NOT, V, evalExpr, variables, allAssignments, speakExpr, type Expr } from './expr'
+import { Speaker } from './Speaker'
 
 type Op = 'and' | 'or'
 type UnaryFlag = 'id' | 'not'
@@ -321,9 +322,12 @@ export function BlockBuilder({ level, onExit }: { level: 'easy' | 'medium' | 'ha
         <div className="w-16" />
       </div>
 
-      <p className="text-sm text-muted-foreground text-center max-w-md">
-        Tap the <span className="font-bold">?</span> blocks to pick operators. Match the target below 🔧
-      </p>
+      <div className="flex items-center justify-center gap-2 max-w-md">
+        <Speaker text={`Block Builder. Tap the question mark blocks to pick operators. Match the target: ${speakExpr(puzzle.target)}.`} />
+        <p className="text-sm text-muted-foreground text-center">
+          Tap the <span className="font-bold">?</span> blocks to pick operators. Match the target below 🔧
+        </p>
+      </div>
 
       <div className="p-4 rounded-xl bg-card border border-border flex flex-col items-center gap-2">
         <span className="text-xs text-muted-foreground font-bold">YOUR BLOCK</span>

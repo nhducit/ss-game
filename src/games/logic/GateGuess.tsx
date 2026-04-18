@@ -5,6 +5,7 @@ import { RotateCcw, Trophy, Check, X, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
+import { Speaker } from './Speaker'
 
 type Gate = 'and' | 'or' | 'not' | 'and-not' | 'or-not' | 'not-and' | 'not-or'
 
@@ -175,9 +176,12 @@ export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
         <div className="w-16" />
       </div>
 
-      <p className="text-sm text-muted-foreground text-center max-w-md">
-        Which Scratch operator matches this truth table? 🔍
-      </p>
+      <div className="flex items-center justify-center gap-2 max-w-md">
+        <Speaker text={`Gate Guess. Which Scratch operator matches this truth table?`} />
+        <p className="text-sm text-muted-foreground text-center">
+          Which Scratch operator matches this truth table? 🔍
+        </p>
+      </div>
 
       <div className="overflow-x-auto">
         <table className="mx-auto font-mono text-base border-separate border-spacing-0 shadow-md rounded-lg overflow-hidden">

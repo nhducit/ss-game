@@ -4,6 +4,7 @@ import { Bulb, Switch, OperatorBlock, BoolBlock } from './blocks'
 import { RotateCcw, Trophy, SkipForward, ArrowRight } from 'lucide-react'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
+import { Speaker } from './Speaker'
 
 type Expr =
   | { kind: 'var'; name: string }
@@ -21,6 +22,13 @@ function evalExpr(e: Expr, env: Record<string, boolean>): boolean {
   if (e.kind === 'not') return !evalExpr(e.x, env)
   if (e.kind === 'and') return evalExpr(e.a, env) && evalExpr(e.b, env)
   return evalExpr(e.a, env) || evalExpr(e.b, env)
+}
+
+function speakExpr(e: Expr): string {
+  if (e.kind === 'var') return e.name
+  if (e.kind === 'not') return e.x.kind === 'var' ? `not ${e.x.name}` : `not, ${speakExpr(e.x)}`
+  const joiner = e.kind === 'and' ? 'and' : 'or'
+  return `${speakExpr(e.a)}, ${joiner}, ${speakExpr(e.b)}`
 }
 
 function variables(e: Expr): string[] {
@@ -158,7 +166,8 @@ export function LightUp({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; 
         <Button variant="ghost" size="sm" onClick={skip}><SkipForward className="size-4" />Skip</Button>
       </div>
 
-      <div className="text-center">
+      <div className="flex items-center justify-center gap-2">
+        <Speaker text={`Light Up. Make the bulb light up by flipping the switches. The expression is: ${speakExpr(currentExpr)}.`} />
         <p className="text-sm text-muted-foreground">Make the bulb light up 💡</p>
       </div>
 

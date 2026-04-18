@@ -54,3 +54,14 @@ export function toString(e: Expr): string {
   if (e.kind === 'and') return `(${toString(e.a)} and ${toString(e.b)})`
   return `(${toString(e.a)} or ${toString(e.b)})`
 }
+
+/** Human-readable speech for a boolean expression. */
+export function speakExpr(e: Expr): string {
+  if (e.kind === 'var') return e.name
+  if (e.kind === 'not') {
+    if (e.x.kind === 'var') return `not ${e.x.name}`
+    return `not, ${speakExpr(e.x)}`
+  }
+  const joiner = e.kind === 'and' ? 'and' : 'or'
+  return `${speakExpr(e.a)}, ${joiner}, ${speakExpr(e.b)}`
+}

@@ -5,6 +5,7 @@ import { RotateCcw, Trophy, Check, X, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
+import { Speaker } from './Speaker'
 
 type Color = 'red' | 'blue' | 'yellow'
 type Shape = 'star' | 'heart' | 'circle'
@@ -22,6 +23,15 @@ type Condition =
   | { kind: 'not'; c: Condition }
   | { kind: 'and'; a: Condition; b: Condition }
   | { kind: 'or'; a: Condition; b: Condition }
+
+function speakCondition(c: Condition): string {
+  if (c.kind === 'prop') return `${c.val}`
+  if (c.kind === 'not') {
+    return c.c.kind === 'prop' ? `not ${c.c.val}` : `not, ${speakCondition(c.c)}`
+  }
+  const joiner = c.kind === 'and' ? 'and' : 'or'
+  return `${speakCondition(c.a)}, ${joiner}, ${speakCondition(c.b)}`
+}
 
 function matches(c: Condition, s: Sprite): boolean {
   if (c.kind === 'prop') return (s as unknown as Record<string, string>)[c.prop] === c.val
@@ -249,7 +259,10 @@ export function SpriteFilter({ level, onExit }: { level: 'easy' | 'medium' | 'ha
       </div>
 
       <div className="flex flex-col items-center gap-2 text-center">
-        <p className="text-sm text-muted-foreground">Tap every sprite that matches:</p>
+        <div className="flex items-center justify-center gap-2">
+          <Speaker text={`Sprite Filter. Tap every sprite that is ${speakCondition(grid.condition)}.`} />
+          <p className="text-sm text-muted-foreground">Tap every sprite that matches:</p>
+        </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
           <RenderCondition c={grid.condition} />
         </div>

@@ -5,7 +5,8 @@ import { ArrowRight, Check, RotateCcw, Trophy, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
-import { AND, OR, NOT, V, evalExpr, variables, allAssignments, equivalent, type Expr } from './expr'
+import { AND, OR, NOT, V, evalExpr, variables, allAssignments, equivalent, speakExpr, type Expr } from './expr'
+import { Speaker } from './Speaker'
 
 interface Pair { a: Expr; b: Expr }
 
@@ -152,7 +153,10 @@ export function SpotSame({ level, onExit }: { level: 'easy' | 'medium' | 'hard';
         <div className="w-16" />
       </div>
 
-      <p className="text-sm text-muted-foreground text-center">Do both blocks <em>always</em> give the same output?</p>
+      <div className="flex items-center justify-center gap-2">
+        <Speaker text={`Spot the Same. Do both blocks always give the same output? Left: ${speakExpr(pair.a)}. Right: ${speakExpr(pair.b)}.`} />
+        <p className="text-sm text-muted-foreground text-center">Do both blocks <em>always</em> give the same output?</p>
+      </div>
 
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full">
         <div className="flex-1 flex flex-col items-center gap-2 p-4 rounded-xl bg-card border border-border min-w-[180px]">
