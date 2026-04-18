@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Bulb, Switch, OperatorBlock, BoolBlock } from './blocks'
-import { RotateCcw, Trophy, SkipForward } from 'lucide-react'
+import { RotateCcw, Trophy, SkipForward, ArrowRight } from 'lucide-react'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
 
@@ -96,28 +96,29 @@ export function LightUp({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; 
     const newEnv = { ...env, [name]: !(env[name] ?? false) }
     setEnv(newEnv)
     const lit = evalExpr(currentExpr, newEnv)
-    if (!lit) return
-    // Bulb lit → advance
-    setLocked(true)
-    setScore(s => s + 1)
-    setTimeout(() => {
-      if (round + 1 >= ROUND_COUNT) {
-        setDone(true)
-        record(cfg.stars, 'light-up')
-      } else {
-        const next = pickExpr(cfg.exprs, currentExpr)
-        setCurrentExpr(next)
-        setEnv(initEnv(next))
-        setRound(r => r + 1)
-        setLocked(false)
-      }
-    }, 900)
-  }, [locked, done, env, currentExpr, round, cfg, record])
+    if (lit) {
+      setLocked(true)
+      setScore(s => s + 1)
+    }
+  }, [locked, done, env, currentExpr])
+
+  const next = () => {
+    if (round + 1 >= ROUND_COUNT) {
+      setDone(true)
+      record(cfg.stars, 'light-up')
+    } else {
+      const nextExpr = pickExpr(cfg.exprs, currentExpr)
+      setCurrentExpr(nextExpr)
+      setEnv(initEnv(nextExpr))
+      setRound(r => r + 1)
+      setLocked(false)
+    }
+  }
 
   const skip = () => {
-    const next = pickExpr(cfg.exprs, currentExpr)
-    setCurrentExpr(next)
-    setEnv(initEnv(next))
+    const nextExpr = pickExpr(cfg.exprs, currentExpr)
+    setCurrentExpr(nextExpr)
+    setEnv(initEnv(nextExpr))
     setLocked(false)
   }
 
@@ -173,6 +174,12 @@ export function LightUp({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; 
           <Switch key={v} on={env[v] ?? false} label={v} onToggle={() => toggle(v)} />
         ))}
       </div>
+
+      {locked && (
+        <Button size="lg" onClick={next} className="mt-4">
+          {round + 1 >= ROUND_COUNT ? '🏁 Finish' : 'Next'} <ArrowRight className="size-4" />
+        </Button>
+      )}
     </div>
   )
 }

@@ -2,14 +2,17 @@ import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Lightbulb, HelpCircle, Shapes, GraduationCap } from 'lucide-react'
+import { Lightbulb, HelpCircle, Shapes, GraduationCap, Table, Equal, Puzzle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Learn } from './Learn'
 import { LightUp } from './LightUp'
 import { GateGuess } from './GateGuess'
 import { SpriteFilter } from './SpriteFilter'
+import { TruthFill } from './TruthFill'
+import { SpotSame } from './SpotSame'
+import { BlockBuilder } from './BlockBuilder'
 
-type View = 'menu' | 'learn' | 'light-up' | 'gate-guess' | 'sprite-filter'
+type View = 'menu' | 'learn' | 'light-up' | 'gate-guess' | 'sprite-filter' | 'truth-fill' | 'spot-same' | 'block-builder'
 type Level = 'easy' | 'medium' | 'hard'
 
 const LEVELS: { id: Level; name: string; emoji: string; color: string }[] = [
@@ -47,6 +50,27 @@ const ACTIVITIES: { id: Exclude<View, 'menu'>; title: string; description: strin
     icon: Shapes,
     accent: 'from-pink-500 to-fuchsia-500',
   },
+  {
+    id: 'truth-fill',
+    title: 'Truth Fill 📋',
+    description: 'Fill the output column row by row',
+    icon: Table,
+    accent: 'from-violet-500 to-purple-600',
+  },
+  {
+    id: 'spot-same',
+    title: 'Spot the Same ⚖️',
+    description: 'Are these two blocks always equal?',
+    icon: Equal,
+    accent: 'from-cyan-500 to-blue-500',
+  },
+  {
+    id: 'block-builder',
+    title: 'Block Builder 🔧',
+    description: 'Fill holes to match the target table',
+    icon: Puzzle,
+    accent: 'from-lime-500 to-green-600',
+  },
 ]
 
 export function Logic() {
@@ -69,6 +93,9 @@ export function Logic() {
     if (view === 'light-up') return <LightUp level={level} onExit={() => setView('menu')} />
     if (view === 'gate-guess') return <GateGuess level={level} onExit={() => setView('menu')} />
     if (view === 'sprite-filter') return <SpriteFilter level={level} onExit={() => setView('menu')} />
+    if (view === 'truth-fill') return <TruthFill level={level} onExit={() => setView('menu')} />
+    if (view === 'spot-same') return <SpotSame level={level} onExit={() => setView('menu')} />
+    if (view === 'block-builder') return <BlockBuilder level={level} onExit={() => setView('menu')} />
   }
 
   return (
@@ -80,7 +107,7 @@ export function Logic() {
 
       <LevelPills level={level} onChange={setLevel} />
 
-      <div className="grid w-full max-w-2xl grid-cols-2 gap-3">
+      <div className="grid w-full max-w-2xl grid-cols-2 sm:grid-cols-3 gap-3">
         {ACTIVITIES.map(a => (
           <button
             key={a.id}

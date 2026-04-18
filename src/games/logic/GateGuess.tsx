@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { BoolBlock } from './blocks'
-import { RotateCcw, Trophy, Check, X } from 'lucide-react'
+import { RotateCcw, Trophy, Check, X, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
@@ -118,19 +118,19 @@ export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
   const pick = useCallback((g: Gate) => {
     if (picked !== null) return
     setPicked(g)
-    const isRight = g === puzzle.answer
-    setTimeout(() => {
-      if (isRight) setScore(s => s + 1)
-      if (round + 1 >= ROUND_COUNT) {
-        setDone(true)
-        record(STAR_LEVEL[level], 'gate-guess')
-      } else {
-        setPuzzle(buildPuzzle(level))
-        setPicked(null)
-        setRound(r => r + 1)
-      }
-    }, 1400)
-  }, [picked, puzzle.answer, round, level, record])
+    if (g === puzzle.answer) setScore(s => s + 1)
+  }, [picked, puzzle.answer])
+
+  const next = () => {
+    if (round + 1 >= ROUND_COUNT) {
+      setDone(true)
+      record(STAR_LEVEL[level], 'gate-guess')
+    } else {
+      setPuzzle(buildPuzzle(level))
+      setPicked(null)
+      setRound(r => r + 1)
+    }
+  }
 
   const restart = () => {
     reset()
@@ -218,12 +218,17 @@ export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
       </div>
 
       {picked !== null && (
-        <div className={cn('flex items-center gap-2 font-bold text-base', correct ? 'text-emerald-600' : 'text-rose-500')}>
-          {correct
-            ? <><Check className="size-5" /> Correct!</>
-            : <><X className="size-5" /> Answer: <span className="text-foreground">{GATE_LABELS[puzzle.answer]}</span></>
-          }
-        </div>
+        <>
+          <div className={cn('flex items-center gap-2 font-bold text-base', correct ? 'text-emerald-600' : 'text-rose-500')}>
+            {correct
+              ? <><Check className="size-5" /> Correct!</>
+              : <><X className="size-5" /> Answer: <span className="text-foreground">{GATE_LABELS[puzzle.answer]}</span></>
+            }
+          </div>
+          <Button size="lg" onClick={next}>
+            {round + 1 >= ROUND_COUNT ? '🏁 Finish' : 'Next'} <ArrowRight className="size-4" />
+          </Button>
+        </>
       )}
     </div>
   )

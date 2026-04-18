@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { OperatorBlock } from './blocks'
-import { RotateCcw, Trophy, Check, X } from 'lucide-react'
+import { RotateCcw, Trophy, Check, X, ArrowRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
@@ -189,17 +189,18 @@ export function SpriteFilter({ level, onExit }: { level: 'easy' | 'medium' | 'ha
     if (checked) return
     setChecked(true)
     if (allRight) setScore(s => s + 1)
-    setTimeout(() => {
-      if (round + 1 >= ROUND_COUNT) {
-        setDone(true)
-        record(STAR_LEVEL[level], 'sprite-filter')
-      } else {
-        setGrid(buildGrid(level))
-        setSelected(new Set())
-        setChecked(false)
-        setRound(r => r + 1)
-      }
-    }, 1600)
+  }
+
+  const next = () => {
+    if (round + 1 >= ROUND_COUNT) {
+      setDone(true)
+      record(STAR_LEVEL[level], 'sprite-filter')
+    } else {
+      setGrid(buildGrid(level))
+      setSelected(new Set())
+      setChecked(false)
+      setRound(r => r + 1)
+    }
   }
 
   const restart = () => {
@@ -266,14 +267,21 @@ export function SpriteFilter({ level, onExit }: { level: 'easy' | 'medium' | 'ha
         ))}
       </div>
 
-      <Button
-        size="lg"
-        onClick={submit}
-        disabled={checked}
-        className="mt-2"
-      >
-        {checked ? (allRight ? '🎉 Perfect!' : '🤔 Try again') : 'Check ✓'}
-      </Button>
+      {!checked && (
+        <Button size="lg" onClick={submit} className="mt-2">
+          Check <Check className="size-4" />
+        </Button>
+      )}
+      {checked && (
+        <div className="flex flex-col items-center gap-3 mt-2">
+          <div className={cn('flex items-center gap-2 font-bold text-base', allRight ? 'text-emerald-600' : 'text-rose-500')}>
+            {allRight ? <><Check className="size-5" /> Perfect pick!</> : <><X className="size-5" /> See the markers above</>}
+          </div>
+          <Button size="lg" onClick={next}>
+            {round + 1 >= ROUND_COUNT ? '🏁 Finish' : 'Next'} <ArrowRight className="size-4" />
+          </Button>
+        </div>
+      )}
     </div>
   )
 }
