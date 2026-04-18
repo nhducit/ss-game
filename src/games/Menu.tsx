@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { BookOpen, Brain, Ear, Puzzle, Skull } from 'lucide-react'
+import { BookOpen, Brain, Ear, Puzzle, Skull, Blocks } from 'lucide-react'
 import { levels } from '@/games/english/words'
 import { levels as chineseLevels } from '@/games/chinese/words'
 import { useLevel } from '@/games/english/use-level'
@@ -41,6 +41,16 @@ const englishGames = [
     description: 'Guess the word letter by letter',
     icon: Skull,
     to: '/hangman' as const,
+  },
+]
+
+const codingGames = [
+  {
+    id: 'logic',
+    title: 'Scratch Logic 🧩',
+    description: 'AND · OR · NOT — learn & play',
+    icon: Blocks,
+    to: '/logic' as const,
   },
 ]
 
@@ -129,6 +139,14 @@ export function Menu() {
         </div>
         <LevelPills levels={levels} current={engLevel} onChange={(id) => setEngLevel(id as typeof engLevel)} />
         <GameGrid games={englishGames} />
+      </section>
+
+      {/* Coding section */}
+      <section className="flex flex-col items-center gap-5 w-full">
+        <div className="text-center">
+          <h2 className="text-2xl font-extrabold tracking-tight text-foreground">Coding 🧑‍💻</h2>
+        </div>
+        <GameGrid games={codingGames} />
       </section>
 
       {/* Chinese section */}

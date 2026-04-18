@@ -311,6 +311,13 @@ body {
   animation: spelling-shake 0.4s ease-out;
 }
 
+/* ── Scratch Logic: hexagon bool block (Scratch reporter shape) ── */
+.hexagon-block {
+  clip-path: polygon(8% 0, 92% 0, 100% 50%, 92% 100%, 8% 100%, 0 50%);
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 /* ── Star notifications ── */
 @keyframes star-pop {
   0% { transform: scale(0) rotate(-10deg); opacity: 0; }
