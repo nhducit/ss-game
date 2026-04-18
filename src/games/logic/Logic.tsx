@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Lightbulb, HelpCircle, Shapes, GraduationCap, Table, Equal, Puzzle } from 'lucide-react'
+import { Lightbulb, HelpCircle, Shapes, GraduationCap, Table, Equal, Puzzle, Eye, Sparkles } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Learn } from './Learn'
 import { LightUp } from './LightUp'
@@ -11,8 +11,10 @@ import { SpriteFilter } from './SpriteFilter'
 import { TruthFill } from './TruthFill'
 import { SpotSame } from './SpotSame'
 import { BlockBuilder } from './BlockBuilder'
+import { BulbQuiz } from './BulbQuiz'
+import { OddOneOut } from './OddOneOut'
 
-type View = 'menu' | 'learn' | 'light-up' | 'gate-guess' | 'sprite-filter' | 'truth-fill' | 'spot-same' | 'block-builder'
+type View = 'menu' | 'learn' | 'light-up' | 'gate-guess' | 'sprite-filter' | 'truth-fill' | 'spot-same' | 'block-builder' | 'bulb-quiz' | 'odd-one-out'
 type Level = 'easy' | 'medium' | 'hard'
 
 const LEVELS: { id: Level; name: string; emoji: string; color: string }[] = [
@@ -71,6 +73,20 @@ const ACTIVITIES: { id: Exclude<View, 'menu'>; title: string; description: strin
     icon: Puzzle,
     accent: 'from-lime-500 to-green-600',
   },
+  {
+    id: 'bulb-quiz',
+    title: 'Bulb Quiz 💡',
+    description: 'Switches are set — will the bulb light?',
+    icon: Eye,
+    accent: 'from-yellow-500 to-orange-500',
+  },
+  {
+    id: 'odd-one-out',
+    title: 'Odd One Out 🎯',
+    description: 'Two blocks always match. Spot the different one',
+    icon: Sparkles,
+    accent: 'from-rose-500 to-red-500',
+  },
 ]
 
 export function Logic() {
@@ -96,6 +112,8 @@ export function Logic() {
     if (view === 'truth-fill') return <TruthFill level={level} onExit={() => setView('menu')} />
     if (view === 'spot-same') return <SpotSame level={level} onExit={() => setView('menu')} />
     if (view === 'block-builder') return <BlockBuilder level={level} onExit={() => setView('menu')} />
+    if (view === 'bulb-quiz') return <BulbQuiz level={level} onExit={() => setView('menu')} />
+    if (view === 'odd-one-out') return <OddOneOut level={level} onExit={() => setView('menu')} />
   }
 
   return (

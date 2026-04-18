@@ -13,6 +13,10 @@ const EASY: Expr[] = [
   OR(V('A'), V('B')),
   NOT(V('A')),
   AND(V('A'), NOT(V('B'))),
+  OR(NOT(V('A')), V('B')),
+  AND(NOT(V('A')), NOT(V('B'))),
+  OR(NOT(V('A')), NOT(V('B'))),
+  NOT(OR(V('A'), V('B'))),
 ]
 const MEDIUM: Expr[] = [
   OR(V('A'), NOT(V('B'))),
@@ -20,12 +24,21 @@ const MEDIUM: Expr[] = [
   OR(AND(V('A'), V('B')), V('C')),
   AND(OR(V('A'), V('B')), V('C')),
   NOT(AND(V('A'), V('B'))),
+  OR(V('A'), AND(V('B'), V('C'))),
+  AND(V('A'), OR(V('B'), V('C'))),
+  OR(NOT(V('A')), AND(V('B'), V('C'))),
+  AND(V('A'), AND(V('B'), NOT(V('C')))),
+  NOT(OR(V('A'), AND(V('B'), V('C')))),
 ]
 const HARD: Expr[] = [
   AND(OR(V('A'), V('B')), NOT(V('C'))),
   OR(NOT(V('A')), AND(V('B'), V('C'))),
   OR(AND(V('A'), V('B')), AND(NOT(V('A')), V('C'))),
   AND(OR(V('A'), NOT(V('B'))), OR(V('B'), V('C'))),
+  AND(NOT(V('A')), OR(V('B'), NOT(V('C')))),
+  OR(AND(V('A'), NOT(V('B'))), AND(NOT(V('A')), V('B'))),
+  NOT(AND(OR(V('A'), V('B')), V('C'))),
+  OR(AND(V('A'), V('B')), NOT(OR(V('A'), V('C')))),
 ]
 
 const POOLS = { easy: EASY, medium: MEDIUM, hard: HARD }

@@ -62,6 +62,10 @@ const EASY: Expr[] = [
   OR(V('A'), V('B')),
   NOT(V('A')),
   NOT(V('B')),
+  AND(V('A'), NOT(V('B'))),
+  AND(NOT(V('A')), V('B')),
+  OR(V('A'), NOT(V('B'))),
+  OR(NOT(V('A')), V('B')),
 ]
 const MEDIUM: Expr[] = [
   AND(V('A'), NOT(V('B'))),
@@ -69,6 +73,13 @@ const MEDIUM: Expr[] = [
   AND(V('A'), AND(V('B'), V('C'))),
   OR(V('A'), NOT(V('B'))),
   AND(NOT(V('A')), NOT(V('B'))),
+  OR(NOT(V('A')), NOT(V('B'))),
+  OR(V('A'), OR(V('B'), V('C'))),
+  AND(V('A'), OR(V('B'), V('C'))),
+  OR(V('A'), AND(V('B'), V('C'))),
+  NOT(AND(V('A'), V('B'))),
+  NOT(OR(V('A'), V('B'))),
+  AND(NOT(V('A')), OR(V('B'), V('C'))),
 ]
 const HARD: Expr[] = [
   AND(OR(V('A'), V('B')), NOT(V('C'))),
@@ -76,6 +87,13 @@ const HARD: Expr[] = [
   OR(NOT(V('A')), NOT(V('B'))),
   AND(OR(V('A'), V('C')), OR(V('B'), NOT(V('C')))),
   AND(NOT(V('A')), OR(V('B'), V('C'))),
+  OR(AND(V('A'), V('B')), AND(NOT(V('A')), V('C'))),
+  AND(OR(V('A'), NOT(V('B'))), OR(V('B'), V('C'))),
+  AND(AND(V('A'), V('B')), OR(V('C'), V('D'))),
+  OR(NOT(AND(V('A'), V('B'))), V('C')),
+  AND(NOT(OR(V('A'), V('B'))), V('C')),
+  OR(AND(V('A'), NOT(V('B'))), AND(NOT(V('A')), V('B'))),
+  AND(OR(V('A'), V('B')), AND(V('C'), NOT(V('D')))),
 ]
 
 const LEVELS: { id: 'easy' | 'medium' | 'hard'; exprs: Expr[]; stars: DifficultyLevel }[] = [

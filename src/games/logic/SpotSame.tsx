@@ -18,10 +18,16 @@ const EASY_PAIRS: Pair[] = [
   { a: NOT(NOT(V('A'))), b: V('A') },
   { a: AND(V('A'), V('A')), b: V('A') },
   { a: OR(V('A'), V('A')), b: V('A') },
+  { a: NOT(NOT(NOT(V('A')))), b: NOT(V('A')) },
+  { a: AND(V('A'), NOT(V('A'))), b: AND(V('B'), NOT(V('B'))) },
+  { a: OR(V('A'), NOT(V('A'))), b: OR(V('B'), NOT(V('B'))) },
   // NOT equivalent
   { a: AND(V('A'), V('B')), b: OR(V('A'), V('B')) },
   { a: V('A'), b: NOT(V('A')) },
   { a: AND(V('A'), V('B')), b: V('A') },
+  { a: OR(V('A'), V('B')), b: V('A') },
+  { a: NOT(V('A')), b: NOT(V('B')) },
+  { a: AND(V('A'), NOT(V('B'))), b: AND(NOT(V('A')), V('B')) },
 ]
 
 const MEDIUM_PAIRS: Pair[] = [
@@ -30,12 +36,19 @@ const MEDIUM_PAIRS: Pair[] = [
   { a: NOT(OR(V('A'), V('B'))), b: AND(NOT(V('A')), NOT(V('B'))) },
   // distributive
   { a: AND(V('A'), OR(V('B'), V('C'))), b: OR(AND(V('A'), V('B')), AND(V('A'), V('C'))) },
+  { a: OR(V('A'), AND(V('B'), V('C'))), b: AND(OR(V('A'), V('B')), OR(V('A'), V('C'))) },
   // absorption
   { a: OR(V('A'), AND(V('A'), V('B'))), b: V('A') },
+  { a: AND(V('A'), OR(V('A'), V('B'))), b: V('A') },
+  // associativity
+  { a: AND(AND(V('A'), V('B')), V('C')), b: AND(V('A'), AND(V('B'), V('C'))) },
+  { a: OR(OR(V('A'), V('B')), V('C')), b: OR(V('A'), OR(V('B'), V('C'))) },
   // NOT equivalent
   { a: AND(V('A'), NOT(V('B'))), b: AND(NOT(V('A')), V('B')) },
   { a: OR(V('A'), AND(V('B'), V('C'))), b: AND(OR(V('A'), V('B')), V('C')) },
   { a: NOT(AND(V('A'), V('B'))), b: AND(NOT(V('A')), NOT(V('B'))) },
+  { a: NOT(OR(V('A'), V('B'))), b: OR(NOT(V('A')), NOT(V('B'))) },
+  { a: AND(V('A'), OR(V('B'), V('C'))), b: OR(V('A'), AND(V('B'), V('C'))) },
 ]
 
 const HARD_PAIRS: Pair[] = [
@@ -44,10 +57,15 @@ const HARD_PAIRS: Pair[] = [
   { a: AND(OR(V('A'), V('B')), OR(V('A'), NOT(V('B')))), b: V('A') },
   { a: NOT(AND(OR(V('A'), V('B')), V('C'))), b: OR(AND(NOT(V('A')), NOT(V('B'))), NOT(V('C'))) },
   { a: OR(V('A'), NOT(AND(V('A'), V('B')))), b: OR(V('A'), NOT(V('B'))) },
+  { a: AND(OR(V('A'), V('B')), NOT(AND(V('A'), V('B')))), b: OR(AND(V('A'), NOT(V('B'))), AND(NOT(V('A')), V('B'))) },
+  { a: NOT(OR(AND(V('A'), V('B')), V('C'))), b: AND(OR(NOT(V('A')), NOT(V('B'))), NOT(V('C'))) },
+  { a: OR(AND(V('A'), V('B')), V('A')), b: V('A') },
   // NOT equivalent (tricky)
   { a: AND(OR(V('A'), V('B')), V('C')), b: OR(AND(V('A'), V('C')), V('B')) },
   { a: NOT(OR(V('A'), AND(V('B'), V('C')))), b: AND(NOT(V('A')), OR(NOT(V('B')), NOT(V('C')))) },
   { a: OR(AND(V('A'), V('B')), V('C')), b: AND(V('A'), OR(V('B'), V('C'))) },
+  { a: AND(OR(V('A'), V('B')), OR(V('B'), V('C'))), b: OR(V('A'), V('C')) },
+  { a: NOT(AND(V('A'), OR(V('B'), V('C')))), b: OR(NOT(V('A')), AND(NOT(V('B')), NOT(V('C')))) },
 ]
 
 const POOLS = { easy: EASY_PAIRS, medium: MEDIUM_PAIRS, hard: HARD_PAIRS }
