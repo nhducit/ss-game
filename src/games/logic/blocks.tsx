@@ -40,17 +40,23 @@ export function OperatorBlock({
   op,
   children,
   result,
+  depth = 0,
 }: {
   op: 'and' | 'or' | 'not'
   children: React.ReactNode
   result?: boolean
+  depth?: number
 }) {
-  const color = result === undefined ? 'bg-[#59C059]' : result ? 'bg-[#59C059] ring-4 ring-[#ffbf00]/60' : 'bg-[#2f7f2f]'
+  const shade = DEPTH_SHADES[Math.min(depth, DEPTH_SHADES.length - 1)]
+  const off = result === false
+  const ring = result === true ? 'ring-4 ring-[#ffbf00]/60' : ''
+  const bg = off ? 'bg-[#2f7f2f] border-[#1d4f1d]' : shade
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-white font-bold text-sm shadow-sm',
-        color,
+        'inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-white font-bold text-sm shadow-sm border-2',
+        bg,
+        ring,
       )}
     >
       {op !== 'not' && <span className="contents">{arrayFirst(children)}</span>}
@@ -59,6 +65,15 @@ export function OperatorBlock({
     </span>
   )
 }
+
+// Outer → inner. Each depth darkens the fill slightly and uses a distinct
+// border so nested operator blocks read as separate groups.
+const DEPTH_SHADES = [
+  'bg-[#3f9c3f] border-[#1f5a1f]',
+  'bg-[#59C059] border-[#2f7f2f]',
+  'bg-[#74d474] border-[#3a8a3a]',
+  'bg-[#8fe38f] border-[#4a9a4a]',
+]
 
 function arrayFirst(children: React.ReactNode): React.ReactNode {
   if (Array.isArray(children)) return children[0]

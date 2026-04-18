@@ -137,9 +137,9 @@ function AndNotDemo() {
         <Switch on={b} label="B" onToggle={() => setB(!b)} />
         <div className="flex flex-col items-center">
           <Bulb on={result} />
-          <OperatorBlock op="and" result={result}>
+          <OperatorBlock op="and" result={result} depth={0}>
             <BoolBlock value={a} label="A" size="sm" />
-            <OperatorBlock op="not" result={!b}>
+            <OperatorBlock op="not" result={!b} depth={1}>
               <BoolBlock value={b} label="B" size="sm" />
             </OperatorBlock>
           </OperatorBlock>
@@ -170,8 +170,8 @@ function NotOrDemo() {
         <Switch on={b} label="B" onToggle={() => setB(!b)} />
         <div className="flex flex-col items-center">
           <Bulb on={result} />
-          <OperatorBlock op="or" result={result}>
-            <OperatorBlock op="not" result={!a}>
+          <OperatorBlock op="or" result={result} depth={0}>
+            <OperatorBlock op="not" result={!a} depth={1}>
               <BoolBlock value={a} label="A" size="sm" />
             </OperatorBlock>
             <BoolBlock value={b} label="B" size="sm" />
@@ -205,8 +205,8 @@ function TripleAndDemo() {
         <Switch on={c} label="C" onToggle={() => setC(!c)} />
         <div className="flex flex-col items-center">
           <Bulb on={result} />
-          <OperatorBlock op="and" result={result}>
-            <OperatorBlock op="and" result={a && b}>
+          <OperatorBlock op="and" result={result} depth={0}>
+            <OperatorBlock op="and" result={a && b} depth={1}>
               <BoolBlock value={a} label="A" size="sm" />
               <BoolBlock value={b} label="B" size="sm" />
             </OperatorBlock>
@@ -234,12 +234,12 @@ function OrAndNotDemo() {
         <Switch on={c} label="C" onToggle={() => setC(!c)} />
         <div className="flex flex-col items-center">
           <Bulb on={result} />
-          <OperatorBlock op="and" result={result}>
-            <OperatorBlock op="or" result={inner}>
+          <OperatorBlock op="and" result={result} depth={0}>
+            <OperatorBlock op="or" result={inner} depth={1}>
               <BoolBlock value={a} label="A" size="sm" />
               <BoolBlock value={b} label="B" size="sm" />
             </OperatorBlock>
-            <OperatorBlock op="not" result={notC}>
+            <OperatorBlock op="not" result={notC} depth={1}>
               <BoolBlock value={c} label="C" size="sm" />
             </OperatorBlock>
           </OperatorBlock>
@@ -267,14 +267,14 @@ function AndOrAndNotDemo() {
         <Switch on={d} label="D" onToggle={() => setD(!d)} />
         <div className="flex flex-col items-center">
           <Bulb on={result} />
-          <OperatorBlock op="or" result={result}>
-            <OperatorBlock op="and" result={left}>
+          <OperatorBlock op="or" result={result} depth={0}>
+            <OperatorBlock op="and" result={left} depth={1}>
               <BoolBlock value={a} label="A" size="sm" />
               <BoolBlock value={b} label="B" size="sm" />
             </OperatorBlock>
-            <OperatorBlock op="and" result={right}>
+            <OperatorBlock op="and" result={right} depth={1}>
               <BoolBlock value={c} label="C" size="sm" />
-              <OperatorBlock op="not" result={notD}>
+              <OperatorBlock op="not" result={notD} depth={2}>
                 <BoolBlock value={d} label="D" size="sm" />
               </OperatorBlock>
             </OperatorBlock>
@@ -296,11 +296,11 @@ function NotOrNotDemo() {
         <Switch on={b} label="B" onToggle={() => setB(!b)} />
         <div className="flex flex-col items-center">
           <Bulb on={result} />
-          <OperatorBlock op="or" result={result}>
-            <OperatorBlock op="not" result={!a}>
+          <OperatorBlock op="or" result={result} depth={0}>
+            <OperatorBlock op="not" result={!a} depth={1}>
               <BoolBlock value={a} label="A" size="sm" />
             </OperatorBlock>
-            <OperatorBlock op="not" result={!b}>
+            <OperatorBlock op="not" result={!b} depth={1}>
               <BoolBlock value={b} label="B" size="sm" />
             </OperatorBlock>
           </OperatorBlock>

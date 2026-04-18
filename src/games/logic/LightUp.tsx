@@ -42,17 +42,17 @@ function variables(e: Expr): string[] {
   return Array.from(set).sort()
 }
 
-function RenderExpr({ e, env }: { e: Expr; env: Record<string, boolean> }) {
+function RenderExpr({ e, env, depth = 0 }: { e: Expr; env: Record<string, boolean>; depth?: number }) {
   if (e.kind === 'var') return <BoolBlock value={env[e.name] ?? false} label={e.name} size="sm" />
   if (e.kind === 'not') return (
-    <OperatorBlock op="not" result={evalExpr(e, env)}>
-      <RenderExpr e={e.x} env={env} />
+    <OperatorBlock op="not" result={evalExpr(e, env)} depth={depth}>
+      <RenderExpr e={e.x} env={env} depth={depth + 1} />
     </OperatorBlock>
   )
   return (
-    <OperatorBlock op={e.kind} result={evalExpr(e, env)}>
-      <RenderExpr e={e.a} env={env} />
-      <RenderExpr e={e.b} env={env} />
+    <OperatorBlock op={e.kind} result={evalExpr(e, env)} depth={depth}>
+      <RenderExpr e={e.a} env={env} depth={depth + 1} />
+      <RenderExpr e={e.b} env={env} depth={depth + 1} />
     </OperatorBlock>
   )
 }

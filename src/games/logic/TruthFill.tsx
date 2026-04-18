@@ -49,13 +49,13 @@ const STAR: Record<'easy' | 'medium' | 'hard', DifficultyLevel> = {
 type Cell = boolean | null
 const ROUND_COUNT = 4
 
-function RenderExpr({ e }: { e: Expr }) {
+function RenderExpr({ e, depth = 0 }: { e: Expr; depth?: number }) {
   if (e.kind === 'var') return <BoolBlock value={true} label={e.name} size="sm" />
-  if (e.kind === 'not') return <OperatorBlock op="not"><RenderExpr e={e.x} /></OperatorBlock>
+  if (e.kind === 'not') return <OperatorBlock op="not" depth={depth}><RenderExpr e={e.x} depth={depth + 1} /></OperatorBlock>
   return (
-    <OperatorBlock op={e.kind}>
-      <RenderExpr e={e.a} />
-      <RenderExpr e={e.b} />
+    <OperatorBlock op={e.kind} depth={depth}>
+      <RenderExpr e={e.a} depth={depth + 1} />
+      <RenderExpr e={e.b} depth={depth + 1} />
     </OperatorBlock>
   )
 }

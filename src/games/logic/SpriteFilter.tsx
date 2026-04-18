@@ -49,18 +49,18 @@ function PropPill({ emoji, label }: { emoji: string; label: string }) {
   )
 }
 
-function RenderCondition({ c }: { c: Condition }) {
+function RenderCondition({ c, depth = 0 }: { c: Condition; depth?: number }) {
   if (c.kind === 'prop') {
     const emoji = c.prop === 'color' ? colorEmoji(c.val as Color) : c.prop === 'shape' ? shapeEmoji(c.val as Shape) : c.val === 'big' ? '📏' : '📐'
     return <PropPill emoji={emoji} label={c.val} />
   }
   if (c.kind === 'not') {
-    return <OperatorBlock op="not"><RenderCondition c={c.c} /></OperatorBlock>
+    return <OperatorBlock op="not" depth={depth}><RenderCondition c={c.c} depth={depth + 1} /></OperatorBlock>
   }
   return (
-    <OperatorBlock op={c.kind}>
-      <RenderCondition c={c.a} />
-      <RenderCondition c={c.b} />
+    <OperatorBlock op={c.kind} depth={depth}>
+      <RenderCondition c={c.a} depth={depth + 1} />
+      <RenderCondition c={c.b} depth={depth + 1} />
     </OperatorBlock>
   )
 }
