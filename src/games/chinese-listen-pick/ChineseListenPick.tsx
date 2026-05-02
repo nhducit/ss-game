@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { ArrowLeft, Volume2, RotateCcw, Trophy } from 'lucide-react'
+import { ArrowLeft, Volume2, RotateCcw, Trophy, ArrowRight } from 'lucide-react'
 import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord } from '@/games/chinese/words'
 import { speakChinese } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
@@ -79,25 +79,25 @@ export function ChineseListenPick() {
       const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
       setScore(s => s + points)
       speakChinese(currentRound.correct.chinese, 0.8)
-
-      setTimeout(() => {
-        if (roundIndex + 1 < rounds.length) {
-          setRoundIndex(r => r + 1)
-          setCorrect(false)
-          setShowWord(false)
-          hasSpoken.current = false
-        } else {
-          recordGame(level, 'Listen & Pick CN')
-          setScreen('results')
-        }
-      }, 1500)
     } else {
       setShakeIndex(optionIndex)
       recordWrong(category!.id, level, currentRound.correct.chinese)
       setStreak(0)
       setTimeout(() => setShakeIndex(null), 400)
     }
-  }, [currentRound, correct, streak, roundIndex, rounds, category, level])
+  }, [currentRound, correct, streak, category, level])
+
+  const advanceRound = useCallback(() => {
+    if (roundIndex + 1 < rounds.length) {
+      setRoundIndex(r => r + 1)
+      setCorrect(false)
+      setShowWord(false)
+      hasSpoken.current = false
+    } else {
+      recordGame(level, 'Listen & Pick CN')
+      setScreen('results')
+    }
+  }, [roundIndex, rounds, recordGame, level])
 
   if (screen === 'categories') {
     return (
@@ -206,6 +206,16 @@ export function ChineseListenPick() {
               )
             })}
           </div>
+
+          {correct && (
+            <Button size="lg" className="gap-2 text-lg" onClick={advanceRound}>
+              {roundIndex + 1 < rounds.length ? (
+                <>Next <ArrowRight className="size-4" /></>
+              ) : (
+                <>Finish <ArrowRight className="size-4" /></>
+              )}
+            </Button>
+          )}
         </div>
       )}
     </div>

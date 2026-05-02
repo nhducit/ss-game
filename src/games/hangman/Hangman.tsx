@@ -55,7 +55,6 @@ export function Hangman() {
   const [streak, setStreak] = useState(0)
   const [skipped, setSkipped] = useState(0)
   const [won, setWon] = useState<boolean | null>(null) // null = playing, true = won, false = lost
-  const [nextDisabled, setNextDisabled] = useState(false)
   const hasSpoken = useRef(false)
   const { record: recordGame, reset: resetRecordGame } = useRecordGame()
 
@@ -120,14 +119,10 @@ export function Hangman() {
       setStreak(newStreak)
       const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
       setScore(s => s + points)
-      setNextDisabled(true)
       speakSequence([
         { text: currentWord.english, rate: 0.8 },
         ...currentWord.sentences.map(s => ({ text: s, rate: 0.75, pause: 400 })),
       ])
-      setTimeout(() => {
-        setNextDisabled(false)
-      }, 3000)
     } else {
       const newWrong = wrongCount + 1
       setWrongCount(newWrong)
@@ -160,14 +155,6 @@ export function Hangman() {
     setSkipped(s => s + 1)
     advanceWord()
   }, [currentWord, won, advanceWord])
-
-  // Auto-advance after win
-  useEffect(() => {
-    if (won === true && !nextDisabled) {
-      const t = setTimeout(advanceWord, 3000)
-      return () => clearTimeout(t)
-    }
-  }, [won, nextDisabled, advanceWord])
 
   // ── Categories screen ──
   if (screen === 'categories') {
@@ -372,7 +359,7 @@ export function Hangman() {
               </>
             )}
             {won === true && (
-              <Button className="gap-2 text-lg" onClick={advanceWord} disabled={nextDisabled}>
+              <Button className="gap-2 text-lg" onClick={advanceWord}>
                 ✓ Next word
               </Button>
             )}

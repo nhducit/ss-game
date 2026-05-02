@@ -18,3 +18,28 @@ concrete expression / word / sentence being asked about).
   domains may inline the `Volume2` icon pattern used by Spelling Bee.
 - Place the speaker next to the prompt so the connection is obvious.
 - Kids may not read yet — audio is how they understand the task.
+
+**Manual Next** — games MUST NOT auto-advance to the next question / word /
+round. After a win, loss, or any answer reveal, the kid taps a visible
+"Next" button to move on. Applies to every existing and new game.
+
+- No `setTimeout(advanceWord, …)` or equivalent useEffect that fires the
+  next item without a tap.
+- Skip / Submit / Next buttons are the only ways forward (plus an explicit
+  end-of-round transition to the results screen, which itself has buttons).
+- Why: kids need to read the example sentences, hear the TTS finish, and
+  process the result at their own pace. Auto-advance steals that time.
+
+## Workflow
+
+**Auto commit & push** — after finishing a coherent change the user has
+accepted, automatically commit and push to `main` without waiting for an
+explicit instruction.
+
+- Run `node_modules/.bin/tsc --noEmit -p .` and confirm zero errors before
+  staging. Do not commit if typecheck fails — fix the errors first.
+- Stage only the files you actually touched (no `git add -A`).
+- Write a focused commit message describing the why, not the what.
+- `git pull --rebase` before pushing if the remote has moved on.
+- Skip the commit only if the user explicitly says "don't commit" or the
+  change is purely exploratory / WIP.
