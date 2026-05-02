@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect, useRef } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy } from 'lucide-react'
+import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy, Delete, Check } from 'lucide-react'
 import { getWords, type Category, type Level, type Word } from '@/games/english/words'
 import { speak, speakSequence } from '@/games/english/speak'
 import { CategoryPicker } from '@/games/english/CategoryPicker'
@@ -48,8 +48,9 @@ export function Hangman() {
   const [level, setLevel] = useState<Level>('starters')
   const [words, setWords] = useState<Word[]>([])
   const [wordIndex, setWordIndex] = useState(0)
-  const [guessedLetters, setGuessedLetters] = useState<Set<string>>(new Set())
+  const [inputLetters, setInputLetters] = useState<string[]>([])
   const [wrongCount, setWrongCount] = useState(0)
+  const [shake, setShake] = useState(false)
   const [score, setScore] = useState(0)
   const [streak, setStreak] = useState(0)
   const [skipped, setSkipped] = useState(0)
@@ -61,7 +62,7 @@ export function Hangman() {
   const currentWord = words[wordIndex] ?? null
 
   const resetWord = useCallback(() => {
-    setGuessedLetters(new Set())
+    setInputLetters([])
     setWrongCount(0)
     setWon(null)
     hasSpoken.current = false
@@ -79,7 +80,7 @@ export function Hangman() {
     setSkipped(0)
     setScreen('playing')
     resetRecordGame()
-    setGuessedLetters(new Set())
+    setInputLetters([])
     setWrongCount(0)
     setWon(null)
     hasSpoken.current = false
@@ -94,40 +95,45 @@ export function Hangman() {
     }
   }, [screen, currentWord, wordIndex])
 
-  const handleGuess = useCallback((letter: string) => {
+  const handleLetter = useCallback((letter: string) => {
     if (!currentWord || won !== null) return
-    if (guessedLetters.has(letter)) return
+    if (inputLetters.length >= currentWord.english.length) return
+    setInputLetters(prev => [...prev, letter])
+  }, [currentWord, won, inputLetters])
 
-    const newGuessed = new Set(guessedLetters)
-    newGuessed.add(letter)
-    setGuessedLetters(newGuessed)
+  const handleDelete = useCallback(() => {
+    if (won !== null) return
+    setInputLetters(prev => prev.slice(0, -1))
+  }, [won])
 
+  const handleSubmit = useCallback(() => {
+    if (!currentWord || won !== null) return
+    if (inputLetters.length !== currentWord.english.length) return
+
+    const guess = inputLetters.join('')
     const wordUpper = currentWord.english.toUpperCase()
 
-    if (wordUpper.includes(letter)) {
-      // Correct guess - check if won
-      const uniqueLetters = new Set(wordUpper.split(''))
-      const allGuessed = [...uniqueLetters].every(l => newGuessed.has(l))
-      if (allGuessed) {
-        setWon(true)
-        recordCorrect(category!.id, level, currentWord.english)
-        const newStreak = streak + 1
-        setStreak(newStreak)
-        const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
-        setScore(s => s + points)
-        setNextDisabled(true)
-        speakSequence([
-          { text: currentWord.english, rate: 0.8 },
-          ...currentWord.sentences.map(s => ({ text: s, rate: 0.75, pause: 400 })),
-        ])
-        setTimeout(() => {
-          setNextDisabled(false)
-        }, 3000)
-      }
+    if (guess === wordUpper) {
+      setWon(true)
+      recordCorrect(category!.id, level, currentWord.english)
+      const newStreak = streak + 1
+      setStreak(newStreak)
+      const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
+      setScore(s => s + points)
+      setNextDisabled(true)
+      speakSequence([
+        { text: currentWord.english, rate: 0.8 },
+        ...currentWord.sentences.map(s => ({ text: s, rate: 0.75, pause: 400 })),
+      ])
+      setTimeout(() => {
+        setNextDisabled(false)
+      }, 3000)
     } else {
-      // Wrong guess
       const newWrong = wrongCount + 1
       setWrongCount(newWrong)
+      setInputLetters([])
+      setShake(true)
+      setTimeout(() => setShake(false), 400)
       if (newWrong >= MAX_WRONG) {
         setWon(false)
         recordWrong(category!.id, level, currentWord.english)
@@ -135,7 +141,7 @@ export function Hangman() {
         speak(currentWord.english)
       }
     }
-  }, [currentWord, won, guessedLetters, wrongCount, category, level, streak])
+  }, [currentWord, won, inputLetters, wrongCount, category, level, streak])
 
   const advanceWord = useCallback(() => {
     if (wordIndex + 1 < words.length) {
@@ -264,13 +270,25 @@ export function Hangman() {
           {/* Hangman drawing */}
           <HangmanDrawing wrongCount={wrongCount} />
 
-          {/* Word display */}
-          <div className="text-3xl sm:text-4xl font-bold tracking-[0.3em] uppercase select-none">
-            {wordLetters.map((letter, i) => (
-              <span key={i} className={won === false ? 'text-red-500' : guessedLetters.has(letter) ? 'text-foreground' : 'text-muted-foreground'}>
-                {guessedLetters.has(letter) || won === false ? letter : '_'}{' '}
-              </span>
-            ))}
+          {/* Word display - filled by user input */}
+          <div className={`text-3xl sm:text-4xl font-bold tracking-[0.3em] uppercase select-none ${shake ? 'spelling-shake' : ''}`}>
+            {wordLetters.map((letter, i) => {
+              const filled = inputLetters[i]
+              const showFinal = won !== null
+              const display = showFinal ? letter : (filled ?? '_')
+              const cls = won === false
+                ? 'text-red-500'
+                : won === true
+                  ? 'text-green-600'
+                  : filled
+                    ? 'text-foreground'
+                    : 'text-muted-foreground'
+              return (
+                <span key={i} className={cls}>
+                  {display}{' '}
+                </span>
+              )
+            })}
           </div>
 
           {/* Win/lose message */}
@@ -308,28 +326,26 @@ export function Hangman() {
             <div className="flex flex-col items-center gap-1.5 sm:gap-2 mt-1">
               {KEYBOARD_ROWS.map((row, ri) => (
                 <div key={ri} className="flex gap-1.5 sm:gap-2">
-                  {row.map(letter => {
-                    const isGuessed = guessedLetters.has(letter)
-                    const isCorrect = isGuessed && wordUpper.includes(letter)
-                    const isWrong = isGuessed && !wordUpper.includes(letter)
-                    return (
-                      <button
-                        key={letter}
-                        className={
-                          `font-bold rounded-lg w-9 h-10 sm:w-10 sm:h-11 transition-all duration-150 touch-manipulation select-none ` +
-                          (isCorrect
-                            ? 'bg-green-500 text-white cursor-default'
-                            : isWrong
-                              ? 'bg-red-500/20 text-red-500 line-through cursor-default'
-                              : 'bg-muted hover:bg-muted/80 text-foreground cursor-pointer active:scale-95')
-                        }
-                        onClick={() => handleGuess(letter)}
-                        disabled={isGuessed}
-                      >
-                        {letter}
-                      </button>
-                    )
-                  })}
+                  {row.map(letter => (
+                    <button
+                      key={letter}
+                      className="font-bold rounded-lg w-9 h-10 sm:w-10 sm:h-11 transition-all duration-150 touch-manipulation select-none bg-muted hover:bg-muted/80 text-foreground cursor-pointer active:scale-95 disabled:opacity-50"
+                      onClick={() => handleLetter(letter)}
+                      disabled={inputLetters.length >= wordUpper.length}
+                    >
+                      {letter}
+                    </button>
+                  ))}
+                  {ri === KEYBOARD_ROWS.length - 1 && (
+                    <button
+                      className="font-bold rounded-lg w-12 h-10 sm:w-14 sm:h-11 transition-all duration-150 touch-manipulation select-none bg-muted hover:bg-muted/80 text-foreground cursor-pointer active:scale-95 disabled:opacity-50 flex items-center justify-center"
+                      onClick={handleDelete}
+                      disabled={inputLetters.length === 0}
+                      aria-label="Delete"
+                    >
+                      <Delete className="size-4 sm:size-5" />
+                    </button>
+                  )}
                 </div>
               ))}
             </div>
@@ -338,13 +354,22 @@ export function Hangman() {
           {/* Action buttons */}
           <div className="flex gap-3 mt-1">
             {won === null && (
-              <Button
-                variant="ghost"
-                className="text-muted-foreground gap-2"
-                onClick={skipWord}
-              >
-                <SkipForward className="size-4" /> Skip
-              </Button>
+              <>
+                <Button
+                  variant="ghost"
+                  className="text-muted-foreground gap-2"
+                  onClick={skipWord}
+                >
+                  <SkipForward className="size-4" /> Skip
+                </Button>
+                <Button
+                  className="gap-2"
+                  onClick={handleSubmit}
+                  disabled={inputLetters.length !== wordUpper.length}
+                >
+                  <Check className="size-4" /> Submit
+                </Button>
+              </>
             )}
             {won === true && (
               <Button className="gap-2 text-lg" onClick={advanceWord} disabled={nextDisabled}>
