@@ -36,10 +36,14 @@ round. After a win, loss, or any answer reveal, the kid taps a visible
 accepted, automatically commit and push to `main` without waiting for an
 explicit instruction.
 
-- Run `node_modules/.bin/tsc --noEmit -p .` and confirm zero errors before
-  staging. Do not commit if typecheck fails — fix the errors first.
+- Run `pnpm typecheck` (TypeScript 7 native preview, `tsgo -b`) and confirm
+  zero errors before staging. Do not commit if typecheck fails — fix the
+  errors first.
+- Run `pnpm lint` (oxlint) and `pnpm format:check` (oxfmt --check). Treat
+  errors as blocking; warnings are fine. Run `pnpm format` to fix style.
 - Stage only the files you actually touched (no `git add -A`).
 - Write a focused commit message describing the why, not the what.
 - `git pull --rebase` before pushing if the remote has moved on.
+- Use `pnpm` for all package operations — never `npm` or `yarn`.
 - Skip the commit only if the user explicitly says "don't commit" or the
   change is purely exploratory / WIP.

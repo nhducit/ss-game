@@ -1,0 +1,20 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "dist",
+    "convex/_generated",
+    "src/index.css",
+    ".agents",
+    "docs",
+    "**/*.md",
+    "**/*.yaml",
+    "**/*.yml",
+    "package.json",
+    "pnpm-lock.yaml",
+    "test-results"
+  ],
+  "semi": false,
+  "singleQuote": true,
+  "jsxSingleQuote": false,
+  "arrowParens": "avoid"
+}
