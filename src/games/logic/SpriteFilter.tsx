@@ -51,11 +51,22 @@ function PropPill({ emoji, label }: { emoji: string; label: string }) {
 
 function RenderCondition({ c, depth = 0 }: { c: Condition; depth?: number }) {
   if (c.kind === 'prop') {
-    const emoji = c.prop === 'color' ? colorEmoji(c.val as Color) : c.prop === 'shape' ? shapeEmoji(c.val as Shape) : c.val === 'big' ? '📏' : '📐'
+    const emoji =
+      c.prop === 'color'
+        ? colorEmoji(c.val as Color)
+        : c.prop === 'shape'
+          ? shapeEmoji(c.val as Shape)
+          : c.val === 'big'
+            ? '📏'
+            : '📐'
     return <PropPill emoji={emoji} label={c.val} />
   }
   if (c.kind === 'not') {
-    return <OperatorBlock op="not" depth={depth}><RenderCondition c={c.c} depth={depth + 1} /></OperatorBlock>
+    return (
+      <OperatorBlock op="not" depth={depth}>
+        <RenderCondition c={c.c} depth={depth + 1} />
+      </OperatorBlock>
+    )
   }
   return (
     <OperatorBlock op={c.kind} depth={depth}>
@@ -72,8 +83,23 @@ function shapeEmoji(s: Shape): string {
   return s === 'star' ? '⭐' : s === 'heart' ? '❤️' : '⚪'
 }
 
-function SpriteTile({ sprite, selected, onClick, lockedShow }: { sprite: Sprite; selected: boolean; onClick: () => void; lockedShow: 'good' | 'missed' | 'bad' | 'ok' | null }) {
-  const colorClass = sprite.color === 'red' ? 'text-rose-500' : sprite.color === 'blue' ? 'text-sky-500' : 'text-amber-400'
+function SpriteTile({
+  sprite,
+  selected,
+  onClick,
+  lockedShow,
+}: {
+  sprite: Sprite
+  selected: boolean
+  onClick: () => void
+  lockedShow: 'good' | 'missed' | 'bad' | 'ok' | null
+}) {
+  const colorClass =
+    sprite.color === 'red'
+      ? 'text-rose-500'
+      : sprite.color === 'blue'
+        ? 'text-sky-500'
+        : 'text-amber-400'
   const sizeClass = sprite.size === 'big' ? 'text-6xl' : 'text-3xl'
   const shapeChar = sprite.shape === 'star' ? '★' : sprite.shape === 'heart' ? '♥' : '●'
 
@@ -85,7 +111,10 @@ function SpriteTile({ sprite, selected, onClick, lockedShow }: { sprite: Sprite;
       className={cn(
         'relative flex items-center justify-center rounded-2xl border-4 transition-all aspect-square touch-manipulation',
         'bg-white dark:bg-zinc-900',
-        lockedShow === null && (selected ? 'border-primary ring-4 ring-primary/30 scale-105' : 'border-border hover:border-primary/50 active:scale-95'),
+        lockedShow === null &&
+          (selected
+            ? 'border-primary ring-4 ring-primary/30 scale-105'
+            : 'border-border hover:border-primary/50 active:scale-95'),
         lockedShow === 'good' && 'border-emerald-500 ring-4 ring-emerald-500/40',
         lockedShow === 'missed' && 'border-amber-500 ring-4 ring-amber-500/40',
         lockedShow === 'bad' && 'border-rose-500 ring-4 ring-rose-500/40',
@@ -93,9 +122,13 @@ function SpriteTile({ sprite, selected, onClick, lockedShow }: { sprite: Sprite;
       )}
     >
       <span className={cn(colorClass, sizeClass, 'drop-shadow')}>{shapeChar}</span>
-      {lockedShow === 'good' && <Check className="absolute top-1 right-1 size-5 text-emerald-600" />}
+      {lockedShow === 'good' && (
+        <Check className="absolute top-1 right-1 size-5 text-emerald-600" />
+      )}
       {lockedShow === 'bad' && <X className="absolute top-1 right-1 size-5 text-rose-600" />}
-      {lockedShow === 'missed' && <span className="absolute top-1 right-1 text-xs font-bold text-amber-600">missed</span>}
+      {lockedShow === 'missed' && (
+        <span className="absolute top-1 right-1 text-xs font-bold text-amber-600">missed</span>
+      )}
     </button>
   )
 }
@@ -116,8 +149,18 @@ function randomCondition(level: 'easy' | 'medium' | 'hard'): Condition {
   const prop = (): Condition => {
     const kinds: ('color' | 'shape' | 'size')[] = ['color', 'shape', 'size']
     const p = kinds[Math.floor(Math.random() * kinds.length)]
-    if (p === 'color') return { kind: 'prop', prop: 'color', val: ['red', 'blue', 'yellow'][Math.floor(Math.random() * 3)] }
-    if (p === 'shape') return { kind: 'prop', prop: 'shape', val: ['star', 'heart', 'circle'][Math.floor(Math.random() * 3)] }
+    if (p === 'color')
+      return {
+        kind: 'prop',
+        prop: 'color',
+        val: ['red', 'blue', 'yellow'][Math.floor(Math.random() * 3)],
+      }
+    if (p === 'shape')
+      return {
+        kind: 'prop',
+        prop: 'shape',
+        val: ['star', 'heart', 'circle'][Math.floor(Math.random() * 3)],
+      }
     return { kind: 'prop', prop: 'size', val: ['big', 'small'][Math.floor(Math.random() * 2)] }
   }
   const distinct = (a: Condition, b: Condition) => JSON.stringify(a) !== JSON.stringify(b)
@@ -140,10 +183,22 @@ function randomCondition(level: 'easy' | 'medium' | 'hard'): Condition {
   // hard: 3-term combos
   const p = [prop(), prop(), prop()]
   const patterns = [
-    { kind: 'and' as const, a: { kind: 'or' as const, a: p[0], b: p[1] }, b: { kind: 'not' as const, c: p[2] } },
+    {
+      kind: 'and' as const,
+      a: { kind: 'or' as const, a: p[0], b: p[1] },
+      b: { kind: 'not' as const, c: p[2] },
+    },
     { kind: 'or' as const, a: { kind: 'and' as const, a: p[0], b: p[1] }, b: p[2] },
-    { kind: 'and' as const, a: p[0], b: { kind: 'or' as const, a: p[1], b: { kind: 'not' as const, c: p[2] } } },
-    { kind: 'or' as const, a: { kind: 'not' as const, c: p[0] }, b: { kind: 'and' as const, a: p[1], b: p[2] } },
+    {
+      kind: 'and' as const,
+      a: p[0],
+      b: { kind: 'or' as const, a: p[1], b: { kind: 'not' as const, c: p[2] } },
+    },
+    {
+      kind: 'or' as const,
+      a: { kind: 'not' as const, c: p[0] },
+      b: { kind: 'and' as const, a: p[1], b: p[2] },
+    },
   ]
   return patterns[Math.floor(Math.random() * patterns.length)]
 }
@@ -166,7 +221,13 @@ const STAR_LEVEL: Record<'easy' | 'medium' | 'hard', DifficultyLevel> = {
   hard: 'flyers',
 }
 
-export function SpriteFilter({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; onExit: () => void }) {
+export function SpriteFilter({
+  level,
+  onExit,
+}: {
+  level: 'easy' | 'medium' | 'hard'
+  onExit: () => void
+}) {
   const [round, setRound] = useState(0)
   const [grid, setGrid] = useState(() => buildGrid(level))
   const [selected, setSelected] = useState<Set<number>>(new Set())
@@ -185,15 +246,18 @@ export function SpriteFilter({ level, onExit }: { level: 'easy' | 'medium' | 'ha
     return true
   }, [selected, correctIds])
 
-  const toggle = useCallback((id: number) => {
-    if (checked) return
-    setSelected(prev => {
-      const next = new Set(prev)
-      if (next.has(id)) next.delete(id)
-      else next.add(id)
-      return next
-    })
-  }, [checked])
+  const toggle = useCallback(
+    (id: number) => {
+      if (checked) return
+      setSelected(prev => {
+        const next = new Set(prev)
+        if (next.has(id)) next.delete(id)
+        else next.add(id)
+        return next
+      })
+    },
+    [checked],
+  )
 
   const submit = () => {
     if (checked) return
@@ -228,10 +292,17 @@ export function SpriteFilter({ level, onExit }: { level: 'easy' | 'medium' | 'ha
       <div className="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
         <Trophy className="size-16 text-amber-500" />
         <h2 className="text-3xl font-extrabold">Filter Pro!</h2>
-        <p className="text-lg text-muted-foreground">Perfect picks: {score}/{ROUND_COUNT}</p>
+        <p className="text-lg text-muted-foreground">
+          Perfect picks: {score}/{ROUND_COUNT}
+        </p>
         <div className="flex gap-2">
-          <Button onClick={restart}><RotateCcw className="size-4" />Play again</Button>
-          <Button variant="outline" onClick={onExit}>Back</Button>
+          <Button onClick={restart}>
+            <RotateCcw className="size-4" />
+            Play again
+          </Button>
+          <Button variant="outline" onClick={onExit}>
+            Back
+          </Button>
         </div>
       </div>
     )
@@ -250,9 +321,13 @@ export function SpriteFilter({ level, onExit }: { level: 'easy' | 'medium' | 'ha
   return (
     <div className="flex flex-col items-center gap-4 p-4 max-w-3xl mx-auto">
       <div className="flex items-center justify-between w-full">
-        <Button variant="ghost" size="sm" onClick={onExit}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ← Back
+        </Button>
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-bold">Round {round + 1}/{ROUND_COUNT}</span>
+          <span className="font-bold">
+            Round {round + 1}/{ROUND_COUNT}
+          </span>
           <span>⭐ {score}</span>
         </div>
         <div className="w-16" />
@@ -260,7 +335,9 @@ export function SpriteFilter({ level, onExit }: { level: 'easy' | 'medium' | 'ha
 
       <div className="flex flex-col items-center gap-2 text-center">
         <div className="flex items-center justify-center gap-2">
-          <Speaker text={`Sprite Filter. Tap every sprite that is ${speakCondition(grid.condition)}.`} />
+          <Speaker
+            text={`Sprite Filter. Tap every sprite that is ${speakCondition(grid.condition)}.`}
+          />
           <p className="text-sm text-muted-foreground">Tap every sprite that matches:</p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
@@ -287,8 +364,21 @@ export function SpriteFilter({ level, onExit }: { level: 'easy' | 'medium' | 'ha
       )}
       {checked && (
         <div className="flex flex-col items-center gap-3 mt-2">
-          <div className={cn('flex items-center gap-2 font-bold text-base', allRight ? 'text-emerald-600' : 'text-rose-500')}>
-            {allRight ? <><Check className="size-5" /> Perfect pick!</> : <><X className="size-5" /> See the markers above</>}
+          <div
+            className={cn(
+              'flex items-center gap-2 font-bold text-base',
+              allRight ? 'text-emerald-600' : 'text-rose-500',
+            )}
+          >
+            {allRight ? (
+              <>
+                <Check className="size-5" /> Perfect pick!
+              </>
+            ) : (
+              <>
+                <X className="size-5" /> See the markers above
+              </>
+            )}
           </div>
           <Button size="lg" onClick={next}>
             {round + 1 >= ROUND_COUNT ? '🏁 Finish' : 'Next'} <ArrowRight className="size-4" />

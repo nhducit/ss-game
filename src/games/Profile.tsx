@@ -1,14 +1,40 @@
 import { useState, useEffect, useMemo } from 'react'
 import { Card, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { getPlayer, updateProfile, getGameHistory, type PlayerData, type GameHistoryEntry } from '@/games/convex-sync'
+import {
+  getPlayer,
+  updateProfile,
+  getGameHistory,
+  type PlayerData,
+  type GameHistoryEntry,
+} from '@/games/convex-sync'
 import { getPlayerLevel, ALL_ACHIEVEMENTS } from '@/games/gamification'
 
 const AVATAR_OPTIONS = [
-  '🧒', '👦', '👧', '🧒🏻', '👦🏻', '👧🏻',
-  '🐱', '🐶', '🦊', '🐼', '🐸', '🦄',
-  '🦁', '🐯', '🐻', '🐨', '🐰', '🐷',
-  '🌟', '🚀', '🎨', '⚽', '🎸', '🌈',
+  '🧒',
+  '👦',
+  '👧',
+  '🧒🏻',
+  '👦🏻',
+  '👧🏻',
+  '🐱',
+  '🐶',
+  '🦊',
+  '🐼',
+  '🐸',
+  '🦄',
+  '🦁',
+  '🐯',
+  '🐻',
+  '🐨',
+  '🐰',
+  '🐷',
+  '🌟',
+  '🚀',
+  '🎨',
+  '⚽',
+  '🎸',
+  '🌈',
 ]
 
 function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
@@ -89,9 +115,16 @@ function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
             ))}
           </div>
           <div className="flex gap-0.5">
-            <div className="flex flex-col justify-between pr-1" style={{ height: 7 * (CELL + GAP) - GAP }}>
+            <div
+              className="flex flex-col justify-between pr-1"
+              style={{ height: 7 * (CELL + GAP) - GAP }}
+            >
               {['', 'Mon', '', 'Wed', '', 'Fri', ''].map((label, i) => (
-                <span key={i} className="text-[10px] text-muted-foreground leading-none" style={{ height: CELL }}>
+                <span
+                  key={i}
+                  className="text-[10px] text-muted-foreground leading-none"
+                  style={{ height: CELL }}
+                >
                   {label}
                 </span>
               ))}
@@ -99,11 +132,11 @@ function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
             <div className="flex" style={{ gap: GAP }}>
               {weeks.map((week, wi) => (
                 <div key={wi} className="flex flex-col" style={{ gap: GAP }}>
-                  {wi === 0 && week[0].dayOfWeek > 0 && (
+                  {wi === 0 &&
+                    week[0].dayOfWeek > 0 &&
                     Array.from({ length: week[0].dayOfWeek }).map((_, pi) => (
                       <div key={`pad-${pi}`} style={{ width: CELL, height: CELL }} />
-                    ))
-                  )}
+                    ))}
                   {week.map(day => (
                     <div
                       key={day.date}
@@ -119,10 +152,22 @@ function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
           <div className="flex items-center gap-1.5 mt-2 justify-end">
             <span className="text-[10px] text-muted-foreground">Less</span>
             <div className="rounded-sm bg-muted" style={{ width: CELL, height: CELL }} />
-            <div className="rounded-sm bg-green-200 dark:bg-green-900" style={{ width: CELL, height: CELL }} />
-            <div className="rounded-sm bg-green-400 dark:bg-green-700" style={{ width: CELL, height: CELL }} />
-            <div className="rounded-sm bg-green-500 dark:bg-green-500" style={{ width: CELL, height: CELL }} />
-            <div className="rounded-sm bg-green-600 dark:bg-green-400" style={{ width: CELL, height: CELL }} />
+            <div
+              className="rounded-sm bg-green-200 dark:bg-green-900"
+              style={{ width: CELL, height: CELL }}
+            />
+            <div
+              className="rounded-sm bg-green-400 dark:bg-green-700"
+              style={{ width: CELL, height: CELL }}
+            />
+            <div
+              className="rounded-sm bg-green-500 dark:bg-green-500"
+              style={{ width: CELL, height: CELL }}
+            />
+            <div
+              className="rounded-sm bg-green-600 dark:bg-green-400"
+              style={{ width: CELL, height: CELL }}
+            />
             <span className="text-[10px] text-muted-foreground">More</span>
           </div>
         </div>
@@ -257,7 +302,9 @@ export function Profile() {
         </Card>
         <Card>
           <CardHeader className="p-4 text-center">
-            <div className="text-2xl font-bold">{lvl.emoji} {lvl.name}</div>
+            <div className="text-2xl font-bold">
+              {lvl.emoji} {lvl.name}
+            </div>
             <CardTitle className="text-xs text-muted-foreground font-normal">Level</CardTitle>
           </CardHeader>
         </Card>
@@ -270,7 +317,9 @@ export function Profile() {
         <Card>
           <CardHeader className="p-4 text-center">
             <div className="text-2xl font-bold tabular-nums">{history.length}</div>
-            <CardTitle className="text-xs text-muted-foreground font-normal">Games Played</CardTitle>
+            <CardTitle className="text-xs text-muted-foreground font-normal">
+              Games Played
+            </CardTitle>
           </CardHeader>
         </Card>
       </div>
@@ -278,8 +327,12 @@ export function Profile() {
       {lvl.nextLevel && (
         <div className="w-full">
           <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-            <span>{lvl.emoji} {lvl.name}</span>
-            <span>{lvl.nextLevel.emoji} {lvl.nextLevel.name}</span>
+            <span>
+              {lvl.emoji} {lvl.name}
+            </span>
+            <span>
+              {lvl.nextLevel.emoji} {lvl.nextLevel.name}
+            </span>
           </div>
           <div className="h-2.5 w-full rounded-full bg-muted overflow-hidden">
             <div

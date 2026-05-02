@@ -41,20 +41,23 @@ export function SpellingBee() {
     hasSpoken.current = false
   }, [])
 
-  const startCategory = useCallback((cat: Category, lvl: Level) => {
-    const levelWords = getWords(cat, lvl)
-    const shuffledWords = getSmartWordOrder(cat.id, lvl, levelWords)
-    setCategory(cat)
-    setLevel(lvl)
-    setWords(shuffledWords)
-    setWordIndex(0)
-    setScore(0)
-    setStreak(0)
-    setSkipped(0)
-    setScreen('playing')
-    resetRecordGame()
-    setupWord(shuffledWords[0])
-  }, [setupWord, resetRecordGame])
+  const startCategory = useCallback(
+    (cat: Category, lvl: Level) => {
+      const levelWords = getWords(cat, lvl)
+      const shuffledWords = getSmartWordOrder(cat.id, lvl, levelWords)
+      setCategory(cat)
+      setLevel(lvl)
+      setWords(shuffledWords)
+      setWordIndex(0)
+      setScore(0)
+      setStreak(0)
+      setSkipped(0)
+      setScreen('playing')
+      resetRecordGame()
+      setupWord(shuffledWords[0])
+    },
+    [setupWord, resetRecordGame],
+  )
 
   // Speak the word when it changes
   useEffect(() => {
@@ -93,12 +96,15 @@ export function SpellingBee() {
     }
   }, [selected, currentWord, result, availableIndices, scrambled, streak])
 
-  const handleLetterTap = useCallback((scrambledIdx: number) => {
-    if (!currentWord || result !== 'pending') return
-    if (selected.includes(scrambledIdx)) return
-    if (selected.length >= currentWord.english.length) return
-    setSelected(prev => [...prev, scrambledIdx])
-  }, [currentWord, result, selected])
+  const handleLetterTap = useCallback(
+    (scrambledIdx: number) => {
+      if (!currentWord || result !== 'pending') return
+      if (selected.includes(scrambledIdx)) return
+      if (selected.length >= currentWord.english.length) return
+      setSelected(prev => [...prev, scrambledIdx])
+    },
+    [currentWord, result, selected],
+  )
 
   const undoLetter = useCallback(() => {
     if (result !== 'pending' || selected.length === 0) return
@@ -150,9 +156,7 @@ export function SpellingBee() {
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             {score >= total * 8 ? 'Great job! 🌟' : 'Well done! 👏'}
           </h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            {category?.name}
-          </p>
+          <p className="mt-2 text-lg text-muted-foreground">{category?.name}</p>
         </div>
         <div className="flex gap-4 text-center">
           <div className="flex flex-col items-center gap-1">
@@ -160,7 +164,9 @@ export function SpellingBee() {
             <span className="text-sm text-muted-foreground">Score</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-bold text-foreground">{answered}/{total}</span>
+            <span className="text-3xl font-bold text-foreground">
+              {answered}/{total}
+            </span>
             <span className="text-sm text-muted-foreground">Words</span>
           </div>
         </div>
@@ -168,9 +174,7 @@ export function SpellingBee() {
           <Button variant="outline" onClick={() => startCategory(category!, level)}>
             <RotateCcw className="size-4 mr-2" /> Play again
           </Button>
-          <Button onClick={() => setScreen('categories')}>
-            Other topics
-          </Button>
+          <Button onClick={() => setScreen('categories')}>Other topics</Button>
         </div>
       </div>
     )
@@ -189,7 +193,9 @@ export function SpellingBee() {
         <div className="flex items-center gap-3.5">
           <Tooltip>
             <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />}
+              render={
+                <Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />
+              }
             >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>
@@ -247,17 +253,18 @@ export function SpellingBee() {
             {answerSlots.map((correctLetter, i) => {
               const filled = i < userLetters.length
               const userLetter = filled ? userLetters[i] : null
-              const slotClass = result === 'pending'
-                ? (filled
+              const slotClass =
+                result === 'pending'
+                  ? filled
                     ? ' border-primary bg-primary/10 text-foreground scale-105'
-                    : ' border-muted-foreground/30 bg-muted/30 text-transparent')
-                : result === 'correct'
-                  ? ' border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
-                  : (filled && userLetter === correctLetter
+                    : ' border-muted-foreground/30 bg-muted/30 text-transparent'
+                  : result === 'correct'
+                    ? ' border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
+                    : filled && userLetter === correctLetter
                       ? ' border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
                       : filled
                         ? ' border-red-500 bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'
-                        : ' border-muted-foreground/30 bg-muted/30 text-transparent')
+                        : ' border-muted-foreground/30 bg-muted/30 text-transparent'
               return (
                 <div
                   key={i}
@@ -276,7 +283,8 @@ export function SpellingBee() {
           {result === 'wrong' && (
             <div className="text-center">
               <p className="text-lg font-bold text-red-500">
-                Correct spelling: <span className="text-2xl uppercase tracking-widest">{currentWord.english}</span>
+                Correct spelling:{' '}
+                <span className="text-2xl uppercase tracking-widest">{currentWord.english}</span>
               </p>
             </div>
           )}
@@ -317,11 +325,7 @@ export function SpellingBee() {
                 >
                   <Undo2 className="size-4" /> Undo
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="text-muted-foreground gap-2"
-                  onClick={skipWord}
-                >
+                <Button variant="ghost" className="text-muted-foreground gap-2" onClick={skipWord}>
                   <SkipForward className="size-4" /> Skip
                 </Button>
               </>
@@ -333,7 +337,12 @@ export function SpellingBee() {
             )}
             {result === 'wrong' && (
               <div className="flex gap-3">
-                <Button variant="outline" className="gap-2" onClick={retryWord} disabled={nextDisabled}>
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={retryWord}
+                  disabled={nextDisabled}
+                >
                   <RotateCcw className="size-4" /> Try again
                 </Button>
                 <Button className="gap-2" onClick={advanceWord} disabled={nextDisabled}>

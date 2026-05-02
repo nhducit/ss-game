@@ -16,7 +16,12 @@ export function BoolBlock({
   onClick?: () => void
   size?: 'sm' | 'md' | 'lg'
 }) {
-  const pad = size === 'sm' ? 'px-3 py-1 text-xs' : size === 'lg' ? 'px-5 py-2 text-base' : 'px-4 py-1.5 text-sm'
+  const pad =
+    size === 'sm'
+      ? 'px-3 py-1 text-xs'
+      : size === 'lg'
+        ? 'px-5 py-2 text-base'
+        : 'px-4 py-1.5 text-sm'
   return (
     <button
       type="button"
@@ -31,7 +36,12 @@ export function BoolBlock({
       )}
     >
       {label}
-      <span className={cn('ml-2 inline-block size-2.5 rounded-full', value ? 'bg-white shadow-[0_0_6px_white]' : 'bg-white/30')} />
+      <span
+        className={cn(
+          'ml-2 inline-block size-2.5 rounded-full',
+          value ? 'bg-white shadow-[0_0_6px_white]' : 'bg-white/30',
+        )}
+      />
     </button>
   )
 }
@@ -61,7 +71,11 @@ export function OperatorBlock({
     >
       {op !== 'not' && <span className="contents">{arrayFirst(children)}</span>}
       <span className="uppercase text-xs tracking-wide">{op}</span>
-      {op !== 'not' ? <span className="contents">{arraySecond(children)}</span> : <span className="contents">{children}</span>}
+      {op !== 'not' ? (
+        <span className="contents">{arraySecond(children)}</span>
+      ) : (
+        <span className="contents">{children}</span>
+      )}
     </span>
   )
 }
@@ -97,7 +111,12 @@ export function Bulb({ on, size = 80 }: { on: boolean; size?: number }) {
         </defs>
         {on && (
           <circle cx="40" cy="38" r="38" fill="#fde68a" opacity="0.45">
-            <animate attributeName="opacity" values="0.3;0.55;0.3" dur="1.2s" repeatCount="indefinite" />
+            <animate
+              attributeName="opacity"
+              values="0.3;0.55;0.3"
+              dur="1.2s"
+              repeatCount="indefinite"
+            />
           </circle>
         )}
         <path
@@ -106,9 +125,33 @@ export function Bulb({ on, size = 80 }: { on: boolean; size?: number }) {
           stroke="#1f2937"
           strokeWidth="2"
         />
-        <rect x="26" y="72" width="28" height="6" fill="#6b7280" stroke="#1f2937" strokeWidth="1.5" />
-        <rect x="28" y="78" width="24" height="5" fill="#6b7280" stroke="#1f2937" strokeWidth="1.5" />
-        <rect x="30" y="83" width="20" height="5" fill="#6b7280" stroke="#1f2937" strokeWidth="1.5" />
+        <rect
+          x="26"
+          y="72"
+          width="28"
+          height="6"
+          fill="#6b7280"
+          stroke="#1f2937"
+          strokeWidth="1.5"
+        />
+        <rect
+          x="28"
+          y="78"
+          width="24"
+          height="5"
+          fill="#6b7280"
+          stroke="#1f2937"
+          strokeWidth="1.5"
+        />
+        <rect
+          x="30"
+          y="83"
+          width="20"
+          height="5"
+          fill="#6b7280"
+          stroke="#1f2937"
+          strokeWidth="1.5"
+        />
         <path d="M 34 88 L 46 94" stroke="#1f2937" strokeWidth="2" fill="none" />
       </svg>
     </div>
@@ -133,7 +176,9 @@ export function Switch({
         className={cn(
           'relative flex items-center justify-center rounded-2xl border-4 border-gray-700 shadow-lg transition-all active:scale-95 touch-manipulation',
           'w-20 h-28',
-          on ? 'bg-gradient-to-b from-amber-300 to-amber-500' : 'bg-gradient-to-b from-gray-600 to-gray-800',
+          on
+            ? 'bg-gradient-to-b from-amber-300 to-amber-500'
+            : 'bg-gradient-to-b from-gray-600 to-gray-800',
         )}
       >
         <div
@@ -144,10 +189,12 @@ export function Switch({
               : 'bg-gradient-to-b from-gray-300 to-gray-500 translate-y-[22px]',
           )}
         />
-        <span className={cn(
-          'absolute text-[10px] font-extrabold tracking-wider',
-          on ? 'top-1.5 text-amber-900' : 'bottom-1.5 text-gray-200',
-        )}>
+        <span
+          className={cn(
+            'absolute text-[10px] font-extrabold tracking-wider',
+            on ? 'top-1.5 text-amber-900' : 'bottom-1.5 text-gray-200',
+          )}
+        >
           {on ? 'ON' : 'OFF'}
         </span>
       </button>

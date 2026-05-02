@@ -3,13 +3,17 @@ import { Link, useLocation } from '@tanstack/react-router'
 import { getPlayer } from '@/games/convex-sync'
 import { getPlayerLevel } from '@/games/gamification'
 
-const CELEBRATIONS = [
-  '🎉', '🥳', '🎊', '✨', '💪', '👏', '🌟', '💫', '🏅', '🎯',
-]
+const CELEBRATIONS = ['🎉', '🥳', '🎊', '✨', '💪', '👏', '🌟', '💫', '🏅', '🎯']
 
 const MESSAGES = [
-  'Amazing!', 'Great job!', 'Keep going!', 'Awesome!',
-  'Fantastic!', 'Brilliant!', 'Way to go!', 'Super!',
+  'Amazing!',
+  'Great job!',
+  'Keep going!',
+  'Awesome!',
+  'Fantastic!',
+  'Brilliant!',
+  'Way to go!',
+  'Super!',
 ]
 
 function StarNotification({ stars, onDone }: { stars: number; onDone: () => void }) {
@@ -27,10 +31,12 @@ function StarNotification({ stars, onDone }: { stars: number; onDone: () => void
         <span
           key={i}
           className="absolute text-2xl animate-star-fly"
-          style={{
-            '--angle': `${(i * 45)}deg`,
-            '--delay': `${i * 60}ms`,
-          } as React.CSSProperties}
+          style={
+            {
+              '--angle': `${i * 45}deg`,
+              '--delay': `${i * 60}ms`,
+            } as React.CSSProperties
+          }
         >
           ⭐
         </span>
@@ -54,16 +60,18 @@ export function NavBar() {
   const keyRef = useRef(0)
 
   const refresh = useCallback(() => {
-    getPlayer().then(player => {
-      if (player) {
-        setData({
-          stars: player.totalStars,
-          streak: player.currentStreak,
-          emoji: player.emoji,
-          name: player.name,
-        })
-      }
-    }).catch(() => {})
+    getPlayer()
+      .then(player => {
+        if (player) {
+          setData({
+            stars: player.totalStars,
+            streak: player.currentStreak,
+            emoji: player.emoji,
+            name: player.name,
+          })
+        }
+      })
+      .catch(() => {})
   }, [])
 
   useEffect(() => {
@@ -89,7 +97,15 @@ export function NavBar() {
 
   const lvl = getPlayerLevel(data.stars)
 
-  const hiddenPaths = ['/caro', '/tic-tac-toe', '/o-an-quan', '/connect-four', '/dots-and-boxes', '/reversi', '/games']
+  const hiddenPaths = [
+    '/caro',
+    '/tic-tac-toe',
+    '/o-an-quan',
+    '/connect-four',
+    '/dots-and-boxes',
+    '/reversi',
+    '/games',
+  ]
   if (hiddenPaths.includes(location.pathname)) return null
 
   return (
@@ -106,14 +122,22 @@ export function NavBar() {
           {data.streak > 0 && (
             <span className="text-sm font-bold text-orange-500">🔥 {data.streak}</span>
           )}
-          <span className={`text-sm font-bold tabular-nums transition-transform ${bounce ? 'scale-150 text-yellow-500' : ''}`}>
+          <span
+            className={`text-sm font-bold tabular-nums transition-transform ${bounce ? 'scale-150 text-yellow-500' : ''}`}
+          >
             ⭐ {data.stars}
           </span>
-          <span className="text-xs text-muted-foreground">{lvl.emoji} {lvl.name}</span>
+          <span className="text-xs text-muted-foreground">
+            {lvl.emoji} {lvl.name}
+          </span>
         </Link>
         <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <span className="text-2xl">{data.emoji}</span>
-          {data.name && <span className="text-sm font-medium text-foreground hidden sm:inline">{data.name}</span>}
+          {data.name && (
+            <span className="text-sm font-medium text-foreground hidden sm:inline">
+              {data.name}
+            </span>
+          )}
         </Link>
       </div>
     </>

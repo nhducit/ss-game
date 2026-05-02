@@ -21,7 +21,10 @@ export function variables(e: Expr): string[] {
   const walk = (x: Expr) => {
     if (x.kind === 'var') set.add(x.name)
     else if (x.kind === 'not') walk(x.x)
-    else { walk(x.a); walk(x.b) }
+    else {
+      walk(x.a)
+      walk(x.b)
+    }
   }
   walk(e)
   return Array.from(set).sort()

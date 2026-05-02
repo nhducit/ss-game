@@ -3,7 +3,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { ArrowLeft, RotateCcw, Trophy } from 'lucide-react'
-import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord } from '@/games/chinese/words'
+import {
+  shuffle,
+  getWords,
+  type ChineseCategory,
+  type Level,
+  type ChineseWord,
+} from '@/games/chinese/words'
 import { speakChinese } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
 import { recordCorrect, getSmartWordOrder } from '@/games/chinese/progress'
@@ -31,63 +37,69 @@ export function CharacterMatch() {
   const [moves, setMoves] = useState(0)
   const [matches, setMatches] = useState(0)
 
-  const startCategory = useCallback((cat: ChineseCategory, lvl: Level) => {
-    const levelWords = getWords(cat, lvl)
-    const selectedWords = getSmartWordOrder(cat.id, lvl, levelWords).slice(0, PAIR_COUNT)
-    const cardPairs: MatchCard[] = []
-    selectedWords.forEach((word, i) => {
-      cardPairs.push({ id: i * 2, word, type: 'emoji', matched: false })
-      cardPairs.push({ id: i * 2 + 1, word, type: 'character', matched: false })
-    })
-    setCategory(cat)
-    setLevel(lvl)
-    setCards(shuffle(cardPairs))
-    setFlipped([])
-    setLocked(false)
-    setMoves(0)
-    setMatches(0)
-    setScreen('playing')
-    resetRecordGame()
-  }, [resetRecordGame])
+  const startCategory = useCallback(
+    (cat: ChineseCategory, lvl: Level) => {
+      const levelWords = getWords(cat, lvl)
+      const selectedWords = getSmartWordOrder(cat.id, lvl, levelWords).slice(0, PAIR_COUNT)
+      const cardPairs: MatchCard[] = []
+      selectedWords.forEach((word, i) => {
+        cardPairs.push({ id: i * 2, word, type: 'emoji', matched: false })
+        cardPairs.push({ id: i * 2 + 1, word, type: 'character', matched: false })
+      })
+      setCategory(cat)
+      setLevel(lvl)
+      setCards(shuffle(cardPairs))
+      setFlipped([])
+      setLocked(false)
+      setMoves(0)
+      setMatches(0)
+      setScreen('playing')
+      resetRecordGame()
+    },
+    [resetRecordGame],
+  )
 
-  const handleCardClick = useCallback((index: number) => {
-    if (locked) return
-    const card = cards[index]
-    if (card.matched || flipped.includes(index)) return
+  const handleCardClick = useCallback(
+    (index: number) => {
+      if (locked) return
+      const card = cards[index]
+      if (card.matched || flipped.includes(index)) return
 
-    if (card.type === 'character') {
-      speakChinese(card.word.chinese)
-    }
-
-    const newFlipped = [...flipped, index]
-    setFlipped(newFlipped)
-
-    if (newFlipped.length === 2) {
-      setMoves(m => m + 1)
-      setLocked(true)
-      const [first, second] = newFlipped
-      const card1 = cards[first]
-      const card2 = cards[second]
-
-      if (card1.word.chinese === card2.word.chinese && card1.type !== card2.type) {
-        speakChinese(card1.word.chinese, 0.8)
-        recordCorrect(category!.id, level, card1.word.chinese)
-        setTimeout(() => {
-          setCards(prev => prev.map((c, i) =>
-            i === first || i === second ? { ...c, matched: true } : c
-          ))
-          setFlipped([])
-          setLocked(false)
-          setMatches(m => m + 1)
-        }, 600)
-      } else {
-        setTimeout(() => {
-          setFlipped([])
-          setLocked(false)
-        }, 1000)
+      if (card.type === 'character') {
+        speakChinese(card.word.chinese)
       }
-    }
-  }, [cards, flipped, locked, category, level])
+
+      const newFlipped = [...flipped, index]
+      setFlipped(newFlipped)
+
+      if (newFlipped.length === 2) {
+        setMoves(m => m + 1)
+        setLocked(true)
+        const [first, second] = newFlipped
+        const card1 = cards[first]
+        const card2 = cards[second]
+
+        if (card1.word.chinese === card2.word.chinese && card1.type !== card2.type) {
+          speakChinese(card1.word.chinese, 0.8)
+          recordCorrect(category!.id, level, card1.word.chinese)
+          setTimeout(() => {
+            setCards(prev =>
+              prev.map((c, i) => (i === first || i === second ? { ...c, matched: true } : c)),
+            )
+            setFlipped([])
+            setLocked(false)
+            setMatches(m => m + 1)
+          }, 600)
+        } else {
+          setTimeout(() => {
+            setFlipped([])
+            setLocked(false)
+          }, 1000)
+        }
+      }
+    },
+    [cards, flipped, locked, category, level],
+  )
 
   useEffect(() => {
     if (matches === PAIR_COUNT && matches > 0) {
@@ -144,7 +156,11 @@ export function CharacterMatch() {
       <div className="game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border">
         <div className="flex items-center gap-3.5">
           <Tooltip>
-            <TooltipTrigger render={<Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />}>
+            <TooltipTrigger
+              render={
+                <Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />
+              }
+            >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>
             <TooltipContent>Back</TooltipContent>
@@ -152,8 +168,12 @@ export function CharacterMatch() {
           <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">
             {category?.emoji} {category?.name}
           </h1>
-          <Badge variant="secondary" className="gap-1.5 font-bold tabular-nums">Moves: {moves}</Badge>
-          <Badge variant="outline" className="gap-1.5 font-bold tabular-nums">{matches}/{PAIR_COUNT}</Badge>
+          <Badge variant="secondary" className="gap-1.5 font-bold tabular-nums">
+            Moves: {moves}
+          </Badge>
+          <Badge variant="outline" className="gap-1.5 font-bold tabular-nums">
+            {matches}/{PAIR_COUNT}
+          </Badge>
         </div>
       </div>
 

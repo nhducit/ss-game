@@ -4,14 +4,24 @@ import { cn } from '@/lib/utils'
 
 type Level = 'easy' | 'medium' | 'hard'
 
-function TruthRow({ cols, values, highlight }: { cols: string[]; values: (boolean | string)[][]; highlight?: number }) {
+function TruthRow({
+  cols,
+  values,
+  highlight,
+}: {
+  cols: string[]
+  values: (boolean | string)[][]
+  highlight?: number
+}) {
   return (
     <div className="overflow-x-auto">
       <table className="mx-auto text-sm border-separate border-spacing-0 font-mono">
         <thead>
           <tr>
             {cols.map((c, i) => (
-              <th key={i} className="px-3 py-1.5 bg-muted font-bold border border-border">{c}</th>
+              <th key={i} className="px-3 py-1.5 bg-muted font-bold border border-border">
+                {c}
+              </th>
             ))}
           </tr>
         </thead>
@@ -19,10 +29,13 @@ function TruthRow({ cols, values, highlight }: { cols: string[]; values: (boolea
           {values.map((row, ri) => (
             <tr key={ri} className={cn(highlight === ri && 'bg-amber-100 dark:bg-amber-900/40')}>
               {row.map((v, ci) => (
-                <td key={ci} className={cn(
-                  'px-3 py-1.5 border border-border text-center',
-                  typeof v === 'boolean' && (v ? 'text-emerald-600 font-bold' : 'text-rose-500'),
-                )}>
+                <td
+                  key={ci}
+                  className={cn(
+                    'px-3 py-1.5 border border-border text-center',
+                    typeof v === 'boolean' && (v ? 'text-emerald-600 font-bold' : 'text-rose-500'),
+                  )}
+                >
                   {typeof v === 'boolean' ? (v ? 'true ✅' : 'false ❌') : v}
                 </td>
               ))}
@@ -41,7 +54,10 @@ function AndDemo() {
   const result = a && b
   const highlight = (a ? 2 : 0) + (b ? 1 : 0)
   return (
-    <Section title="AND — both must be true" subtitle="The bulb lights only when A AND B are both ON">
+    <Section
+      title="AND — both must be true"
+      subtitle="The bulb lights only when A AND B are both ON"
+    >
       <div className="flex flex-wrap items-center justify-center gap-6">
         <Switch on={a} label="A" onToggle={() => setA(!a)} />
         <Switch on={b} label="B" onToggle={() => setB(!b)} />
@@ -73,7 +89,10 @@ function OrDemo() {
   const result = a || b
   const highlight = (a ? 2 : 0) + (b ? 1 : 0)
   return (
-    <Section title="OR — at least one must be true" subtitle="The bulb lights when A OR B (or both) are ON">
+    <Section
+      title="OR — at least one must be true"
+      subtitle="The bulb lights when A OR B (or both) are ON"
+    >
       <div className="flex flex-wrap items-center justify-center gap-6">
         <Switch on={a} label="A" onToggle={() => setA(!a)} />
         <Switch on={b} label="B" onToggle={() => setB(!b)} />
@@ -259,7 +278,10 @@ function AndOrAndNotDemo() {
   const right = c && notD
   const result = left || right
   return (
-    <Section title="(A AND B) OR (C AND NOT D)" subtitle="Two paths: either A+B are both ON, or C is ON while D is OFF">
+    <Section
+      title="(A AND B) OR (C AND NOT D)"
+      subtitle="Two paths: either A+B are both ON, or C is ON while D is OFF"
+    >
       <div className="flex flex-wrap items-center justify-center gap-6">
         <Switch on={a} label="A" onToggle={() => setA(!a)} />
         <Switch on={b} label="B" onToggle={() => setB(!b)} />
@@ -290,7 +312,10 @@ function NotOrNotDemo() {
   const [b, setB] = useState(false)
   const result = !a || !b
   return (
-    <Section title="(NOT A) OR (NOT B)" subtitle="Lights unless BOTH A and B are ON (same as 'NOT (A AND B)')">
+    <Section
+      title="(NOT A) OR (NOT B)"
+      subtitle="Lights unless BOTH A and B are ON (same as 'NOT (A AND B)')"
+    >
       <div className="flex flex-wrap items-center justify-center gap-6">
         <Switch on={a} label="A" onToggle={() => setA(!a)} />
         <Switch on={b} label="B" onToggle={() => setB(!b)} />
@@ -307,13 +332,22 @@ function NotOrNotDemo() {
         </div>
       </div>
       <p className="text-center text-sm text-muted-foreground max-w-md mx-auto">
-        💡 This is called <strong>De Morgan's Law</strong>: "not A or not B" is the same as "not (A and B)".
+        💡 This is called <strong>De Morgan's Law</strong>: "not A or not B" is the same as "not (A
+        and B)".
       </p>
     </Section>
   )
 }
 
-function Section({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
+function Section({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string
+  subtitle: string
+  children: React.ReactNode
+}) {
   return (
     <section className="flex flex-col gap-4 p-4 rounded-xl border border-border bg-card shadow-sm">
       <div className="text-center">

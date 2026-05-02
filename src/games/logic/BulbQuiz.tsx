@@ -41,7 +41,9 @@ const HARD: Expr[] = [
 
 const POOLS = { easy: EASY, medium: MEDIUM, hard: HARD }
 const STAR: Record<'easy' | 'medium' | 'hard', DifficultyLevel> = {
-  easy: 'starters', medium: 'movers', hard: 'flyers',
+  easy: 'starters',
+  medium: 'movers',
+  hard: 'flyers',
 }
 const ROUND_COUNT = 6
 
@@ -71,13 +73,22 @@ function buildPuzzle(level: 'easy' | 'medium' | 'hard', exclude?: Puzzle): Puzzl
   return { expr, env: randomEnv(variables(expr)) }
 }
 
-function RenderExpr({ e, env, depth = 0 }: { e: Expr; env: Record<string, boolean>; depth?: number }) {
+function RenderExpr({
+  e,
+  env,
+  depth = 0,
+}: {
+  e: Expr
+  env: Record<string, boolean>
+  depth?: number
+}) {
   if (e.kind === 'var') return <BoolBlock value={env[e.name] ?? false} label={e.name} size="sm" />
-  if (e.kind === 'not') return (
-    <OperatorBlock op="not" depth={depth}>
-      <RenderExpr e={e.x} env={env} depth={depth + 1} />
-    </OperatorBlock>
-  )
+  if (e.kind === 'not')
+    return (
+      <OperatorBlock op="not" depth={depth}>
+        <RenderExpr e={e.x} env={env} depth={depth + 1} />
+      </OperatorBlock>
+    )
   return (
     <OperatorBlock op={e.kind} depth={depth}>
       <RenderExpr e={e.a} env={env} depth={depth + 1} />
@@ -86,7 +97,13 @@ function RenderExpr({ e, env, depth = 0 }: { e: Expr; env: Record<string, boolea
   )
 }
 
-export function BulbQuiz({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; onExit: () => void }) {
+export function BulbQuiz({
+  level,
+  onExit,
+}: {
+  level: 'easy' | 'medium' | 'hard'
+  onExit: () => void
+}) {
   const [puzzle, setPuzzle] = useState<Puzzle>(() => buildPuzzle(level))
   const [picked, setPicked] = useState<boolean | null>(null)
   const [round, setRound] = useState(0)
@@ -129,10 +146,17 @@ export function BulbQuiz({ level, onExit }: { level: 'easy' | 'medium' | 'hard';
       <div className="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
         <Trophy className="size-16 text-amber-500" />
         <h2 className="text-3xl font-extrabold">Bulb Predictor!</h2>
-        <p className="text-lg text-muted-foreground">You got {score}/{ROUND_COUNT} right</p>
+        <p className="text-lg text-muted-foreground">
+          You got {score}/{ROUND_COUNT} right
+        </p>
         <div className="flex gap-2">
-          <Button onClick={restart}><RotateCcw className="size-4" />Play again</Button>
-          <Button variant="outline" onClick={onExit}>Back</Button>
+          <Button onClick={restart}>
+            <RotateCcw className="size-4" />
+            Play again
+          </Button>
+          <Button variant="outline" onClick={onExit}>
+            Back
+          </Button>
         </div>
       </div>
     )
@@ -143,16 +167,22 @@ export function BulbQuiz({ level, onExit }: { level: 'easy' | 'medium' | 'hard';
   return (
     <div className="flex flex-col items-center gap-5 p-4 max-w-3xl mx-auto">
       <div className="flex items-center justify-between w-full">
-        <Button variant="ghost" size="sm" onClick={onExit}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ← Back
+        </Button>
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-bold">Round {round + 1}/{ROUND_COUNT}</span>
+          <span className="font-bold">
+            Round {round + 1}/{ROUND_COUNT}
+          </span>
           <span>⭐ {score}</span>
         </div>
         <div className="w-16" />
       </div>
 
       <div className="flex items-center justify-center gap-2 max-w-md">
-        <Speaker text={`Bulb Quiz. Will the bulb light up? The expression is ${speakExpr(puzzle.expr)}. The switches are: ${envSpeech}.`} />
+        <Speaker
+          text={`Bulb Quiz. Will the bulb light up? The expression is ${speakExpr(puzzle.expr)}. The switches are: ${envSpeech}.`}
+        />
         <p className="text-sm text-muted-foreground text-center">Will the bulb light up? 💡</p>
       </div>
 
@@ -160,12 +190,14 @@ export function BulbQuiz({ level, onExit }: { level: 'easy' | 'medium' | 'hard';
         {vars.map(v => (
           <div key={v} className="flex flex-col items-center gap-1">
             <span className="font-bold text-base">{v}</span>
-            <span className={cn(
-              'px-3 py-1.5 rounded-lg border-2 font-extrabold text-sm uppercase shadow-sm',
-              puzzle.env[v]
-                ? 'bg-amber-200 border-amber-500 text-amber-900'
-                : 'bg-zinc-200 border-zinc-500 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
-            )}>
+            <span
+              className={cn(
+                'px-3 py-1.5 rounded-lg border-2 font-extrabold text-sm uppercase shadow-sm',
+                puzzle.env[v]
+                  ? 'bg-amber-200 border-amber-500 text-amber-900'
+                  : 'bg-zinc-200 border-zinc-500 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
+              )}
+            >
               {puzzle.env[v] ? 'ON' : 'OFF'}
             </span>
           </div>
@@ -179,10 +211,12 @@ export function BulbQuiz({ level, onExit }: { level: 'easy' | 'medium' | 'hard';
       {picked !== null && (
         <div className="flex flex-col items-center gap-2 mt-1">
           <Bulb on={answer} size={80} />
-          <span className={cn(
-            'text-xs font-bold uppercase tracking-wide',
-            answer ? 'text-amber-600' : 'text-zinc-500',
-          )}>
+          <span
+            className={cn(
+              'text-xs font-bold uppercase tracking-wide',
+              answer ? 'text-amber-600' : 'text-zinc-500',
+            )}
+          >
             Bulb is {answer ? 'ON' : 'OFF'}
           </span>
         </div>
@@ -211,11 +245,22 @@ export function BulbQuiz({ level, onExit }: { level: 'easy' | 'medium' | 'hard';
 
       {picked !== null && (
         <>
-          <div className={cn('flex items-center gap-2 font-bold text-base', correct ? 'text-emerald-600' : 'text-rose-500')}>
-            {correct
-              ? <><Check className="size-5" /> Correct!</>
-              : <><X className="size-5" /> Answer: <span className="text-foreground">{answer ? 'ON' : 'OFF'}</span></>
-            }
+          <div
+            className={cn(
+              'flex items-center gap-2 font-bold text-base',
+              correct ? 'text-emerald-600' : 'text-rose-500',
+            )}
+          >
+            {correct ? (
+              <>
+                <Check className="size-5" /> Correct!
+              </>
+            ) : (
+              <>
+                <X className="size-5" /> Answer:{' '}
+                <span className="text-foreground">{answer ? 'ON' : 'OFF'}</span>
+              </>
+            )}
           </div>
           <Button size="lg" onClick={next}>
             {round + 1 >= ROUND_COUNT ? '🏁 Finish' : 'Next'} <ArrowRight className="size-4" />

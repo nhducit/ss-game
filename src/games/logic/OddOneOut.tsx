@@ -116,7 +116,9 @@ const HARD_TRIPLES: Triple[] = [
 
 const POOLS = { easy: EASY_TRIPLES, medium: MEDIUM_TRIPLES, hard: HARD_TRIPLES }
 const STAR: Record<'easy' | 'medium' | 'hard', DifficultyLevel> = {
-  easy: 'starters', medium: 'movers', hard: 'flyers',
+  easy: 'starters',
+  medium: 'movers',
+  hard: 'flyers',
 }
 const ROUND_COUNT = 5
 
@@ -154,7 +156,12 @@ function buildRound(level: 'easy' | 'medium' | 'hard', exclude?: Triple): Round 
 
 function RenderExpr({ e, depth = 0 }: { e: Expr; depth?: number }) {
   if (e.kind === 'var') return <BoolBlock value={true} label={e.name} size="sm" />
-  if (e.kind === 'not') return <OperatorBlock op="not" depth={depth}><RenderExpr e={e.x} depth={depth + 1} /></OperatorBlock>
+  if (e.kind === 'not')
+    return (
+      <OperatorBlock op="not" depth={depth}>
+        <RenderExpr e={e.x} depth={depth + 1} />
+      </OperatorBlock>
+    )
   return (
     <OperatorBlock op={e.kind} depth={depth}>
       <RenderExpr e={e.a} depth={depth + 1} />
@@ -163,7 +170,13 @@ function RenderExpr({ e, depth = 0 }: { e: Expr; depth?: number }) {
   )
 }
 
-export function OddOneOut({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; onExit: () => void }) {
+export function OddOneOut({
+  level,
+  onExit,
+}: {
+  level: 'easy' | 'medium' | 'hard'
+  onExit: () => void
+}) {
   const [round, setRound] = useState<Round>(() => buildRound(level))
   const [roundNum, setRoundNum] = useState(0)
   const [picked, setPicked] = useState<number | null>(null)
@@ -202,7 +215,9 @@ export function OddOneOut({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
   // Sanity: equivalence of the two non-odd items (used to describe result).
   const twinEquiv = useMemo(() => {
     const twins: Expr[] = []
-    round.items.forEach((e, i) => { if (i !== round.oddIndex) twins.push(e) })
+    round.items.forEach((e, i) => {
+      if (i !== round.oddIndex) twins.push(e)
+    })
     return twins.length === 2 && equivalent(twins[0], twins[1])
   }, [round])
 
@@ -211,10 +226,17 @@ export function OddOneOut({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
       <div className="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
         <Trophy className="size-16 text-amber-500" />
         <h2 className="text-3xl font-extrabold">Sharp Eye!</h2>
-        <p className="text-lg text-muted-foreground">You got {score}/{ROUND_COUNT} right</p>
+        <p className="text-lg text-muted-foreground">
+          You got {score}/{ROUND_COUNT} right
+        </p>
         <div className="flex gap-2">
-          <Button onClick={restart}><RotateCcw className="size-4" />Play again</Button>
-          <Button variant="outline" onClick={onExit}>Back</Button>
+          <Button onClick={restart}>
+            <RotateCcw className="size-4" />
+            Play again
+          </Button>
+          <Button variant="outline" onClick={onExit}>
+            Back
+          </Button>
         </div>
       </div>
     )
@@ -225,16 +247,22 @@ export function OddOneOut({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
   return (
     <div className="flex flex-col items-center gap-5 p-4 max-w-3xl mx-auto">
       <div className="flex items-center justify-between w-full">
-        <Button variant="ghost" size="sm" onClick={onExit}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ← Back
+        </Button>
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-bold">Round {roundNum + 1}/{ROUND_COUNT}</span>
+          <span className="font-bold">
+            Round {roundNum + 1}/{ROUND_COUNT}
+          </span>
           <span>⭐ {score}</span>
         </div>
         <div className="w-16" />
       </div>
 
       <div className="flex items-center justify-center gap-2 max-w-md">
-        <Speaker text={`Odd One Out. Two blocks give the same output for every input. One is different. Find the odd one. ${spokenList}.`} />
+        <Speaker
+          text={`Odd One Out. Two blocks give the same output for every input. One is different. Find the odd one. ${spokenList}.`}
+        />
         <p className="text-sm text-muted-foreground text-center">
           Two blocks are <em>always</em> equal. One is different. Tap the odd one out.
         </p>
@@ -261,14 +289,16 @@ export function OddOneOut({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
                 picked !== null && !isPicked && !revealOdd && 'opacity-50',
               )}
             >
-              <span className={cn(
-                'flex size-9 shrink-0 items-center justify-center rounded-full font-extrabold',
-                picked === null && 'bg-muted text-foreground',
-                isCorrectPick && 'bg-white text-emerald-700',
-                isWrongPick && 'bg-white text-rose-700',
-                revealOdd && 'bg-emerald-500 text-white',
-                picked !== null && !isPicked && !revealOdd && 'bg-muted text-muted-foreground',
-              )}>
+              <span
+                className={cn(
+                  'flex size-9 shrink-0 items-center justify-center rounded-full font-extrabold',
+                  picked === null && 'bg-muted text-foreground',
+                  isCorrectPick && 'bg-white text-emerald-700',
+                  isWrongPick && 'bg-white text-rose-700',
+                  revealOdd && 'bg-emerald-500 text-white',
+                  picked !== null && !isPicked && !revealOdd && 'bg-muted text-muted-foreground',
+                )}
+              >
                 {i + 1}
               </span>
               <div className="flex flex-wrap items-center gap-1 flex-1">
@@ -276,7 +306,11 @@ export function OddOneOut({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
               </div>
               {isCorrectPick && <Check className="size-5" />}
               {isWrongPick && <X className="size-5" />}
-              {revealOdd && <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">← odd one</span>}
+              {revealOdd && (
+                <span className="text-xs font-bold text-emerald-700 dark:text-emerald-300">
+                  ← odd one
+                </span>
+              )}
             </button>
           )
         })}
@@ -284,11 +318,22 @@ export function OddOneOut({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
 
       {picked !== null && (
         <div className="flex flex-col items-center gap-3">
-          <div className={cn('flex items-center gap-2 font-bold text-base', correct ? 'text-emerald-600' : 'text-rose-500')}>
-            {correct
-              ? <><Check className="size-5" /> Nice — the other two are {twinEquiv ? 'always equal' : 'the same'}.</>
-              : <><X className="size-5" /> Answer: Block {round.oddIndex + 1}</>
-            }
+          <div
+            className={cn(
+              'flex items-center gap-2 font-bold text-base',
+              correct ? 'text-emerald-600' : 'text-rose-500',
+            )}
+          >
+            {correct ? (
+              <>
+                <Check className="size-5" /> Nice — the other two are{' '}
+                {twinEquiv ? 'always equal' : 'the same'}.
+              </>
+            ) : (
+              <>
+                <X className="size-5" /> Answer: Block {round.oddIndex + 1}
+              </>
+            )}
           </div>
           <Button size="lg" onClick={next}>
             {roundNum + 1 >= ROUND_COUNT ? '🏁 Finish' : 'Next'} <ArrowRight className="size-4" />

@@ -73,14 +73,19 @@ export function GamesMenu() {
         <Lock className="size-12 text-muted-foreground" />
         <div className="text-center">
           <h1 className="text-2xl font-extrabold tracking-tight text-foreground">Enter password</h1>
-          <p className="mt-1 text-sm text-muted-foreground">These games require a password to play</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            These games require a password to play
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col items-center gap-3 w-full max-w-xs">
           <input
             type="password"
             inputMode="numeric"
             value={input}
-            onChange={(e) => { setInput(e.target.value); setError(false) }}
+            onChange={e => {
+              setInput(e.target.value)
+              setError(false)
+            }}
             placeholder="Password"
             className={
               `w-full text-center text-2xl tracking-[0.3em] font-mono px-4 py-3 rounded-lg border-2 bg-background outline-none transition-colors` +
@@ -93,7 +98,10 @@ export function GamesMenu() {
             Unlock
           </Button>
         </form>
-        <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <Link
+          to="/"
+          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+        >
           &larr; Back to home
         </Link>
       </div>
@@ -107,7 +115,7 @@ export function GamesMenu() {
         <p className="mt-1 text-muted-foreground">Pick a game to play</p>
       </div>
       <div className="grid w-full max-w-2xl grid-cols-2 sm:grid-cols-3 gap-3">
-        {games.map((game) => (
+        {games.map(game => (
           <Link key={game.id} to={game.to} className="no-underline">
             <Card className="cursor-pointer transition-colors hover:bg-muted/50 h-full">
               <CardHeader className="flex flex-col items-center text-center gap-2 p-4">
@@ -123,7 +131,10 @@ export function GamesMenu() {
           </Link>
         ))}
       </div>
-      <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+      <Link
+        to="/"
+        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+      >
         &larr; Back to home
       </Link>
     </div>

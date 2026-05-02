@@ -2,7 +2,17 @@ import { useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Lightbulb, HelpCircle, Shapes, GraduationCap, Table, Equal, Puzzle, Eye, Sparkles } from 'lucide-react'
+import {
+  Lightbulb,
+  HelpCircle,
+  Shapes,
+  GraduationCap,
+  Table,
+  Equal,
+  Puzzle,
+  Eye,
+  Sparkles,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Learn } from './Learn'
 import { LightUp } from './LightUp'
@@ -14,7 +24,17 @@ import { BlockBuilder } from './BlockBuilder'
 import { BulbQuiz } from './BulbQuiz'
 import { OddOneOut } from './OddOneOut'
 
-type View = 'menu' | 'learn' | 'light-up' | 'gate-guess' | 'sprite-filter' | 'truth-fill' | 'spot-same' | 'block-builder' | 'bulb-quiz' | 'odd-one-out'
+type View =
+  | 'menu'
+  | 'learn'
+  | 'light-up'
+  | 'gate-guess'
+  | 'sprite-filter'
+  | 'truth-fill'
+  | 'spot-same'
+  | 'block-builder'
+  | 'bulb-quiz'
+  | 'odd-one-out'
 type Level = 'easy' | 'medium' | 'hard'
 
 const LEVELS: { id: Level; name: string; emoji: string; color: string }[] = [
@@ -23,7 +43,13 @@ const LEVELS: { id: Level; name: string; emoji: string; color: string }[] = [
   { id: 'hard', name: 'Hard', emoji: '🔥', color: 'bg-rose-500' },
 ]
 
-const ACTIVITIES: { id: Exclude<View, 'menu'>; title: string; description: string; icon: React.ComponentType<{ className?: string }>; accent: string }[] = [
+const ACTIVITIES: {
+  id: Exclude<View, 'menu'>
+  title: string
+  description: string
+  icon: React.ComponentType<{ className?: string }>
+  accent: string
+}[] = [
   {
     id: 'learn',
     title: 'Learn 📚',
@@ -98,7 +124,9 @@ export function Logic() {
       return (
         <div className="flex flex-col items-center gap-4 p-4">
           <div className="flex items-center justify-between w-full max-w-3xl">
-            <Button variant="ghost" size="sm" onClick={() => setView('menu')}>← Back</Button>
+            <Button variant="ghost" size="sm" onClick={() => setView('menu')}>
+              ← Back
+            </Button>
             <LevelPills level={level} onChange={setLevel} />
             <div className="w-12" />
           </div>
@@ -108,10 +136,12 @@ export function Logic() {
     }
     if (view === 'light-up') return <LightUp level={level} onExit={() => setView('menu')} />
     if (view === 'gate-guess') return <GateGuess level={level} onExit={() => setView('menu')} />
-    if (view === 'sprite-filter') return <SpriteFilter level={level} onExit={() => setView('menu')} />
+    if (view === 'sprite-filter')
+      return <SpriteFilter level={level} onExit={() => setView('menu')} />
     if (view === 'truth-fill') return <TruthFill level={level} onExit={() => setView('menu')} />
     if (view === 'spot-same') return <SpotSame level={level} onExit={() => setView('menu')} />
-    if (view === 'block-builder') return <BlockBuilder level={level} onExit={() => setView('menu')} />
+    if (view === 'block-builder')
+      return <BlockBuilder level={level} onExit={() => setView('menu')} />
     if (view === 'bulb-quiz') return <BulbQuiz level={level} onExit={() => setView('menu')} />
     if (view === 'odd-one-out') return <OddOneOut level={level} onExit={() => setView('menu')} />
   }
@@ -135,7 +165,12 @@ export function Logic() {
           >
             <Card className="cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg h-full overflow-hidden">
               <CardHeader className="flex flex-col items-center text-center gap-2 p-4">
-                <div className={cn('flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md', a.accent)}>
+                <div
+                  className={cn(
+                    'flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md',
+                    a.accent,
+                  )}
+                >
                   <a.icon className="size-7" />
                 </div>
                 <div>
@@ -148,7 +183,10 @@ export function Logic() {
         ))}
       </div>
 
-      <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors mt-4">
+      <Link
+        to="/"
+        className="text-sm text-muted-foreground hover:text-foreground transition-colors mt-4"
+      >
         ← Back to home
       </Link>
     </div>

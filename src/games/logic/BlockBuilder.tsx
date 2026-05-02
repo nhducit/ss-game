@@ -29,7 +29,7 @@ function easyOpBetween(aName: string, bName: string): Puzzle {
   const op: Op = Math.random() < 0.5 ? 'and' : 'or'
   const target = op === 'and' ? AND(V(aName), V(bName)) : OR(V(aName), V(bName))
   return {
-    build: (choices) => {
+    build: choices => {
       const o = choices[0] as Op
       return o === 'and' ? AND(V(aName), V(bName)) : OR(V(aName), V(bName))
     },
@@ -53,7 +53,7 @@ function easyNotThenOp(aName: string, bName: string): Puzzle {
   const left: Expr = useNot === 'not' ? NOT(V(aName)) : V(aName)
   const target = op === 'and' ? AND(left, V(bName)) : OR(left, V(bName))
   return {
-    build: (choices) => {
+    build: choices => {
       const u = choices[0] as UnaryFlag
       const l: Expr = u === 'not' ? NOT(V(aName)) : V(aName)
       return op === 'and' ? AND(l, V(bName)) : OR(l, V(bName))
@@ -71,7 +71,7 @@ function mediumPuzzle(aName: string, bName: string): Puzzle {
   const right: Expr = useNot === 'not' ? NOT(V(bName)) : V(bName)
   const target = op === 'and' ? AND(V(aName), right) : OR(V(aName), right)
   return {
-    build: (choices) => {
+    build: choices => {
       const o = choices[0] as Op
       const u = choices[1] as UnaryFlag
       const r: Expr = u === 'not' ? NOT(V(bName)) : V(bName)
@@ -91,7 +91,7 @@ function hardPuzzle(aName: string, bName: string, cName: string): Puzzle {
   const inner: Expr = op1 === 'and' ? AND(V(aName), V(bName)) : OR(V(aName), V(bName))
   const target = op2 === 'and' ? AND(inner, V(cName)) : OR(inner, V(cName))
   return {
-    build: (choices) => {
+    build: choices => {
       const o1 = choices[0] as Op
       const o2 = choices[1] as Op
       const inn: Expr = o1 === 'and' ? AND(V(aName), V(bName)) : OR(V(aName), V(bName))
@@ -112,13 +112,20 @@ function buildPuzzle(level: 'easy' | 'medium' | 'hard'): Puzzle {
 }
 
 const STAR: Record<'easy' | 'medium' | 'hard', DifficultyLevel> = {
-  easy: 'starters', medium: 'movers', hard: 'flyers',
+  easy: 'starters',
+  medium: 'movers',
+  hard: 'flyers',
 }
 const ROUND_COUNT = 5
 
 function RenderExpr({ e, depth = 0 }: { e: Expr; depth?: number }) {
   if (e.kind === 'var') return <BoolBlock value={true} label={e.name} size="sm" />
-  if (e.kind === 'not') return <OperatorBlock op="not" depth={depth}><RenderExpr e={e.x} depth={depth + 1} /></OperatorBlock>
+  if (e.kind === 'not')
+    return (
+      <OperatorBlock op="not" depth={depth}>
+        <RenderExpr e={e.x} depth={depth + 1} />
+      </OperatorBlock>
+    )
   return (
     <OperatorBlock op={e.kind} depth={depth}>
       <RenderExpr e={e.a} depth={depth + 1} />
@@ -150,13 +157,17 @@ function HoleButton({
         'px-3 py-2 rounded-lg border-2 font-extrabold text-white text-sm transition-all active:scale-95 touch-manipulation min-w-[80px]',
         value === null && 'bg-muted border-dashed border-muted-foreground text-muted-foreground',
         value !== null && kind === 'op' && 'bg-[#59C059] border-[#3a8a3a]',
-        value !== null && kind === 'unary' && (value === 'not' ? 'bg-[#59C059] border-[#3a8a3a]' : 'bg-zinc-400 border-zinc-500'),
+        value !== null &&
+          kind === 'unary' &&
+          (value === 'not' ? 'bg-[#59C059] border-[#3a8a3a]' : 'bg-zinc-400 border-zinc-500'),
         wrong && 'ring-4 ring-rose-500/60',
       )}
     >
       {label}
       {wrong && revealed && (
-        <div className="text-[10px] font-normal mt-0.5 text-rose-100">(was {revealed === 'id' ? '(no NOT)' : revealed.toUpperCase()})</div>
+        <div className="text-[10px] font-normal mt-0.5 text-rose-100">
+          (was {revealed === 'id' ? '(no NOT)' : revealed.toUpperCase()})
+        </div>
       )}
     </button>
   )
@@ -181,7 +192,11 @@ function RenderTemplate({
     return (
       <div className="flex flex-wrap items-center justify-center gap-2">
         <BoolBlock value={true} label="A" size="sm" />
-        <HoleButton kind="op" value={choices[0]} onClick={() => cycle(setChoice, 0, choices[0] as Op | null, ['and', 'or'])} />
+        <HoleButton
+          kind="op"
+          value={choices[0]}
+          onClick={() => cycle(setChoice, 0, choices[0] as Op | null, ['and', 'or'])}
+        />
         <BoolBlock value={true} label="B" size="sm" />
       </div>
     )
@@ -192,9 +207,15 @@ function RenderTemplate({
     const op = target.kind === 'and' || target.kind === 'or' ? target.kind : 'and'
     return (
       <div className="flex flex-wrap items-center justify-center gap-2">
-        <HoleButton kind="unary" value={choices[0]} onClick={() => cycle(setChoice, 0, choices[0] as UnaryFlag | null, ['id', 'not'])} />
+        <HoleButton
+          kind="unary"
+          value={choices[0]}
+          onClick={() => cycle(setChoice, 0, choices[0] as UnaryFlag | null, ['id', 'not'])}
+        />
         <BoolBlock value={true} label="A" size="sm" />
-        <span className="px-2 py-1.5 rounded-md bg-[#59C059] text-white font-bold text-sm uppercase">{op}</span>
+        <span className="px-2 py-1.5 rounded-md bg-[#59C059] text-white font-bold text-sm uppercase">
+          {op}
+        </span>
         <BoolBlock value={true} label="B" size="sm" />
       </div>
     )
@@ -204,8 +225,16 @@ function RenderTemplate({
     return (
       <div className="flex flex-wrap items-center justify-center gap-2">
         <BoolBlock value={true} label="A" size="sm" />
-        <HoleButton kind="op" value={choices[0]} onClick={() => cycle(setChoice, 0, choices[0] as Op | null, ['and', 'or'])} />
-        <HoleButton kind="unary" value={choices[1]} onClick={() => cycle(setChoice, 1, choices[1] as UnaryFlag | null, ['id', 'not'])} />
+        <HoleButton
+          kind="op"
+          value={choices[0]}
+          onClick={() => cycle(setChoice, 0, choices[0] as Op | null, ['and', 'or'])}
+        />
+        <HoleButton
+          kind="unary"
+          value={choices[1]}
+          onClick={() => cycle(setChoice, 1, choices[1] as UnaryFlag | null, ['id', 'not'])}
+        />
         <BoolBlock value={true} label="B" size="sm" />
       </div>
     )
@@ -215,10 +244,18 @@ function RenderTemplate({
     <div className="flex flex-wrap items-center justify-center gap-2">
       <span className="text-muted-foreground font-bold">(</span>
       <BoolBlock value={true} label="A" size="sm" />
-      <HoleButton kind="op" value={choices[0]} onClick={() => cycle(setChoice, 0, choices[0] as Op | null, ['and', 'or'])} />
+      <HoleButton
+        kind="op"
+        value={choices[0]}
+        onClick={() => cycle(setChoice, 0, choices[0] as Op | null, ['and', 'or'])}
+      />
       <BoolBlock value={true} label="B" size="sm" />
       <span className="text-muted-foreground font-bold">)</span>
-      <HoleButton kind="op" value={choices[1]} onClick={() => cycle(setChoice, 1, choices[1] as Op | null, ['and', 'or'])} />
+      <HoleButton
+        kind="op"
+        value={choices[1]}
+        onClick={() => cycle(setChoice, 1, choices[1] as Op | null, ['and', 'or'])}
+      />
       <BoolBlock value={true} label="C" size="sm" />
     </div>
   )
@@ -236,9 +273,17 @@ function RenderTemplate({
   }
 }
 
-export function BlockBuilder({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; onExit: () => void }) {
+export function BlockBuilder({
+  level,
+  onExit,
+}: {
+  level: 'easy' | 'medium' | 'hard'
+  onExit: () => void
+}) {
   const [puzzle, setPuzzle] = useState<Puzzle>(() => buildPuzzle(level))
-  const [choices, setChoices] = useState<(Op | UnaryFlag | null)[]>(() => puzzle.holes.map(() => null))
+  const [choices, setChoices] = useState<(Op | UnaryFlag | null)[]>(() =>
+    puzzle.holes.map(() => null),
+  )
   const [checked, setChecked] = useState(false)
   const [round, setRound] = useState(0)
   const [score, setScore] = useState(0)
@@ -252,7 +297,9 @@ export function BlockBuilder({ level, onExit }: { level: 'easy' | 'medium' | 'ha
   if (filled) {
     builtExpr = puzzle.build(choices as (Op | UnaryFlag)[])
     const vars = variables(builtExpr)
-    correct = allAssignments(vars).every(env => evalExpr(builtExpr!, env) === evalExpr(puzzle.target, env))
+    correct = allAssignments(vars).every(
+      env => evalExpr(builtExpr!, env) === evalExpr(puzzle.target, env),
+    )
   }
 
   const setChoice = (i: number, v: Op | UnaryFlag) => {
@@ -298,10 +345,17 @@ export function BlockBuilder({ level, onExit }: { level: 'easy' | 'medium' | 'ha
       <div className="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
         <Trophy className="size-16 text-amber-500" />
         <h2 className="text-3xl font-extrabold">Block Builder!</h2>
-        <p className="text-lg text-muted-foreground">Correct builds: {score}/{ROUND_COUNT}</p>
+        <p className="text-lg text-muted-foreground">
+          Correct builds: {score}/{ROUND_COUNT}
+        </p>
         <div className="flex gap-2">
-          <Button onClick={restart}><RotateCcw className="size-4" />Play again</Button>
-          <Button variant="outline" onClick={onExit}>Back</Button>
+          <Button onClick={restart}>
+            <RotateCcw className="size-4" />
+            Play again
+          </Button>
+          <Button variant="outline" onClick={onExit}>
+            Back
+          </Button>
         </div>
       </div>
     )
@@ -314,18 +368,25 @@ export function BlockBuilder({ level, onExit }: { level: 'easy' | 'medium' | 'ha
   return (
     <div className="flex flex-col items-center gap-4 p-4 max-w-3xl mx-auto">
       <div className="flex items-center justify-between w-full">
-        <Button variant="ghost" size="sm" onClick={onExit}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ← Back
+        </Button>
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-bold">Round {round + 1}/{ROUND_COUNT}</span>
+          <span className="font-bold">
+            Round {round + 1}/{ROUND_COUNT}
+          </span>
           <span>⭐ {score}</span>
         </div>
         <div className="w-16" />
       </div>
 
       <div className="flex items-center justify-center gap-2 max-w-md">
-        <Speaker text={`Block Builder. Tap the question mark blocks to pick operators. Match the target: ${speakExpr(puzzle.target)}.`} />
+        <Speaker
+          text={`Block Builder. Tap the question mark blocks to pick operators. Match the target: ${speakExpr(puzzle.target)}.`}
+        />
         <p className="text-sm text-muted-foreground text-center">
-          Tap the <span className="font-bold">?</span> blocks to pick operators. Match the target below 🔧
+          Tap the <span className="font-bold">?</span> blocks to pick operators. Match the target
+          below 🔧
         </p>
       </div>
 
@@ -340,7 +401,11 @@ export function BlockBuilder({ level, onExit }: { level: 'easy' | 'medium' | 'ha
         <table className="font-mono text-xs border-separate border-spacing-0 mt-1">
           <thead>
             <tr className="bg-[#59C059] text-white">
-              {targetVars.map(v => <th key={v} className="px-2 py-1 border border-[#3a8a3a]">{v}</th>)}
+              {targetVars.map(v => (
+                <th key={v} className="px-2 py-1 border border-[#3a8a3a]">
+                  {v}
+                </th>
+              ))}
               <th className="px-2 py-1 border border-[#3a8a3a]">💡</th>
             </tr>
           </thead>
@@ -348,9 +413,16 @@ export function BlockBuilder({ level, onExit }: { level: 'easy' | 'medium' | 'ha
             {rows.map((env, i) => (
               <tr key={i} className={i % 2 === 0 ? 'bg-muted/50' : ''}>
                 {targetVars.map(v => (
-                  <td key={v} className="px-2 py-1 border border-border text-center">{env[v] ? 'on' : 'off'}</td>
+                  <td key={v} className="px-2 py-1 border border-border text-center">
+                    {env[v] ? 'on' : 'off'}
+                  </td>
                 ))}
-                <td className={cn('px-2 py-1 border border-border text-center font-bold', evalExpr(puzzle.target, env) ? 'text-emerald-600' : 'text-rose-500')}>
+                <td
+                  className={cn(
+                    'px-2 py-1 border border-border text-center font-bold',
+                    evalExpr(puzzle.target, env) ? 'text-emerald-600' : 'text-rose-500',
+                  )}
+                >
                   {evalExpr(puzzle.target, env) ? '✅' : '❌'}
                 </td>
               </tr>
@@ -366,11 +438,21 @@ export function BlockBuilder({ level, onExit }: { level: 'easy' | 'medium' | 'ha
       )}
       {checked && (
         <div className="flex flex-col items-center gap-3">
-          <div className={cn('flex items-center gap-2 font-bold text-base', correct ? 'text-emerald-600' : 'text-rose-500')}>
-            {correct
-              ? <><Check className="size-5" /> Perfect match!</>
-              : <><X className="size-5" /> Not quite — target shown:</>
-            }
+          <div
+            className={cn(
+              'flex items-center gap-2 font-bold text-base',
+              correct ? 'text-emerald-600' : 'text-rose-500',
+            )}
+          >
+            {correct ? (
+              <>
+                <Check className="size-5" /> Perfect match!
+              </>
+            ) : (
+              <>
+                <X className="size-5" /> Not quite — target shown:
+              </>
+            )}
           </div>
           {!correct && builtExpr && (
             <div className="flex flex-wrap items-center justify-center gap-2">
@@ -386,4 +468,3 @@ export function BlockBuilder({ level, onExit }: { level: 'easy' | 'medium' | 'ha
     </div>
   )
 }
-

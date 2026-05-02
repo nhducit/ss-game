@@ -12,11 +12,7 @@ type Cell = Player | null
 const SIZE = 8
 const TOTAL = SIZE * SIZE
 
-const DIRECTIONS = [
-  -SIZE - 1, -SIZE, -SIZE + 1,
-  -1,                 1,
-  SIZE - 1,  SIZE,  SIZE + 1,
-]
+const DIRECTIONS = [-SIZE - 1, -SIZE, -SIZE + 1, -1, 1, SIZE - 1, SIZE, SIZE + 1]
 
 function rowCol(index: number): [number, number] {
   return [Math.floor(index / SIZE), index % SIZE]
@@ -37,14 +33,31 @@ function getFlips(board: Cell[], player: Player, index: number): number[] {
     let [r, c] = [row, col]
 
     let dRow: number, dCol: number
-    if (dir === -SIZE - 1) { dRow = -1; dCol = -1 }
-    else if (dir === -SIZE) { dRow = -1; dCol = 0 }
-    else if (dir === -SIZE + 1) { dRow = -1; dCol = 1 }
-    else if (dir === -1) { dRow = 0; dCol = -1 }
-    else if (dir === 1) { dRow = 0; dCol = 1 }
-    else if (dir === SIZE - 1) { dRow = 1; dCol = -1 }
-    else if (dir === SIZE) { dRow = 1; dCol = 0 }
-    else { dRow = 1; dCol = 1 } // SIZE + 1
+    if (dir === -SIZE - 1) {
+      dRow = -1
+      dCol = -1
+    } else if (dir === -SIZE) {
+      dRow = -1
+      dCol = 0
+    } else if (dir === -SIZE + 1) {
+      dRow = -1
+      dCol = 1
+    } else if (dir === -1) {
+      dRow = 0
+      dCol = -1
+    } else if (dir === 1) {
+      dRow = 0
+      dCol = 1
+    } else if (dir === SIZE - 1) {
+      dRow = 1
+      dCol = -1
+    } else if (dir === SIZE) {
+      dRow = 1
+      dCol = 0
+    } else {
+      dRow = 1
+      dCol = 1
+    } // SIZE + 1
 
     r += dRow
     c += dCol
@@ -70,7 +83,11 @@ function getValidMoves(board: Cell[], player: Player): Set<number> {
   return moves
 }
 
-function makeMove(board: Cell[], player: Player, index: number): { newBoard: Cell[]; flipped: number[] } {
+function makeMove(
+  board: Cell[],
+  player: Player,
+  index: number,
+): { newBoard: Cell[]; flipped: number[] } {
   const flips = getFlips(board, player, index)
   const newBoard = [...board]
   newBoard[index] = player
@@ -91,7 +108,8 @@ function createInitialBoard(): Cell[] {
 }
 
 function countDiscs(board: Cell[]): { X: number; O: number } {
-  let X = 0, O = 0
+  let X = 0,
+    O = 0
   for (const cell of board) {
     if (cell === 'X') X++
     else if (cell === 'O') O++
@@ -164,20 +182,23 @@ export function Reversi() {
     }
   }, [board, gameOver])
 
-  const handleClick = useCallback((index: number) => {
-    if (gameOver || !validMoves.has(index) || skipNotice) return
+  const handleClick = useCallback(
+    (index: number) => {
+      if (gameOver || !validMoves.has(index) || skipNotice) return
 
-    const { newBoard, flipped } = makeMove(board, currentPlayer, index)
-    setBoard(newBoard)
-    setLastPlaced(index)
-    setFlippedCells(new Set(flipped))
+      const { newBoard, flipped } = makeMove(board, currentPlayer, index)
+      setBoard(newBoard)
+      setLastPlaced(index)
+      setFlippedCells(new Set(flipped))
 
-    // Clear flip animation after transition
-    setTimeout(() => setFlippedCells(new Set()), 400)
+      // Clear flip animation after transition
+      setTimeout(() => setFlippedCells(new Set()), 400)
 
-    const opponent: Player = currentPlayer === 'X' ? 'O' : 'X'
-    setCurrentPlayer(opponent)
-  }, [board, currentPlayer, gameOver, validMoves, skipNotice])
+      const opponent: Player = currentPlayer === 'X' ? 'O' : 'X'
+      setCurrentPlayer(opponent)
+    },
+    [board, currentPlayer, gameOver, validMoves, skipNotice],
+  )
 
   const resetGame = useCallback(() => {
     setBoard(createInitialBoard())
@@ -201,11 +222,15 @@ export function Reversi() {
   }, [])
 
   const turnClass = gameOver
-    ? gameResult && gameResult !== 'draw' ? `turn-${gameResult.toLowerCase()}` : ''
+    ? gameResult && gameResult !== 'draw'
+      ? `turn-${gameResult.toLowerCase()}`
+      : ''
     : `turn-${currentPlayer.toLowerCase()}`
 
   return (
-    <div className={`game flex flex-col h-svh overflow-hidden transition-colors duration-300 ${turnClass}`}>
+    <div
+      className={`game flex flex-col h-svh overflow-hidden transition-colors duration-300 ${turnClass}`}
+    >
       {/* Navbar */}
       <div className="game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border transition-colors duration-300">
         <div className="flex items-center gap-3.5">
@@ -217,7 +242,9 @@ export function Reversi() {
             </TooltipTrigger>
             <TooltipContent>Back to menu</TooltipContent>
           </Tooltip>
-          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">Reversi</h1>
+          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">
+            Reversi
+          </h1>
           <div className="flex items-center gap-1 tabular-nums">
             <Badge
               variant={currentPlayer === 'X' && !gameOver ? 'secondary' : 'outline'}
@@ -255,9 +282,7 @@ export function Reversi() {
             <TooltipContent>New game</TooltipContent>
           </Tooltip>
           <Tooltip>
-            <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={fullReset} />}
-            >
+            <TooltipTrigger render={<Button variant="ghost" size="icon" onClick={fullReset} />}>
               <Trash2 className="size-4" />
             </TooltipTrigger>
             <TooltipContent>Reset scores</TooltipContent>
@@ -324,10 +349,14 @@ export function Reversi() {
           <Card className="modal-card flex-row items-center justify-between gap-4 px-5 py-3.5 max-w-105 mx-auto">
             <span className="flex items-center gap-2 text-lg font-bold text-foreground">
               {gameResult === 'draw' ? (
-                <>Draw! ({discCount.X} - {discCount.O})</>
+                <>
+                  Draw! ({discCount.X} - {discCount.O})
+                </>
               ) : (
                 <>
-                  <span className={`inline-block size-4 rounded-full ${gameResult === 'X' ? 'bg-[radial-gradient(circle_at_35%_35%,#f08080,#c0392b)]' : 'bg-[radial-gradient(circle_at_35%_35%,#87ceeb,#2980b9)]'}`} />
+                  <span
+                    className={`inline-block size-4 rounded-full ${gameResult === 'X' ? 'bg-[radial-gradient(circle_at_35%_35%,#f08080,#c0392b)]' : 'bg-[radial-gradient(circle_at_35%_35%,#87ceeb,#2980b9)]'}`}
+                  />
                   {gameResult === 'X' ? 'Red' : 'Blue'} wins! ({discCount.X} - {discCount.O})
                 </>
               )}

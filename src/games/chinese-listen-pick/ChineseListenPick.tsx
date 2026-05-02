@@ -3,7 +3,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { ArrowLeft, Volume2, RotateCcw, Trophy, ArrowRight } from 'lucide-react'
-import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord } from '@/games/chinese/words'
+import {
+  shuffle,
+  getWords,
+  type ChineseCategory,
+  type Level,
+  type ChineseWord,
+} from '@/games/chinese/words'
 import { speakChinese } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/chinese/progress'
@@ -19,8 +25,11 @@ interface Round {
 }
 
 function buildRounds(orderedWords: ChineseWord[], allWords: ChineseWord[]): Round[] {
-  return orderedWords.map((correct) => {
-    const distractors = shuffle(allWords.filter(w => w.chinese !== correct.chinese)).slice(0, OPTIONS_COUNT - 1)
+  return orderedWords.map(correct => {
+    const distractors = shuffle(allWords.filter(w => w.chinese !== correct.chinese)).slice(
+      0,
+      OPTIONS_COUNT - 1,
+    )
     const options = shuffle([correct, ...distractors])
     return { correct, options }
   })
@@ -42,22 +51,25 @@ export function ChineseListenPick() {
 
   const currentRound = rounds[roundIndex] ?? null
 
-  const startCategory = useCallback((cat: ChineseCategory, lvl: Level) => {
-    const levelWords = getWords(cat, lvl)
-    const smartOrder = getSmartWordOrder(cat.id, lvl, levelWords)
-    const newRounds = buildRounds(smartOrder, levelWords)
-    setCategory(cat)
-    setLevel(lvl)
-    setRounds(newRounds)
-    setRoundIndex(0)
-    setScore(0)
-    setStreak(0)
-    setCorrect(false)
-    setShowWord(false)
-    setScreen('playing')
-    hasSpoken.current = false
-    resetRecordGame()
-  }, [resetRecordGame])
+  const startCategory = useCallback(
+    (cat: ChineseCategory, lvl: Level) => {
+      const levelWords = getWords(cat, lvl)
+      const smartOrder = getSmartWordOrder(cat.id, lvl, levelWords)
+      const newRounds = buildRounds(smartOrder, levelWords)
+      setCategory(cat)
+      setLevel(lvl)
+      setRounds(newRounds)
+      setRoundIndex(0)
+      setScore(0)
+      setStreak(0)
+      setCorrect(false)
+      setShowWord(false)
+      setScreen('playing')
+      hasSpoken.current = false
+      resetRecordGame()
+    },
+    [resetRecordGame],
+  )
 
   useEffect(() => {
     if (screen === 'playing' && currentRound && !hasSpoken.current) {
@@ -67,25 +79,28 @@ export function ChineseListenPick() {
     }
   }, [screen, currentRound, roundIndex])
 
-  const handlePick = useCallback((word: ChineseWord, optionIndex: number) => {
-    if (!currentRound || correct) return
+  const handlePick = useCallback(
+    (word: ChineseWord, optionIndex: number) => {
+      if (!currentRound || correct) return
 
-    if (word.chinese === currentRound.correct.chinese) {
-      setCorrect(true)
-      setShowWord(true)
-      recordCorrect(category!.id, level, currentRound.correct.chinese)
-      const newStreak = streak + 1
-      setStreak(newStreak)
-      const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
-      setScore(s => s + points)
-      speakChinese(currentRound.correct.chinese, 0.8)
-    } else {
-      setShakeIndex(optionIndex)
-      recordWrong(category!.id, level, currentRound.correct.chinese)
-      setStreak(0)
-      setTimeout(() => setShakeIndex(null), 400)
-    }
-  }, [currentRound, correct, streak, category, level])
+      if (word.chinese === currentRound.correct.chinese) {
+        setCorrect(true)
+        setShowWord(true)
+        recordCorrect(category!.id, level, currentRound.correct.chinese)
+        const newStreak = streak + 1
+        setStreak(newStreak)
+        const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
+        setScore(s => s + points)
+        speakChinese(currentRound.correct.chinese, 0.8)
+      } else {
+        setShakeIndex(optionIndex)
+        recordWrong(category!.id, level, currentRound.correct.chinese)
+        setStreak(0)
+        setTimeout(() => setShakeIndex(null), 400)
+      }
+    },
+    [currentRound, correct, streak, category, level],
+  )
 
   const advanceRound = useCallback(() => {
     if (roundIndex + 1 < rounds.length) {
@@ -147,7 +162,11 @@ export function ChineseListenPick() {
       <div className="game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border">
         <div className="flex items-center gap-3.5">
           <Tooltip>
-            <TooltipTrigger render={<Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />}>
+            <TooltipTrigger
+              render={
+                <Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />
+              }
+            >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>
             <TooltipContent>Back</TooltipContent>
@@ -155,12 +174,18 @@ export function ChineseListenPick() {
           <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">
             {category?.emoji} {category?.name}
           </h1>
-          <Badge variant="secondary" className="gap-1.5 font-bold tabular-nums">⭐ {score}</Badge>
+          <Badge variant="secondary" className="gap-1.5 font-bold tabular-nums">
+            ⭐ {score}
+          </Badge>
           {streak > 1 && (
-            <Badge variant="outline" className="gap-1 font-bold text-orange-500 tabular-nums">🔥 {streak}</Badge>
+            <Badge variant="outline" className="gap-1 font-bold text-orange-500 tabular-nums">
+              🔥 {streak}
+            </Badge>
           )}
         </div>
-        <Badge variant="ghost" className="text-muted-foreground tabular-nums">{roundIndex + 1} / {rounds.length}</Badge>
+        <Badge variant="ghost" className="text-muted-foreground tabular-nums">
+          {roundIndex + 1} / {rounds.length}
+        </Badge>
       </div>
 
       {currentRound && (
@@ -210,9 +235,13 @@ export function ChineseListenPick() {
           {correct && (
             <Button size="lg" className="gap-2 text-lg" onClick={advanceRound}>
               {roundIndex + 1 < rounds.length ? (
-                <>Next <ArrowRight className="size-4" /></>
+                <>
+                  Next <ArrowRight className="size-4" />
+                </>
               ) : (
-                <>Finish <ArrowRight className="size-4" /></>
+                <>
+                  Finish <ArrowRight className="size-4" />
+                </>
               )}
             </Button>
           )}

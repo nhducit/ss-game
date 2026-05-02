@@ -23,7 +23,9 @@ const LEVELS: PlayerLevel[] = [
   { name: 'Legend', minStars: 1000, emoji: '⭐' },
 ]
 
-export function getPlayerLevel(stars: number): PlayerLevel & { nextLevel: PlayerLevel | null; progress: number } {
+export function getPlayerLevel(
+  stars: number,
+): PlayerLevel & { nextLevel: PlayerLevel | null; progress: number } {
   let current = LEVELS[0]
   let nextIdx = 1
   for (let i = LEVELS.length - 1; i >= 0; i--) {
@@ -34,9 +36,7 @@ export function getPlayerLevel(stars: number): PlayerLevel & { nextLevel: Player
     }
   }
   const next = nextIdx < LEVELS.length ? LEVELS[nextIdx] : null
-  const progress = next
-    ? (stars - current.minStars) / (next.minStars - current.minStars)
-    : 1
+  const progress = next ? (stars - current.minStars) / (next.minStars - current.minStars) : 1
   return { ...current, nextLevel: next, progress }
 }
 

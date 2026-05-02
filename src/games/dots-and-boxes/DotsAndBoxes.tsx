@@ -39,10 +39,10 @@ function vLineIndex(r: number, c: number): number {
 
 function boxLines(r: number, c: number): [number, number, number, number] {
   return [
-    hLineIndex(r, c),       // top
-    hLineIndex(r + 1, c),   // bottom
-    vLineIndex(r, c),       // left
-    vLineIndex(r, c + 1),   // right
+    hLineIndex(r, c), // top
+    hLineIndex(r + 1, c), // bottom
+    vLineIndex(r, c), // left
+    vLineIndex(r, c + 1), // right
   ]
 }
 
@@ -95,53 +95,60 @@ export function DotsAndBoxes() {
   const linesDrawn = lines.filter(l => l !== null).length
   const gameOver = linesDrawn === TOTAL_LINES
 
-  const turnClass = gameOver
-    ? ''
-    : currentPlayer === 1
-      ? 'turn-p1'
-      : 'turn-p2'
+  const turnClass = gameOver ? '' : currentPlayer === 1 ? 'turn-p1' : 'turn-p2'
 
-  const handleLineClick = useCallback((lineIdx: number) => {
-    if (lines[lineIdx] !== null || gameOver) return
+  const handleLineClick = useCallback(
+    (lineIdx: number) => {
+      if (lines[lineIdx] !== null || gameOver) return
 
-    const newLines = [...lines]
-    newLines[lineIdx] = currentPlayer
+      const newLines = [...lines]
+      newLines[lineIdx] = currentPlayer
 
-    const newBoxes = [...boxes]
-    let boxesCompleted = 0
-    const completedBoxIndices: number[] = []
+      const newBoxes = [...boxes]
+      let boxesCompleted = 0
+      const completedBoxIndices: number[] = []
 
-    const newRecent = new Set<number>()
+      const newRecent = new Set<number>()
 
-    for (let r = 0; r < BOX_ROWS; r++) {
-      for (let c = 0; c < BOX_COLS; c++) {
-        const boxIdx = r * BOX_COLS + c
-        if (newBoxes[boxIdx] !== null) continue
-        const [t, b, l, ri] = boxLines(r, c)
-        if (newLines[t] !== null && newLines[b] !== null && newLines[l] !== null && newLines[ri] !== null) {
-          newBoxes[boxIdx] = currentPlayer
-          boxesCompleted++
-          completedBoxIndices.push(boxIdx)
-          newRecent.add(boxIdx)
+      for (let r = 0; r < BOX_ROWS; r++) {
+        for (let c = 0; c < BOX_COLS; c++) {
+          const boxIdx = r * BOX_COLS + c
+          if (newBoxes[boxIdx] !== null) continue
+          const [t, b, l, ri] = boxLines(r, c)
+          if (
+            newLines[t] !== null &&
+            newLines[b] !== null &&
+            newLines[l] !== null &&
+            newLines[ri] !== null
+          ) {
+            newBoxes[boxIdx] = currentPlayer
+            boxesCompleted++
+            completedBoxIndices.push(boxIdx)
+            newRecent.add(boxIdx)
+          }
         }
       }
-    }
 
-    setLines(newLines)
-    setBoxes(newBoxes)
-    setRecentBoxes(newRecent)
-    setMoveHistory(h => [...h, { lineIdx, player: currentPlayer, completedBoxes: completedBoxIndices }])
+      setLines(newLines)
+      setBoxes(newBoxes)
+      setRecentBoxes(newRecent)
+      setMoveHistory(h => [
+        ...h,
+        { lineIdx, player: currentPlayer, completedBoxes: completedBoxIndices },
+      ])
 
-    if (boxesCompleted > 0) {
-      setScores(s => {
-        const next: [number, number] = [...s]
-        next[currentPlayer - 1] += boxesCompleted
-        return next
-      })
-    } else {
-      setCurrentPlayer(p => p === 1 ? 2 : 1)
-    }
-  }, [lines, boxes, currentPlayer, gameOver])
+      if (boxesCompleted > 0) {
+        setScores(s => {
+          const next: [number, number] = [...s]
+          next[currentPlayer - 1] += boxesCompleted
+          return next
+        })
+      } else {
+        setCurrentPlayer(p => (p === 1 ? 2 : 1))
+      }
+    },
+    [lines, boxes, currentPlayer, gameOver],
+  )
 
   const undo = useCallback(() => {
     if (moveHistory.length === 0 || gameOver) return
@@ -193,7 +200,9 @@ export function DotsAndBoxes() {
   const bh = boardHeight(gap)
 
   return (
-    <div className={`game flex flex-col h-svh overflow-hidden transition-colors duration-300 ${turnClass}`}>
+    <div
+      className={`game flex flex-col h-svh overflow-hidden transition-colors duration-300 ${turnClass}`}
+    >
       {/* ── Navbar ── */}
       <div className="game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border transition-colors duration-300">
         <div className="flex items-center gap-3.5">
@@ -205,7 +214,9 @@ export function DotsAndBoxes() {
             </TooltipTrigger>
             <TooltipContent>Back to menu</TooltipContent>
           </Tooltip>
-          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">Dots & Boxes</h1>
+          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">
+            Dots & Boxes
+          </h1>
           <div className="flex items-center gap-1 tabular-nums">
             <Badge
               variant={currentPlayer === 1 && !gameOver ? 'secondary' : 'outline'}
@@ -256,9 +267,7 @@ export function DotsAndBoxes() {
             <TooltipContent>New game</TooltipContent>
           </Tooltip>
           <Tooltip>
-            <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={fullReset} />}
-            >
+            <TooltipTrigger render={<Button variant="ghost" size="icon" onClick={fullReset} />}>
               <Trash2 className="size-4" />
             </TooltipTrigger>
             <TooltipContent>Reset scores</TooltipContent>
@@ -268,10 +277,7 @@ export function DotsAndBoxes() {
 
       {/* ── Board ── */}
       <div className="flex-1 flex items-center justify-center p-4" ref={containerRef}>
-        <div
-          className="relative touch-manipulation"
-          style={{ width: bw, height: bh }}
-        >
+        <div className="relative touch-manipulation" style={{ width: bw, height: bh }}>
           {/* Completed boxes */}
           {Array.from({ length: BOX_ROWS }, (_, r) =>
             Array.from({ length: BOX_COLS }, (_, c) => {
@@ -286,7 +292,9 @@ export function DotsAndBoxes() {
                   key={`box-${boxIdx}`}
                   className={
                     `absolute flex items-center justify-center font-bold text-sm transition-colors duration-200 rounded-sm ` +
-                    (owner === 1 ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400 ' : 'bg-sky-500/20 text-sky-600 dark:text-sky-400 ') +
+                    (owner === 1
+                      ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400 '
+                      : 'bg-sky-500/20 text-sky-600 dark:text-sky-400 ') +
                     (recentBoxes.has(boxIdx) ? 'animate-box-pop ' : '')
                   }
                   style={{
@@ -301,7 +309,7 @@ export function DotsAndBoxes() {
                   </span>
                 </div>
               )
-            })
+            }),
           )}
 
           {/* Horizontal lines */}
@@ -341,15 +349,16 @@ export function DotsAndBoxes() {
                         : owner === 2
                           ? 'bg-sky-500 '
                           : isHovered
-                            ? (currentPlayer === 1 ? 'bg-rose-500/40 ' : 'bg-sky-500/40 ')
-                            : 'bg-transparent '
-                      )
+                            ? currentPlayer === 1
+                              ? 'bg-rose-500/40 '
+                              : 'bg-sky-500/40 '
+                            : 'bg-transparent ')
                     }
                     style={{ height: LINE_THICKNESS }}
                   />
                 </button>
               )
-            })
+            }),
           )}
 
           {/* Vertical lines */}
@@ -389,15 +398,16 @@ export function DotsAndBoxes() {
                         : owner === 2
                           ? 'bg-sky-500 '
                           : isHovered
-                            ? (currentPlayer === 1 ? 'bg-rose-500/40 ' : 'bg-sky-500/40 ')
-                            : 'bg-transparent '
-                      )
+                            ? currentPlayer === 1
+                              ? 'bg-rose-500/40 '
+                              : 'bg-sky-500/40 '
+                            : 'bg-transparent ')
                     }
                     style={{ width: LINE_THICKNESS }}
                   />
                 </button>
               )
-            })
+            }),
           )}
 
           {/* Dots */}
@@ -413,7 +423,7 @@ export function DotsAndBoxes() {
                   top: r * gap,
                 }}
               />
-            ))
+            )),
           )}
         </div>
       </div>
@@ -424,13 +434,19 @@ export function DotsAndBoxes() {
           <Card className="modal-card flex-row items-center justify-between gap-4 px-5 py-3.5 max-w-sm mx-auto">
             <span className="flex items-center gap-2 text-lg font-bold text-foreground">
               {scores[0] > scores[1] ? (
-                <><span className="inline-block size-4 rounded-full bg-rose-500" /> Player 1 wins!</>
+                <>
+                  <span className="inline-block size-4 rounded-full bg-rose-500" /> Player 1 wins!
+                </>
               ) : scores[1] > scores[0] ? (
-                <><span className="inline-block size-4 rounded-full bg-sky-500" /> Player 2 wins!</>
+                <>
+                  <span className="inline-block size-4 rounded-full bg-sky-500" /> Player 2 wins!
+                </>
               ) : (
                 <>Draw!</>
               )}
-              <span className="text-sm font-normal text-muted-foreground ml-1">{scores[0]} - {scores[1]}</span>
+              <span className="text-sm font-normal text-muted-foreground ml-1">
+                {scores[0]} - {scores[1]}
+              </span>
             </span>
             <Button onClick={resetGame}>Play Again</Button>
           </Card>

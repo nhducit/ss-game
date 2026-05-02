@@ -31,63 +31,69 @@ export function WordMatch() {
   const [moves, setMoves] = useState(0)
   const [matches, setMatches] = useState(0)
 
-  const startCategory = useCallback((cat: Category, lvl: Level) => {
-    const levelWords = getWords(cat, lvl)
-    const selectedWords = getSmartWordOrder(cat.id, lvl, levelWords).slice(0, PAIR_COUNT)
-    const cardPairs: MatchCard[] = []
-    selectedWords.forEach((word, i) => {
-      cardPairs.push({ id: i * 2, word, type: 'emoji', matched: false })
-      cardPairs.push({ id: i * 2 + 1, word, type: 'word', matched: false })
-    })
-    setCategory(cat)
-    setLevel(lvl)
-    setCards(shuffle(cardPairs))
-    setFlipped([])
-    setLocked(false)
-    setMoves(0)
-    setMatches(0)
-    setScreen('playing')
-    resetRecordGame()
-  }, [resetRecordGame])
+  const startCategory = useCallback(
+    (cat: Category, lvl: Level) => {
+      const levelWords = getWords(cat, lvl)
+      const selectedWords = getSmartWordOrder(cat.id, lvl, levelWords).slice(0, PAIR_COUNT)
+      const cardPairs: MatchCard[] = []
+      selectedWords.forEach((word, i) => {
+        cardPairs.push({ id: i * 2, word, type: 'emoji', matched: false })
+        cardPairs.push({ id: i * 2 + 1, word, type: 'word', matched: false })
+      })
+      setCategory(cat)
+      setLevel(lvl)
+      setCards(shuffle(cardPairs))
+      setFlipped([])
+      setLocked(false)
+      setMoves(0)
+      setMatches(0)
+      setScreen('playing')
+      resetRecordGame()
+    },
+    [resetRecordGame],
+  )
 
-  const handleCardClick = useCallback((index: number) => {
-    if (locked) return
-    const card = cards[index]
-    if (card.matched || flipped.includes(index)) return
+  const handleCardClick = useCallback(
+    (index: number) => {
+      if (locked) return
+      const card = cards[index]
+      if (card.matched || flipped.includes(index)) return
 
-    if (card.type === 'word') {
-      speak(card.word.english)
-    }
-
-    const newFlipped = [...flipped, index]
-    setFlipped(newFlipped)
-
-    if (newFlipped.length === 2) {
-      setMoves(m => m + 1)
-      setLocked(true)
-      const [first, second] = newFlipped
-      const card1 = cards[first]
-      const card2 = cards[second]
-
-      if (card1.word.english === card2.word.english && card1.type !== card2.type) {
-        speak(card1.word.english, 0.8)
-        recordCorrect(category!.id, level, card1.word.english)
-        setTimeout(() => {
-          setCards(prev => prev.map((c, i) =>
-            i === first || i === second ? { ...c, matched: true } : c
-          ))
-          setFlipped([])
-          setLocked(false)
-          setMatches(m => m + 1)
-        }, 600)
-      } else {
-        setTimeout(() => {
-          setFlipped([])
-          setLocked(false)
-        }, 1000)
+      if (card.type === 'word') {
+        speak(card.word.english)
       }
-    }
-  }, [cards, flipped, locked])
+
+      const newFlipped = [...flipped, index]
+      setFlipped(newFlipped)
+
+      if (newFlipped.length === 2) {
+        setMoves(m => m + 1)
+        setLocked(true)
+        const [first, second] = newFlipped
+        const card1 = cards[first]
+        const card2 = cards[second]
+
+        if (card1.word.english === card2.word.english && card1.type !== card2.type) {
+          speak(card1.word.english, 0.8)
+          recordCorrect(category!.id, level, card1.word.english)
+          setTimeout(() => {
+            setCards(prev =>
+              prev.map((c, i) => (i === first || i === second ? { ...c, matched: true } : c)),
+            )
+            setFlipped([])
+            setLocked(false)
+            setMatches(m => m + 1)
+          }, 600)
+        } else {
+          setTimeout(() => {
+            setFlipped([])
+            setLocked(false)
+          }, 1000)
+        }
+      }
+    },
+    [cards, flipped, locked],
+  )
 
   useEffect(() => {
     if (matches === PAIR_COUNT && matches > 0) {
@@ -117,9 +123,7 @@ export function WordMatch() {
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             {stars === 3 ? 'Amazing! 🌟🌟🌟' : stars === 2 ? 'Great job! 🌟🌟' : 'Well done! 🌟'}
           </h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            {category?.name}
-          </p>
+          <p className="mt-2 text-lg text-muted-foreground">{category?.name}</p>
         </div>
         <div className="flex gap-4 text-center">
           <div className="flex flex-col items-center gap-1">
@@ -135,9 +139,7 @@ export function WordMatch() {
           <Button variant="outline" onClick={() => startCategory(category!, level)}>
             <RotateCcw className="size-4 mr-2" /> Play again
           </Button>
-          <Button onClick={() => setScreen('categories')}>
-            Other topics
-          </Button>
+          <Button onClick={() => setScreen('categories')}>Other topics</Button>
         </div>
       </div>
     )
@@ -149,7 +151,9 @@ export function WordMatch() {
         <div className="flex items-center gap-3.5">
           <Tooltip>
             <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />}
+              render={
+                <Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />
+              }
             >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>

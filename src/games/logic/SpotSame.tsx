@@ -5,10 +5,24 @@ import { ArrowRight, Check, RotateCcw, Trophy, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useRecordGame } from '@/games/useRecordGame'
 import type { DifficultyLevel } from '@/games/gamification'
-import { AND, OR, NOT, V, evalExpr, variables, allAssignments, equivalent, speakExpr, type Expr } from './expr'
+import {
+  AND,
+  OR,
+  NOT,
+  V,
+  evalExpr,
+  variables,
+  allAssignments,
+  equivalent,
+  speakExpr,
+  type Expr,
+} from './expr'
 import { Speaker } from './Speaker'
 
-interface Pair { a: Expr; b: Expr }
+interface Pair {
+  a: Expr
+  b: Expr
+}
 
 // Pairs where we control equivalence. Each level gets both kinds.
 const EASY_PAIRS: Pair[] = [
@@ -57,7 +71,10 @@ const HARD_PAIRS: Pair[] = [
   { a: AND(OR(V('A'), V('B')), OR(V('A'), NOT(V('B')))), b: V('A') },
   { a: NOT(AND(OR(V('A'), V('B')), V('C'))), b: OR(AND(NOT(V('A')), NOT(V('B'))), NOT(V('C'))) },
   { a: OR(V('A'), NOT(AND(V('A'), V('B')))), b: OR(V('A'), NOT(V('B'))) },
-  { a: AND(OR(V('A'), V('B')), NOT(AND(V('A'), V('B')))), b: OR(AND(V('A'), NOT(V('B'))), AND(NOT(V('A')), V('B'))) },
+  {
+    a: AND(OR(V('A'), V('B')), NOT(AND(V('A'), V('B')))),
+    b: OR(AND(V('A'), NOT(V('B'))), AND(NOT(V('A')), V('B'))),
+  },
   { a: NOT(OR(AND(V('A'), V('B')), V('C'))), b: AND(OR(NOT(V('A')), NOT(V('B'))), NOT(V('C'))) },
   { a: OR(AND(V('A'), V('B')), V('A')), b: V('A') },
   // NOT equivalent (tricky)
@@ -70,13 +87,20 @@ const HARD_PAIRS: Pair[] = [
 
 const POOLS = { easy: EASY_PAIRS, medium: MEDIUM_PAIRS, hard: HARD_PAIRS }
 const STAR: Record<'easy' | 'medium' | 'hard', DifficultyLevel> = {
-  easy: 'starters', medium: 'movers', hard: 'flyers',
+  easy: 'starters',
+  medium: 'movers',
+  hard: 'flyers',
 }
 const ROUND_COUNT = 5
 
 function RenderExpr({ e, depth = 0 }: { e: Expr; depth?: number }) {
   if (e.kind === 'var') return <BoolBlock value={true} label={e.name} size="sm" />
-  if (e.kind === 'not') return <OperatorBlock op="not" depth={depth}><RenderExpr e={e.x} depth={depth + 1} /></OperatorBlock>
+  if (e.kind === 'not')
+    return (
+      <OperatorBlock op="not" depth={depth}>
+        <RenderExpr e={e.x} depth={depth + 1} />
+      </OperatorBlock>
+    )
   return (
     <OperatorBlock op={e.kind} depth={depth}>
       <RenderExpr e={e.a} depth={depth + 1} />
@@ -95,7 +119,13 @@ function pickPair(list: Pair[], exclude?: Pair): Pair {
   return p
 }
 
-export function SpotSame({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; onExit: () => void }) {
+export function SpotSame({
+  level,
+  onExit,
+}: {
+  level: 'easy' | 'medium' | 'hard'
+  onExit: () => void
+}) {
   const pool = POOLS[level]
   const [pair, setPair] = useState<Pair>(() => pickPair(pool))
   const [picked, setPicked] = useState<'yes' | 'no' | null>(null)
@@ -151,10 +181,17 @@ export function SpotSame({ level, onExit }: { level: 'easy' | 'medium' | 'hard';
       <div className="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
         <Trophy className="size-16 text-amber-500" />
         <h2 className="text-3xl font-extrabold">Equivalence Expert!</h2>
-        <p className="text-lg text-muted-foreground">You got {score}/{ROUND_COUNT} right</p>
+        <p className="text-lg text-muted-foreground">
+          You got {score}/{ROUND_COUNT} right
+        </p>
         <div className="flex gap-2">
-          <Button onClick={restart}><RotateCcw className="size-4" />Play again</Button>
-          <Button variant="outline" onClick={onExit}>Back</Button>
+          <Button onClick={restart}>
+            <RotateCcw className="size-4" />
+            Play again
+          </Button>
+          <Button variant="outline" onClick={onExit}>
+            Back
+          </Button>
         </div>
       </div>
     )
@@ -163,28 +200,40 @@ export function SpotSame({ level, onExit }: { level: 'easy' | 'medium' | 'hard';
   return (
     <div className="flex flex-col items-center gap-4 p-4 max-w-3xl mx-auto">
       <div className="flex items-center justify-between w-full">
-        <Button variant="ghost" size="sm" onClick={onExit}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ← Back
+        </Button>
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-bold">Round {round + 1}/{ROUND_COUNT}</span>
+          <span className="font-bold">
+            Round {round + 1}/{ROUND_COUNT}
+          </span>
           <span>⭐ {score}</span>
         </div>
         <div className="w-16" />
       </div>
 
       <div className="flex items-center justify-center gap-2">
-        <Speaker text={`Spot the Same. Do both blocks always give the same output? Left: ${speakExpr(pair.a)}. Right: ${speakExpr(pair.b)}.`} />
-        <p className="text-sm text-muted-foreground text-center">Do both blocks <em>always</em> give the same output?</p>
+        <Speaker
+          text={`Spot the Same. Do both blocks always give the same output? Left: ${speakExpr(pair.a)}. Right: ${speakExpr(pair.b)}.`}
+        />
+        <p className="text-sm text-muted-foreground text-center">
+          Do both blocks <em>always</em> give the same output?
+        </p>
       </div>
 
       <div className="flex flex-col md:flex-row items-center justify-center gap-4 w-full">
         <div className="flex-1 flex flex-col items-center gap-2 p-4 rounded-xl bg-card border border-border min-w-[180px]">
           <span className="text-xs text-muted-foreground font-bold">LEFT</span>
-          <div className="flex flex-wrap items-center justify-center gap-1"><RenderExpr e={pair.a} /></div>
+          <div className="flex flex-wrap items-center justify-center gap-1">
+            <RenderExpr e={pair.a} />
+          </div>
         </div>
         <div className="text-2xl font-extrabold text-muted-foreground">=?</div>
         <div className="flex-1 flex flex-col items-center gap-2 p-4 rounded-xl bg-card border border-border min-w-[180px]">
           <span className="text-xs text-muted-foreground font-bold">RIGHT</span>
-          <div className="flex flex-wrap items-center justify-center gap-1"><RenderExpr e={pair.b} /></div>
+          <div className="flex flex-wrap items-center justify-center gap-1">
+            <RenderExpr e={pair.b} />
+          </div>
         </div>
       </div>
 
@@ -211,22 +260,44 @@ export function SpotSame({ level, onExit }: { level: 'easy' | 'medium' | 'hard';
 
       {picked !== null && (
         <div className="flex flex-col items-center gap-3 mt-2 max-w-md">
-          <div className={cn('flex items-center gap-2 font-bold text-base', correct ? 'text-emerald-600' : 'text-rose-500')}>
-            {correct
-              ? <><Check className="size-5" /> {same ? 'Yes, always the same!' : 'Correct — they differ.'}</>
-              : <><X className="size-5" /> Answer: <span className="text-foreground">{same ? 'Same' : 'Different'}</span></>
-            }
+          <div
+            className={cn(
+              'flex items-center gap-2 font-bold text-base',
+              correct ? 'text-emerald-600' : 'text-rose-500',
+            )}
+          >
+            {correct ? (
+              <>
+                <Check className="size-5" />{' '}
+                {same ? 'Yes, always the same!' : 'Correct — they differ.'}
+              </>
+            ) : (
+              <>
+                <X className="size-5" /> Answer:{' '}
+                <span className="text-foreground">{same ? 'Same' : 'Different'}</span>
+              </>
+            )}
           </div>
           {counterExample && (
             <div className="text-xs text-center text-muted-foreground">
-              Counter-example: when {allVars.map(v => `${v}=${counterExample[v] ? 'on' : 'off'}`).join(', ')}, left is{' '}
-              <strong className={cn(evalExpr(pair.a, counterExample) ? 'text-emerald-600' : 'text-rose-500')}>
+              Counter-example: when{' '}
+              {allVars.map(v => `${v}=${counterExample[v] ? 'on' : 'off'}`).join(', ')}, left is{' '}
+              <strong
+                className={cn(
+                  evalExpr(pair.a, counterExample) ? 'text-emerald-600' : 'text-rose-500',
+                )}
+              >
                 {evalExpr(pair.a, counterExample) ? 'on' : 'off'}
-              </strong>
-              {' '}but right is{' '}
-              <strong className={cn(evalExpr(pair.b, counterExample) ? 'text-emerald-600' : 'text-rose-500')}>
+              </strong>{' '}
+              but right is{' '}
+              <strong
+                className={cn(
+                  evalExpr(pair.b, counterExample) ? 'text-emerald-600' : 'text-rose-500',
+                )}
+              >
                 {evalExpr(pair.b, counterExample) ? 'on' : 'off'}
-              </strong>.
+              </strong>
+              .
             </div>
           )}
           <Button size="lg" onClick={next}>

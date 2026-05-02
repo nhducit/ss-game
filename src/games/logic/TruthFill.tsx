@@ -43,7 +43,9 @@ const HARD: Expr[] = [
 
 const POOLS = { easy: EASY, medium: MEDIUM, hard: HARD }
 const STAR: Record<'easy' | 'medium' | 'hard', DifficultyLevel> = {
-  easy: 'starters', medium: 'movers', hard: 'flyers',
+  easy: 'starters',
+  medium: 'movers',
+  hard: 'flyers',
 }
 
 type Cell = boolean | null
@@ -51,7 +53,12 @@ const ROUND_COUNT = 4
 
 function RenderExpr({ e, depth = 0 }: { e: Expr; depth?: number }) {
   if (e.kind === 'var') return <BoolBlock value={true} label={e.name} size="sm" />
-  if (e.kind === 'not') return <OperatorBlock op="not" depth={depth}><RenderExpr e={e.x} depth={depth + 1} /></OperatorBlock>
+  if (e.kind === 'not')
+    return (
+      <OperatorBlock op="not" depth={depth}>
+        <RenderExpr e={e.x} depth={depth + 1} />
+      </OperatorBlock>
+    )
   return (
     <OperatorBlock op={e.kind} depth={depth}>
       <RenderExpr e={e.a} depth={depth + 1} />
@@ -70,13 +77,21 @@ function pickExpr(list: Expr[], exclude?: Expr): Expr {
   return e
 }
 
-export function TruthFill({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; onExit: () => void }) {
+export function TruthFill({
+  level,
+  onExit,
+}: {
+  level: 'easy' | 'medium' | 'hard'
+  onExit: () => void
+}) {
   const pool = POOLS[level]
   const [initial] = useState(() => pickExpr(pool))
   const [expr, setExpr] = useState<Expr>(initial)
   const [round, setRound] = useState(0)
   const [score, setScore] = useState(0)
-  const [answers, setAnswers] = useState<Cell[]>(() => new Array(1 << variables(initial).length).fill(null))
+  const [answers, setAnswers] = useState<Cell[]>(() =>
+    new Array(1 << variables(initial).length).fill(null),
+  )
   const [checked, setChecked] = useState(false)
   const [done, setDone] = useState(false)
   const { record, reset } = useRecordGame()
@@ -132,10 +147,17 @@ export function TruthFill({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
       <div className="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
         <Trophy className="size-16 text-amber-500" />
         <h2 className="text-3xl font-extrabold">Table Tamer!</h2>
-        <p className="text-lg text-muted-foreground">Perfect tables: {score}/{ROUND_COUNT}</p>
+        <p className="text-lg text-muted-foreground">
+          Perfect tables: {score}/{ROUND_COUNT}
+        </p>
         <div className="flex gap-2">
-          <Button onClick={restart}><RotateCcw className="size-4" />Play again</Button>
-          <Button variant="outline" onClick={onExit}>Back</Button>
+          <Button onClick={restart}>
+            <RotateCcw className="size-4" />
+            Play again
+          </Button>
+          <Button variant="outline" onClick={onExit}>
+            Back
+          </Button>
         </div>
       </div>
     )
@@ -144,17 +166,25 @@ export function TruthFill({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
   return (
     <div className="flex flex-col items-center gap-4 p-4 max-w-3xl mx-auto">
       <div className="flex items-center justify-between w-full">
-        <Button variant="ghost" size="sm" onClick={onExit}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ← Back
+        </Button>
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-bold">Round {round + 1}/{ROUND_COUNT}</span>
+          <span className="font-bold">
+            Round {round + 1}/{ROUND_COUNT}
+          </span>
           <span>⭐ {score}</span>
         </div>
         <div className="w-16" />
       </div>
 
       <div className="flex items-center justify-center gap-2">
-        <Speaker text={`Truth Fill. Fill in the output for each row. The expression is: ${speakExpr(expr)}.`} />
-        <p className="text-sm text-muted-foreground text-center">Fill in the bulb column — tap a cell to toggle on/off 💡</p>
+        <Speaker
+          text={`Truth Fill. Fill in the output for each row. The expression is: ${speakExpr(expr)}.`}
+        />
+        <p className="text-sm text-muted-foreground text-center">
+          Fill in the bulb column — tap a cell to toggle on/off 💡
+        </p>
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-2 py-2">
@@ -166,7 +196,9 @@ export function TruthFill({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
           <thead>
             <tr className="bg-[#59C059] text-white">
               {vars.map(v => (
-                <th key={v} className="px-4 py-2 border border-[#3a8a3a]">{v}</th>
+                <th key={v} className="px-4 py-2 border border-[#3a8a3a]">
+                  {v}
+                </th>
               ))}
               <th className="px-4 py-2 border border-[#3a8a3a]">💡 output</th>
             </tr>
@@ -192,17 +224,31 @@ export function TruthFill({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
                       disabled={checked}
                       className={cn(
                         'min-w-[110px] px-3 py-2 rounded-lg border-2 font-bold transition-all active:scale-95 touch-manipulation',
-                        !checked && ans === null && 'bg-muted border-dashed border-border text-muted-foreground hover:border-primary',
-                        !checked && ans === true && 'bg-amber-100 border-amber-500 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200',
-                        !checked && ans === false && 'bg-zinc-200 border-zinc-500 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
+                        !checked &&
+                          ans === null &&
+                          'bg-muted border-dashed border-border text-muted-foreground hover:border-primary',
+                        !checked &&
+                          ans === true &&
+                          'bg-amber-100 border-amber-500 text-amber-900 dark:bg-amber-900/40 dark:text-amber-200',
+                        !checked &&
+                          ans === false &&
+                          'bg-zinc-200 border-zinc-500 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300',
                         wasRight && 'bg-emerald-500 border-emerald-600 text-white',
                         wasWrong && 'bg-rose-500 border-rose-600 text-white',
                         missed && 'bg-amber-100 border-amber-500 text-amber-900',
                       )}
                     >
                       {ans === null ? '?' : ans ? 'on ✨' : 'off'}
-                      {wasWrong && <div className="text-[10px] font-normal mt-0.5">was {correct ? 'on' : 'off'}</div>}
-                      {missed && <div className="text-[10px] font-normal mt-0.5">{correct ? 'on' : 'off'}</div>}
+                      {wasWrong && (
+                        <div className="text-[10px] font-normal mt-0.5">
+                          was {correct ? 'on' : 'off'}
+                        </div>
+                      )}
+                      {missed && (
+                        <div className="text-[10px] font-normal mt-0.5">
+                          {correct ? 'on' : 'off'}
+                        </div>
+                      )}
                     </button>
                   </td>
                 </tr>
@@ -219,8 +265,21 @@ export function TruthFill({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
       )}
       {checked && (
         <div className="flex flex-col items-center gap-3">
-          <div className={cn('flex items-center gap-2 font-bold text-base', allCorrect ? 'text-emerald-600' : 'text-rose-500')}>
-            {allCorrect ? <><Check className="size-5" /> All correct!</> : <><X className="size-5" /> Some rows were off</>}
+          <div
+            className={cn(
+              'flex items-center gap-2 font-bold text-base',
+              allCorrect ? 'text-emerald-600' : 'text-rose-500',
+            )}
+          >
+            {allCorrect ? (
+              <>
+                <Check className="size-5" /> All correct!
+              </>
+            ) : (
+              <>
+                <X className="size-5" /> Some rows were off
+              </>
+            )}
           </div>
           <Button size="lg" onClick={next}>
             {round + 1 >= ROUND_COUNT ? '🏁 Finish' : 'Next'} <ArrowRight className="size-4" />

@@ -14,7 +14,10 @@ function pad(n: number): string {
   return n.toString().padStart(2, '0')
 }
 
-function ScheduleEditor({ schedule, onChange }: {
+function ScheduleEditor({
+  schedule,
+  onChange,
+}: {
   schedule: ScheduleSlot[]
   onChange: (schedule: ScheduleSlot[]) => void
 }) {
@@ -57,7 +60,9 @@ function ScheduleEditor({ schedule, onChange }: {
               className="rounded-md border bg-background px-2 py-1.5 text-sm"
             >
               {DAY_NAMES.map((name, d) => (
-                <option key={d} value={d}>{name}</option>
+                <option key={d} value={d}>
+                  {name}
+                </option>
               ))}
             </select>
             <Input
@@ -141,7 +146,11 @@ function AdminPanel() {
       <Card className="w-full">
         <CardHeader className="flex-row items-center justify-between gap-4 p-5">
           <div className="flex items-center gap-3">
-            {locked ? <Lock className="size-5 text-red-500" /> : <Unlock className="size-5 text-green-500" />}
+            {locked ? (
+              <Lock className="size-5 text-red-500" />
+            ) : (
+              <Unlock className="size-5 text-green-500" />
+            )}
             <div>
               <CardTitle className="text-base">
                 {locked ? 'App is locked' : 'App is unlocked'}
@@ -151,11 +160,7 @@ function AdminPanel() {
               </p>
             </div>
           </div>
-          <Switch
-            checked={locked}
-            onCheckedChange={handleToggleLock}
-            disabled={saving}
-          />
+          <Switch checked={locked} onCheckedChange={handleToggleLock} disabled={saving} />
         </CardHeader>
       </Card>
 
@@ -169,18 +174,15 @@ function AdminPanel() {
       <Card className="w-full">
         <CardHeader className="p-5">
           <ScheduleEditor schedule={schedule} onChange={setSchedule} />
-          <Button
-            onClick={handleSaveSchedule}
-            disabled={saving}
-            className="mt-4 w-full"
-          >
+          <Button onClick={handleSaveSchedule} disabled={saving} className="mt-4 w-full">
             {saving ? 'Saving...' : 'Save schedule'}
           </Button>
         </CardHeader>
       </Card>
 
       <p className="text-xs text-muted-foreground text-center">
-        When schedule is set and global lock is off, the app is only available during the scheduled times.
+        When schedule is set and global lock is off, the app is only available during the scheduled
+        times.
       </p>
     </div>
   )
@@ -212,7 +214,10 @@ export function Admin() {
         <Input
           type="password"
           value={password}
-          onChange={e => { setPassword(e.target.value); setError(false) }}
+          onChange={e => {
+            setPassword(e.target.value)
+            setError(false)
+          }}
           placeholder="Enter password"
           className="text-center text-lg"
           onKeyDown={e => e.key === 'Enter' && handleLogin()}

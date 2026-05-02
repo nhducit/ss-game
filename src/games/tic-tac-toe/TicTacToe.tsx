@@ -16,9 +16,14 @@ interface Move {
 }
 
 const WIN_LINES = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
-  [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
-  [0, 4, 8], [2, 4, 6],             // diagonals
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8], // rows
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8], // cols
+  [0, 4, 8],
+  [2, 4, 6], // diagonals
 ]
 
 function checkWin(board: Cell[]): number[] | null {
@@ -50,22 +55,25 @@ export function TicTacToe() {
       ? ''
       : `turn-${currentPlayer.toLowerCase()}`
 
-  const handleClick = useCallback((index: number) => {
-    if (board[index] || winner) return
-    const next = [...board]
-    next[index] = currentPlayer
-    setBoard(next)
-    setHistory(h => [...h, { index, player: currentPlayer }])
+  const handleClick = useCallback(
+    (index: number) => {
+      if (board[index] || winner) return
+      const next = [...board]
+      next[index] = currentPlayer
+      setBoard(next)
+      setHistory(h => [...h, { index, player: currentPlayer }])
 
-    const line = checkWin(next)
-    if (line) {
-      setWinner(currentPlayer)
-      setWinLine(new Set(line))
-      setScores(s => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
-    } else {
-      setCurrentPlayer(p => p === 'X' ? 'O' : 'X')
-    }
-  }, [board, currentPlayer, winner])
+      const line = checkWin(next)
+      if (line) {
+        setWinner(currentPlayer)
+        setWinLine(new Set(line))
+        setScores(s => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
+      } else {
+        setCurrentPlayer(p => (p === 'X' ? 'O' : 'X'))
+      }
+    },
+    [board, currentPlayer, winner],
+  )
 
   const undo = useCallback(() => {
     if (history.length === 0 || winner) return
@@ -95,7 +103,9 @@ export function TicTacToe() {
   }, [])
 
   return (
-    <div className={`game flex flex-col h-svh overflow-hidden transition-colors duration-300 ${turnClass}`}>
+    <div
+      className={`game flex flex-col h-svh overflow-hidden transition-colors duration-300 ${turnClass}`}
+    >
       <div className="game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border transition-colors duration-300">
         <div className="flex items-center gap-3.5">
           <Tooltip>
@@ -106,7 +116,9 @@ export function TicTacToe() {
             </TooltipTrigger>
             <TooltipContent>Back to menu</TooltipContent>
           </Tooltip>
-          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">Tic Tac Toe</h1>
+          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">
+            Tic Tac Toe
+          </h1>
           <div className="flex items-center gap-1 tabular-nums">
             <Badge
               variant={currentPlayer === 'X' && !winner && !isDraw ? 'secondary' : 'outline'}
@@ -126,7 +138,9 @@ export function TicTacToe() {
           </div>
           <Badge variant="ghost" className="text-muted-foreground">
             {winner ? (
-              <span><strong>{winner}</strong> wins!</span>
+              <span>
+                <strong>{winner}</strong> wins!
+              </span>
             ) : isDraw ? (
               <span>Draw!</span>
             ) : (
@@ -167,9 +181,7 @@ export function TicTacToe() {
           </Tooltip>
           <Separator orientation="vertical" className="mx-1 h-5" />
           <Tooltip>
-            <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={fullReset} />}
-            >
+            <TooltipTrigger render={<Button variant="ghost" size="icon" onClick={fullReset} />}>
               <Trash2 className="size-4" />
             </TooltipTrigger>
             <TooltipContent>Reset scores</TooltipContent>
@@ -200,7 +212,12 @@ export function TicTacToe() {
           <Card className="modal-card flex-row items-center justify-between gap-4 px-5 py-3.5 max-w-105 mx-auto">
             <span className="flex items-center gap-2 text-lg font-bold text-foreground">
               {winner ? (
-                <><span className={`inline-block size-4 rounded-full ${winner === 'X' ? 'bg-[radial-gradient(circle_at_35%_35%,#f08080,#c0392b)]' : 'bg-[radial-gradient(circle_at_35%_35%,#87ceeb,#2980b9)]'}`} />{winner === 'X' ? 'Red' : 'Blue'} wins!</>
+                <>
+                  <span
+                    className={`inline-block size-4 rounded-full ${winner === 'X' ? 'bg-[radial-gradient(circle_at_35%_35%,#f08080,#c0392b)]' : 'bg-[radial-gradient(circle_at_35%_35%,#87ceeb,#2980b9)]'}`}
+                  />
+                  {winner === 'X' ? 'Red' : 'Blue'} wins!
+                </>
               ) : (
                 <>Draw!</>
               )}

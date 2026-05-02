@@ -3,7 +3,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { ArrowLeft, Volume2, SkipForward, RotateCcw, Trophy, Undo2 } from 'lucide-react'
-import { shuffle, getWords, type ChineseCategory, type Level, type ChineseWord } from '@/games/chinese/words'
+import {
+  shuffle,
+  getWords,
+  type ChineseCategory,
+  type Level,
+  type ChineseWord,
+} from '@/games/chinese/words'
 import { speakChinese, speakChineseSequence } from '@/games/chinese/speak'
 import { ChineseCategoryPicker } from '@/games/chinese/CategoryPicker'
 import { recordCorrect, recordWrong, getSmartWordOrder } from '@/games/chinese/progress'
@@ -41,20 +47,23 @@ export function PinyinSpell() {
     hasSpoken.current = false
   }, [])
 
-  const startCategory = useCallback((cat: ChineseCategory, lvl: Level) => {
-    const levelWords = getWords(cat, lvl)
-    const smartWords = getSmartWordOrder(cat.id, lvl, levelWords)
-    setCategory(cat)
-    setLevel(lvl)
-    setWords(smartWords)
-    setWordIndex(0)
-    setScore(0)
-    setStreak(0)
-    setSkipped(0)
-    setScreen('playing')
-    resetRecordGame()
-    setupWord(smartWords[0])
-  }, [setupWord, resetRecordGame])
+  const startCategory = useCallback(
+    (cat: ChineseCategory, lvl: Level) => {
+      const levelWords = getWords(cat, lvl)
+      const smartWords = getSmartWordOrder(cat.id, lvl, levelWords)
+      setCategory(cat)
+      setLevel(lvl)
+      setWords(smartWords)
+      setWordIndex(0)
+      setScore(0)
+      setStreak(0)
+      setSkipped(0)
+      setScreen('playing')
+      resetRecordGame()
+      setupWord(smartWords[0])
+    },
+    [setupWord, resetRecordGame],
+  )
 
   useEffect(() => {
     if (screen === 'playing' && currentWord && !hasSpoken.current) {
@@ -91,12 +100,15 @@ export function PinyinSpell() {
     }
   }, [selected, currentWord, result, availableIndices, scrambled, streak, category, level])
 
-  const handleLetterTap = useCallback((scrambledIdx: number) => {
-    if (!currentWord || result !== 'pending') return
-    if (selected.includes(scrambledIdx)) return
-    if (selected.length >= currentWord.pinyin.length) return
-    setSelected(prev => [...prev, scrambledIdx])
-  }, [currentWord, result, selected])
+  const handleLetterTap = useCallback(
+    (scrambledIdx: number) => {
+      if (!currentWord || result !== 'pending') return
+      if (selected.includes(scrambledIdx)) return
+      if (selected.length >= currentWord.pinyin.length) return
+      setSelected(prev => [...prev, scrambledIdx])
+    },
+    [currentWord, result, selected],
+  )
 
   const undoLetter = useCallback(() => {
     if (result !== 'pending' || selected.length === 0) return
@@ -156,7 +168,9 @@ export function PinyinSpell() {
             <span className="text-sm text-muted-foreground">Score</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-bold text-foreground">{answered}/{total}</span>
+            <span className="text-3xl font-bold text-foreground">
+              {answered}/{total}
+            </span>
             <span className="text-sm text-muted-foreground">Words</span>
           </div>
         </div>
@@ -180,7 +194,9 @@ export function PinyinSpell() {
         <div className="flex items-center gap-3.5">
           <Tooltip>
             <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />}
+              render={
+                <Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />
+              }
             >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>
@@ -189,12 +205,18 @@ export function PinyinSpell() {
           <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">
             {category?.emoji} {category?.name}
           </h1>
-          <Badge variant="secondary" className="gap-1.5 font-bold tabular-nums">⭐ {score}</Badge>
+          <Badge variant="secondary" className="gap-1.5 font-bold tabular-nums">
+            ⭐ {score}
+          </Badge>
           {streak > 1 && (
-            <Badge variant="outline" className="gap-1 font-bold text-orange-500 tabular-nums">🔥 {streak}</Badge>
+            <Badge variant="outline" className="gap-1 font-bold text-orange-500 tabular-nums">
+              🔥 {streak}
+            </Badge>
           )}
         </div>
-        <Badge variant="ghost" className="text-muted-foreground tabular-nums">{wordIndex + 1} / {words.length}</Badge>
+        <Badge variant="ghost" className="text-muted-foreground tabular-nums">
+          {wordIndex + 1} / {words.length}
+        </Badge>
       </div>
 
       {currentWord && (
@@ -237,16 +259,26 @@ export function PinyinSpell() {
             {answerSlots.map((correctLetter, i) => {
               const filled = i < userLetters.length
               const userLetter = filled ? userLetters[i] : null
-              const slotClass = result === 'pending'
-                ? (filled ? ' border-red-500 bg-red-500/10 text-foreground scale-105' : ' border-muted-foreground/30 bg-muted/30 text-transparent')
-                : result === 'correct'
-                  ? ' border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
-                  : (filled && userLetter === correctLetter
+              const slotClass =
+                result === 'pending'
+                  ? filled
+                    ? ' border-red-500 bg-red-500/10 text-foreground scale-105'
+                    : ' border-muted-foreground/30 bg-muted/30 text-transparent'
+                  : result === 'correct'
+                    ? ' border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
+                    : filled && userLetter === correctLetter
                       ? ' border-green-500 bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300'
-                      : filled ? ' border-red-500 bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'
-                      : ' border-muted-foreground/30 bg-muted/30 text-transparent')
+                      : filled
+                        ? ' border-red-500 bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-300'
+                        : ' border-muted-foreground/30 bg-muted/30 text-transparent'
               return (
-                <div key={i} className={`spelling-slot flex items-center justify-center w-10 h-12 sm:w-12 sm:h-14 rounded-lg border-2 text-xl sm:text-2xl font-bold transition-all duration-200` + slotClass}>
+                <div
+                  key={i}
+                  className={
+                    `spelling-slot flex items-center justify-center w-10 h-12 sm:w-12 sm:h-14 rounded-lg border-2 text-xl sm:text-2xl font-bold transition-all duration-200` +
+                    slotClass
+                  }
+                >
                   {filled ? userLetter : '_'}
                 </div>
               )
@@ -268,8 +300,12 @@ export function PinyinSpell() {
                 return (
                   <button
                     key={scrambledIdx}
-                    className={`spelling-tile flex items-center justify-center w-10 h-12 sm:w-12 sm:h-14 rounded-xl text-xl sm:text-2xl font-bold transition-all duration-150 touch-manipulation select-none` +
-                      (used ? ' opacity-0 scale-75 pointer-events-none' : ' bg-foreground text-background hover:scale-110 active:scale-95 cursor-pointer shadow-md')}
+                    className={
+                      `spelling-tile flex items-center justify-center w-10 h-12 sm:w-12 sm:h-14 rounded-xl text-xl sm:text-2xl font-bold transition-all duration-150 touch-manipulation select-none` +
+                      (used
+                        ? ' opacity-0 scale-75 pointer-events-none'
+                        : ' bg-foreground text-background hover:scale-110 active:scale-95 cursor-pointer shadow-md')
+                    }
                     onClick={() => handleLetterTap(scrambledIdx)}
                     disabled={used}
                   >
@@ -284,7 +320,12 @@ export function PinyinSpell() {
           <div className="flex gap-3 mt-1">
             {result === 'pending' && (
               <>
-                <Button variant="outline" className="gap-2" onClick={undoLetter} disabled={selected.length === 0}>
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={undoLetter}
+                  disabled={selected.length === 0}
+                >
                   <Undo2 className="size-4" /> Undo
                 </Button>
                 <Button variant="ghost" className="text-muted-foreground gap-2" onClick={skipWord}>
@@ -293,14 +334,23 @@ export function PinyinSpell() {
               </>
             )}
             {result === 'correct' && (
-              <Button className="gap-2 text-lg" onClick={advanceWord} disabled={nextDisabled}>✓ Next</Button>
+              <Button className="gap-2 text-lg" onClick={advanceWord} disabled={nextDisabled}>
+                ✓ Next
+              </Button>
             )}
             {result === 'wrong' && (
               <div className="flex gap-3">
-                <Button variant="outline" className="gap-2" onClick={retryWord} disabled={nextDisabled}>
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={retryWord}
+                  disabled={nextDisabled}
+                >
                   <RotateCcw className="size-4" /> Try again
                 </Button>
-                <Button className="gap-2" onClick={advanceWord} disabled={nextDisabled}>Next</Button>
+                <Button className="gap-2" onClick={advanceWord} disabled={nextDisabled}>
+                  Next
+                </Button>
               </div>
             )}
           </div>

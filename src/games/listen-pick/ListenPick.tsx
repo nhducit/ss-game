@@ -19,8 +19,11 @@ interface Round {
 }
 
 function buildRounds(orderedWords: Word[], allWords: Word[]): Round[] {
-  return orderedWords.map((correct) => {
-    const distractors = shuffle(allWords.filter(w => w.english !== correct.english)).slice(0, OPTIONS_COUNT - 1)
+  return orderedWords.map(correct => {
+    const distractors = shuffle(allWords.filter(w => w.english !== correct.english)).slice(
+      0,
+      OPTIONS_COUNT - 1,
+    )
     const options = shuffle([correct, ...distractors])
     return { correct, options }
   })
@@ -42,22 +45,25 @@ export function ListenPick() {
 
   const currentRound = rounds[roundIndex] ?? null
 
-  const startCategory = useCallback((cat: Category, lvl: Level) => {
-    const levelWords = getWords(cat, lvl)
-    const smartOrder = getSmartWordOrder(cat.id, lvl, levelWords)
-    const newRounds = buildRounds(smartOrder, levelWords)
-    setCategory(cat)
-    setLevel(lvl)
-    setRounds(newRounds)
-    setRoundIndex(0)
-    setScore(0)
-    setStreak(0)
-    setCorrect(false)
-    setShowWord(false)
-    setScreen('playing')
-    hasSpoken.current = false
-    resetRecordGame()
-  }, [resetRecordGame])
+  const startCategory = useCallback(
+    (cat: Category, lvl: Level) => {
+      const levelWords = getWords(cat, lvl)
+      const smartOrder = getSmartWordOrder(cat.id, lvl, levelWords)
+      const newRounds = buildRounds(smartOrder, levelWords)
+      setCategory(cat)
+      setLevel(lvl)
+      setRounds(newRounds)
+      setRoundIndex(0)
+      setScore(0)
+      setStreak(0)
+      setCorrect(false)
+      setShowWord(false)
+      setScreen('playing')
+      hasSpoken.current = false
+      resetRecordGame()
+    },
+    [resetRecordGame],
+  )
 
   useEffect(() => {
     if (screen === 'playing' && currentRound && !hasSpoken.current) {
@@ -67,25 +73,28 @@ export function ListenPick() {
     }
   }, [screen, currentRound, roundIndex])
 
-  const handlePick = useCallback((word: Word, optionIndex: number) => {
-    if (!currentRound || correct) return
+  const handlePick = useCallback(
+    (word: Word, optionIndex: number) => {
+      if (!currentRound || correct) return
 
-    if (word.english === currentRound.correct.english) {
-      setCorrect(true)
-      setShowWord(true)
-      recordCorrect(category!.id, level, currentRound.correct.english)
-      const newStreak = streak + 1
-      setStreak(newStreak)
-      const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
-      setScore(s => s + points)
-      speak(currentRound.correct.english, 0.8)
-    } else {
-      setShakeIndex(optionIndex)
-      recordWrong(category!.id, level, currentRound.correct.english)
-      setStreak(0)
-      setTimeout(() => setShakeIndex(null), 400)
-    }
-  }, [currentRound, correct, streak, category, level])
+      if (word.english === currentRound.correct.english) {
+        setCorrect(true)
+        setShowWord(true)
+        recordCorrect(category!.id, level, currentRound.correct.english)
+        const newStreak = streak + 1
+        setStreak(newStreak)
+        const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
+        setScore(s => s + points)
+        speak(currentRound.correct.english, 0.8)
+      } else {
+        setShakeIndex(optionIndex)
+        recordWrong(category!.id, level, currentRound.correct.english)
+        setStreak(0)
+        setTimeout(() => setShakeIndex(null), 400)
+      }
+    },
+    [currentRound, correct, streak, category, level],
+  )
 
   const advanceRound = useCallback(() => {
     if (roundIndex + 1 < rounds.length) {
@@ -120,9 +129,7 @@ export function ListenPick() {
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             {score >= total * 8 ? 'Great job! 🌟' : 'Well done! 👏'}
           </h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            {category?.name}
-          </p>
+          <p className="mt-2 text-lg text-muted-foreground">{category?.name}</p>
         </div>
         <div className="flex gap-4 text-center">
           <div className="flex flex-col items-center gap-1">
@@ -138,9 +145,7 @@ export function ListenPick() {
           <Button variant="outline" onClick={() => startCategory(category!, level)}>
             <RotateCcw className="size-4 mr-2" /> Play again
           </Button>
-          <Button onClick={() => setScreen('categories')}>
-            Other topics
-          </Button>
+          <Button onClick={() => setScreen('categories')}>Other topics</Button>
         </div>
       </div>
     )
@@ -152,7 +157,9 @@ export function ListenPick() {
         <div className="flex items-center gap-3.5">
           <Tooltip>
             <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />}
+              render={
+                <Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />
+              }
             >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>
@@ -219,9 +226,13 @@ export function ListenPick() {
           {correct && (
             <Button size="lg" className="gap-2 text-lg" onClick={advanceRound}>
               {roundIndex + 1 < rounds.length ? (
-                <>Next <ArrowRight className="size-4" /></>
+                <>
+                  Next <ArrowRight className="size-4" />
+                </>
               ) : (
-                <>Finish <ArrowRight className="size-4" /></>
+                <>
+                  Finish <ArrowRight className="size-4" />
+                </>
               )}
             </Button>
           )}

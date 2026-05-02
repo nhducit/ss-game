@@ -57,7 +57,11 @@ export function recordWrong(categoryId: string, level: Level, word: string) {
 }
 
 /** Get progress stats for a category + level */
-export function getCategoryProgress(categoryId: string, level: Level, words: Word[]): {
+export function getCategoryProgress(
+  categoryId: string,
+  level: Level,
+  words: Word[],
+): {
   learned: number
   total: number
 } {
@@ -118,7 +122,7 @@ export function getSmartWordOrder(categoryId: string, level: Level, words: Word[
     const p = data.words[key]
     if (!p) return true
     // Include if not seen in the last day, or randomly 30% of the time
-    return (now - p.lastSeen > ONE_DAY) || Math.random() < 0.3
+    return now - p.lastSeen > ONE_DAY || Math.random() < 0.3
   })
 
   return [...shuffledNew, ...shuffledWeak, ...learnedForReview]

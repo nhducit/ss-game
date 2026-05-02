@@ -78,14 +78,18 @@ const chineseGames = [
   },
 ]
 
-function LevelPills({ levels: lvls, current, onChange }: {
+function LevelPills({
+  levels: lvls,
+  current,
+  onChange,
+}: {
   levels: { id: string; name: string; emoji: string }[]
   current: string
   onChange: (id: string) => void
 }) {
   return (
     <div className="flex gap-2">
-      {lvls.map((l) => (
+      {lvls.map(l => (
         <button
           key={l.id}
           onClick={() => onChange(l.id)}
@@ -104,10 +108,20 @@ function LevelPills({ levels: lvls, current, onChange }: {
   )
 }
 
-function GameGrid({ games }: { games: { id: string; title: string; description: string; icon: React.ComponentType<{ className?: string }>; to: string }[] }) {
+function GameGrid({
+  games,
+}: {
+  games: {
+    id: string
+    title: string
+    description: string
+    icon: React.ComponentType<{ className?: string }>
+    to: string
+  }[]
+}) {
   return (
     <div className="grid w-full max-w-2xl grid-cols-2 sm:grid-cols-3 gap-3">
-      {games.map((game) => (
+      {games.map(game => (
         <Link key={game.id} to={game.to} className="no-underline">
           <Card className="cursor-pointer transition-colors hover:bg-muted/50 h-full">
             <CardHeader className="flex flex-col items-center text-center gap-2 p-4">
@@ -137,7 +151,11 @@ export function Menu() {
         <div className="text-center">
           <h2 className="text-2xl font-extrabold tracking-tight text-foreground">English 🇬🇧</h2>
         </div>
-        <LevelPills levels={levels} current={engLevel} onChange={(id) => setEngLevel(id as typeof engLevel)} />
+        <LevelPills
+          levels={levels}
+          current={engLevel}
+          onChange={id => setEngLevel(id as typeof engLevel)}
+        />
         <GameGrid games={englishGames} />
       </section>
 
@@ -154,12 +172,23 @@ export function Menu() {
         <div className="text-center">
           <h2 className="text-2xl font-extrabold tracking-tight text-foreground">Chinese 🇨🇳</h2>
         </div>
-        <LevelPills levels={chineseLevels} current={chnLevel} onChange={(id) => setChnLevel(id as typeof chnLevel)} />
+        <LevelPills
+          levels={chineseLevels}
+          current={chnLevel}
+          onChange={id => setChnLevel(id as typeof chnLevel)}
+        />
         <GameGrid games={chineseGames} />
       </section>
 
       <p className="text-xs text-muted-foreground/50 mt-4 pb-6">
-        Updated {new Date(__COMMIT_TIME__).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' })}
+        Updated{' '}
+        {new Date(__COMMIT_TIME__).toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+        })}
       </p>
     </div>
   )

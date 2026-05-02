@@ -17,20 +17,27 @@ interface Puzzle {
 
 function evalGate(g: Gate, a: boolean, b: boolean): boolean {
   switch (g) {
-    case 'and': return a && b
-    case 'or': return a || b
-    case 'not': return !a
-    case 'and-not': return a && !b
-    case 'or-not': return a || !b
-    case 'not-and': return !(a && b)
-    case 'not-or': return !(a || b)
+    case 'and':
+      return a && b
+    case 'or':
+      return a || b
+    case 'not':
+      return !a
+    case 'and-not':
+      return a && !b
+    case 'or-not':
+      return a || !b
+    case 'not-and':
+      return !(a && b)
+    case 'not-or':
+      return !(a || b)
   }
 }
 
 const GATE_LABELS: Record<Gate, string> = {
-  'and': 'A and B',
-  'or': 'A or B',
-  'not': 'not A',
+  and: 'A and B',
+  or: 'A or B',
+  not: 'not A',
   'and-not': 'A and (not B)',
   'or-not': 'A or (not B)',
   'not-and': 'not (A and B)',
@@ -56,7 +63,8 @@ function GateChip({
         state === 'idle' && 'bg-card border-border hover:border-primary hover:bg-muted/50',
         state === 'selected-right' && 'bg-emerald-500 border-emerald-600 text-white',
         state === 'selected-wrong' && 'bg-rose-500 border-rose-600 text-white',
-        state === 'reveal-right' && 'bg-emerald-100 border-emerald-500 text-emerald-900 dark:bg-emerald-900/40 dark:text-emerald-200',
+        state === 'reveal-right' &&
+          'bg-emerald-100 border-emerald-500 text-emerald-900 dark:bg-emerald-900/40 dark:text-emerald-200',
         state === 'dim' && 'bg-muted border-border opacity-50',
       )}
     >
@@ -106,7 +114,13 @@ const STAR_LEVEL: Record<'easy' | 'medium' | 'hard', DifficultyLevel> = {
   hard: 'flyers',
 }
 
-export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; onExit: () => void }) {
+export function GateGuess({
+  level,
+  onExit,
+}: {
+  level: 'easy' | 'medium' | 'hard'
+  onExit: () => void
+}) {
   const [round, setRound] = useState(0)
   const [puzzle, setPuzzle] = useState<Puzzle>(() => buildPuzzle(level))
   const [picked, setPicked] = useState<Gate | null>(null)
@@ -116,11 +130,14 @@ export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
 
   const correct = picked !== null && picked === puzzle.answer
 
-  const pick = useCallback((g: Gate) => {
-    if (picked !== null) return
-    setPicked(g)
-    if (g === puzzle.answer) setScore(s => s + 1)
-  }, [picked, puzzle.answer])
+  const pick = useCallback(
+    (g: Gate) => {
+      if (picked !== null) return
+      setPicked(g)
+      if (g === puzzle.answer) setScore(s => s + 1)
+    },
+    [picked, puzzle.answer],
+  )
 
   const next = () => {
     if (round + 1 >= ROUND_COUNT) {
@@ -147,10 +164,17 @@ export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
       <div className="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
         <Trophy className="size-16 text-amber-500" />
         <h2 className="text-3xl font-extrabold">Gate Guru!</h2>
-        <p className="text-lg text-muted-foreground">You got {score}/{ROUND_COUNT} right</p>
+        <p className="text-lg text-muted-foreground">
+          You got {score}/{ROUND_COUNT} right
+        </p>
         <div className="flex gap-2">
-          <Button onClick={restart}><RotateCcw className="size-4" />Play again</Button>
-          <Button variant="outline" onClick={onExit}>Back</Button>
+          <Button onClick={restart}>
+            <RotateCcw className="size-4" />
+            Play again
+          </Button>
+          <Button variant="outline" onClick={onExit}>
+            Back
+          </Button>
         </div>
       </div>
     )
@@ -158,7 +182,9 @@ export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
 
   const isUnary = puzzle.answer === 'not'
 
-  function chipState(g: Gate): 'idle' | 'selected-right' | 'selected-wrong' | 'reveal-right' | 'dim' {
+  function chipState(
+    g: Gate,
+  ): 'idle' | 'selected-right' | 'selected-wrong' | 'reveal-right' | 'dim' {
     if (picked === null) return 'idle'
     if (g === picked) return correct ? 'selected-right' : 'selected-wrong'
     if (g === puzzle.answer) return 'reveal-right'
@@ -168,9 +194,13 @@ export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
   return (
     <div className="flex flex-col items-center gap-5 p-4 max-w-3xl mx-auto">
       <div className="flex items-center justify-between w-full">
-        <Button variant="ghost" size="sm" onClick={onExit}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ← Back
+        </Button>
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-bold">Round {round + 1}/{ROUND_COUNT}</span>
+          <span className="font-bold">
+            Round {round + 1}/{ROUND_COUNT}
+          </span>
           <span>⭐ {score}</span>
         </div>
         <div className="w-16" />
@@ -203,10 +233,12 @@ export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
                     <BoolBlock value={r.b!} label="B" size="sm" />
                   </td>
                 )}
-                <td className={cn(
-                  'px-4 py-2 border border-border text-center font-bold',
-                  r.out ? 'text-emerald-600' : 'text-rose-500',
-                )}>
+                <td
+                  className={cn(
+                    'px-4 py-2 border border-border text-center font-bold',
+                    r.out ? 'text-emerald-600' : 'text-rose-500',
+                  )}
+                >
                   {r.out ? '✅ on' : '❌ off'}
                 </td>
               </tr>
@@ -223,11 +255,22 @@ export function GateGuess({ level, onExit }: { level: 'easy' | 'medium' | 'hard'
 
       {picked !== null && (
         <>
-          <div className={cn('flex items-center gap-2 font-bold text-base', correct ? 'text-emerald-600' : 'text-rose-500')}>
-            {correct
-              ? <><Check className="size-5" /> Correct!</>
-              : <><X className="size-5" /> Answer: <span className="text-foreground">{GATE_LABELS[puzzle.answer]}</span></>
-            }
+          <div
+            className={cn(
+              'flex items-center gap-2 font-bold text-base',
+              correct ? 'text-emerald-600' : 'text-rose-500',
+            )}
+          >
+            {correct ? (
+              <>
+                <Check className="size-5" /> Correct!
+              </>
+            ) : (
+              <>
+                <X className="size-5" /> Answer:{' '}
+                <span className="text-foreground">{GATE_LABELS[puzzle.answer]}</span>
+              </>
+            )}
           </div>
           <Button size="lg" onClick={next}>
             {round + 1 >= ROUND_COUNT ? '🏁 Finish' : 'Next'} <ArrowRight className="size-4" />

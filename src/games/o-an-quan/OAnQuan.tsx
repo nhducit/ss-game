@@ -135,8 +135,8 @@ function dirForVisual(player: Player, visual: 'left' | 'right'): Dir {
 }
 
 // Display rows
-const TOP_ROW = P1_CELLS                        // [1, 2, 3, 4, 5]
-const BOT_ROW = [...P2_CELLS].reverse()          // [11, 10, 9, 8, 7]
+const TOP_ROW = P1_CELLS // [1, 2, 3, 4, 5]
+const BOT_ROW = [...P2_CELLS].reverse() // [11, 10, 9, 8, 7]
 
 export function OAnQuan() {
   const navigate = useNavigate()
@@ -157,75 +157,85 @@ export function OAnQuan() {
     setSelectedCell(idx === selectedCell ? null : idx)
   }
 
-  const playTurn = useCallback(async (visual: 'left' | 'right') => {
-    if (selectedCell === null || animating) return
-    const cell = selectedCell
-    const dir = dirForVisual(currentPlayer, visual)
-    setSelectedCell(null)
-    setAnimating(true)
-    cancelRef.current = false
+  const playTurn = useCallback(
+    async (visual: 'left' | 'right') => {
+      if (selectedCell === null || animating) return
+      const cell = selectedCell
+      const dir = dirForVisual(currentPlayer, visual)
+      setSelectedCell(null)
+      setAnimating(true)
+      cancelRef.current = false
 
-    const steps = computeTurn(board, scores, cell, dir, currentPlayer)
+      const steps = computeTurn(board, scores, cell, dir, currentPlayer)
 
-    for (const step of steps) {
-      if (cancelRef.current) break
-      const ms =
-        step.type === 'drop' ? 100 :
-        step.type === 'capture' ? 350 :
-        step.type === 'scoop' ? 200 :
-        step.type === 'pickup' ? 200 : 0
-      if (ms > 0) await wait(ms)
-      setBoard(step.board)
-      setScores(step.scores)
-      setHighlight(step.highlight ?? null)
-      setHand(step.hand)
-    }
-
-    const final = steps[steps.length - 1]
-    const fb = final.board
-    const fs = final.scores
-
-    // Check game end: both quan empty
-    if (fb[0] === 0 && fb[6] === 0) {
-      await wait(400)
-      const endScores: [number, number] = [...fs]
-      endScores[0] += P1_CELLS.reduce((sum, i) => sum + fb[i], 0)
-      endScores[1] += P2_CELLS.reduce((sum, i) => sum + fb[i], 0)
-      setBoard(Array(TOTAL).fill(0))
-      setScores(endScores)
-      setGameOver(true)
-    } else {
-      const next: Player = currentPlayer === 0 ? 1 : 0
-
-      // If next player's side is empty, they must scatter stones
-      if (sideEmpty(fb, next)) {
-        if (fs[next] >= 5) {
-          const newB = [...fb]
-          const newS: [number, number] = [...fs]
-          newS[next] -= 5
-          const cells = next === 0 ? P1_CELLS : P2_CELLS
-          cells.forEach(i => { newB[i] = 1 })
-          await wait(300)
-          setBoard(newB)
-          setScores(newS)
-        } else {
-          // Can't scatter → game ends, other player collects remaining
-          await wait(400)
-          const endScores: [number, number] = [...fs]
-          for (let i = 0; i < TOTAL; i++) endScores[currentPlayer] += fb[i]
-          setBoard(Array(TOTAL).fill(0))
-          setScores(endScores)
-          setGameOver(true)
-        }
+      for (const step of steps) {
+        if (cancelRef.current) break
+        const ms =
+          step.type === 'drop'
+            ? 100
+            : step.type === 'capture'
+              ? 350
+              : step.type === 'scoop'
+                ? 200
+                : step.type === 'pickup'
+                  ? 200
+                  : 0
+        if (ms > 0) await wait(ms)
+        setBoard(step.board)
+        setScores(step.scores)
+        setHighlight(step.highlight ?? null)
+        setHand(step.hand)
       }
 
-      if (!cancelRef.current) setCurrentPlayer(next)
-    }
+      const final = steps[steps.length - 1]
+      const fb = final.board
+      const fs = final.scores
 
-    setHighlight(null)
-    setHand(0)
-    setAnimating(false)
-  }, [selectedCell, animating, board, scores, currentPlayer])
+      // Check game end: both quan empty
+      if (fb[0] === 0 && fb[6] === 0) {
+        await wait(400)
+        const endScores: [number, number] = [...fs]
+        endScores[0] += P1_CELLS.reduce((sum, i) => sum + fb[i], 0)
+        endScores[1] += P2_CELLS.reduce((sum, i) => sum + fb[i], 0)
+        setBoard(Array(TOTAL).fill(0))
+        setScores(endScores)
+        setGameOver(true)
+      } else {
+        const next: Player = currentPlayer === 0 ? 1 : 0
+
+        // If next player's side is empty, they must scatter stones
+        if (sideEmpty(fb, next)) {
+          if (fs[next] >= 5) {
+            const newB = [...fb]
+            const newS: [number, number] = [...fs]
+            newS[next] -= 5
+            const cells = next === 0 ? P1_CELLS : P2_CELLS
+            cells.forEach(i => {
+              newB[i] = 1
+            })
+            await wait(300)
+            setBoard(newB)
+            setScores(newS)
+          } else {
+            // Can't scatter → game ends, other player collects remaining
+            await wait(400)
+            const endScores: [number, number] = [...fs]
+            for (let i = 0; i < TOTAL; i++) endScores[currentPlayer] += fb[i]
+            setBoard(Array(TOTAL).fill(0))
+            setScores(endScores)
+            setGameOver(true)
+          }
+        }
+
+        if (!cancelRef.current) setCurrentPlayer(next)
+      }
+
+      setHighlight(null)
+      setHand(0)
+      setAnimating(false)
+    },
+    [selectedCell, animating, board, scores, currentPlayer],
+  )
 
   const resetGame = useCallback(() => {
     cancelRef.current = true
@@ -245,20 +255,26 @@ export function OAnQuan() {
   return (
     <div className="flex flex-col h-svh overflow-hidden bg-background">
       {/* ── Navbar ── */}
-      <div className={
-        `flex items-center justify-between px-4 h-13 shrink-0 border-b-2 transition-colors duration-300 ` +
-        (p1Color ? 'bg-rose-500/10 border-b-rose-500/40' : '') +
-        (p2Color ? 'bg-sky-500/10 border-b-sky-500/40' : '') +
-        (!p1Color && !p2Color ? 'border-b-border' : '')
-      }>
+      <div
+        className={
+          `flex items-center justify-between px-4 h-13 shrink-0 border-b-2 transition-colors duration-300 ` +
+          (p1Color ? 'bg-rose-500/10 border-b-rose-500/40' : '') +
+          (p2Color ? 'bg-sky-500/10 border-b-sky-500/40' : '') +
+          (!p1Color && !p2Color ? 'border-b-border' : '')
+        }
+      >
         <div className="flex items-center gap-3.5">
           <Tooltip>
-            <TooltipTrigger render={<Button variant="ghost" size="icon" onClick={() => navigate({ to: '/' })} />}>
+            <TooltipTrigger
+              render={<Button variant="ghost" size="icon" onClick={() => navigate({ to: '/' })} />}
+            >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>
             <TooltipContent>Back to menu</TooltipContent>
           </Tooltip>
-          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">Ô Ăn Quan</h1>
+          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">
+            Ô Ăn Quan
+          </h1>
           <div className="flex items-center gap-1">
             <Badge
               variant={currentPlayer === 0 && !gameOver ? 'secondary' : 'outline'}
@@ -289,20 +305,30 @@ export function OAnQuan() {
       <div className="flex-1 flex flex-col items-center justify-center p-4 gap-4">
         {/* Status line */}
         <div className="text-sm font-medium text-muted-foreground h-5">
-          {gameOver ? '' : animating ? (
-            hand > 0 ? `Distributing... (${hand} in hand)` : 'Playing...'
+          {gameOver ? (
+            ''
+          ) : animating ? (
+            hand > 0 ? (
+              `Distributing... (${hand} in hand)`
+            ) : (
+              'Playing...'
+            )
           ) : selectedCell !== null ? (
             'Choose direction'
           ) : (
             <span className="flex items-center gap-1.5">
-              <span className={`inline-block size-2 rounded-full ${currentPlayer === 0 ? 'bg-rose-500' : 'bg-sky-500'}`} />
+              <span
+                className={`inline-block size-2 rounded-full ${currentPlayer === 0 ? 'bg-rose-500' : 'bg-sky-500'}`}
+              />
               Player {currentPlayer + 1}'s turn — tap a cell
             </span>
           )}
         </div>
 
         {/* Player 1 label */}
-        <div className={`text-xs font-semibold uppercase tracking-wider ${p1Color ? 'text-rose-500' : 'text-muted-foreground/50'}`}>
+        <div
+          className={`text-xs font-semibold uppercase tracking-wider ${p1Color ? 'text-rose-500' : 'text-muted-foreground/50'}`}
+        >
           Player 1
         </div>
 
@@ -324,7 +350,9 @@ export function OAnQuan() {
                 count={board[i]}
                 isHighlighted={highlight === i}
                 isSelected={selectedCell === i}
-                isClickable={!animating && !gameOver && isPlayerCell(i, currentPlayer) && board[i] > 0}
+                isClickable={
+                  !animating && !gameOver && isPlayerCell(i, currentPlayer) && board[i] > 0
+                }
                 onClick={() => handleCellClick(i)}
                 player={0}
                 isActive={p1Color}
@@ -340,7 +368,9 @@ export function OAnQuan() {
                 count={board[i]}
                 isHighlighted={highlight === i}
                 isSelected={selectedCell === i}
-                isClickable={!animating && !gameOver && isPlayerCell(i, currentPlayer) && board[i] > 0}
+                isClickable={
+                  !animating && !gameOver && isPlayerCell(i, currentPlayer) && board[i] > 0
+                }
                 onClick={() => handleCellClick(i)}
                 player={1}
                 isActive={p2Color}
@@ -358,17 +388,29 @@ export function OAnQuan() {
         </div>
 
         {/* Player 2 label */}
-        <div className={`text-xs font-semibold uppercase tracking-wider ${p2Color ? 'text-sky-500' : 'text-muted-foreground/50'}`}>
+        <div
+          className={`text-xs font-semibold uppercase tracking-wider ${p2Color ? 'text-sky-500' : 'text-muted-foreground/50'}`}
+        >
           Player 2
         </div>
 
         {/* Direction buttons */}
         {selectedCell !== null && !animating && (
           <div className="flex gap-3 animate-in fade-in duration-150">
-            <Button variant="outline" size="lg" onClick={() => playTurn('left')} className="gap-2 min-w-28">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => playTurn('left')}
+              className="gap-2 min-w-28"
+            >
               <MoveLeft className="size-5" /> Left
             </Button>
-            <Button variant="outline" size="lg" onClick={() => playTurn('right')} className="gap-2 min-w-28">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => playTurn('right')}
+              className="gap-2 min-w-28"
+            >
               Right <MoveRight className="size-5" />
             </Button>
           </div>
@@ -381,13 +423,19 @@ export function OAnQuan() {
           <Card className="modal-card flex-row items-center justify-between gap-4 px-5 py-3.5 max-w-sm mx-auto">
             <span className="flex items-center gap-2 text-lg font-bold text-foreground">
               {scores[0] > scores[1] ? (
-                <><span className="inline-block size-4 rounded-full bg-rose-500" /> Player 1 wins!</>
+                <>
+                  <span className="inline-block size-4 rounded-full bg-rose-500" /> Player 1 wins!
+                </>
               ) : scores[1] > scores[0] ? (
-                <><span className="inline-block size-4 rounded-full bg-sky-500" /> Player 2 wins!</>
+                <>
+                  <span className="inline-block size-4 rounded-full bg-sky-500" /> Player 2 wins!
+                </>
               ) : (
                 <>Draw!</>
               )}
-              <span className="text-sm font-normal text-muted-foreground ml-1">{scores[0]} – {scores[1]}</span>
+              <span className="text-sm font-normal text-muted-foreground ml-1">
+                {scores[0]} – {scores[1]}
+              </span>
             </span>
             <Button onClick={resetGame}>Play Again</Button>
           </Card>
@@ -425,10 +473,16 @@ function CellView({
       className={
         `flex flex-col items-center justify-center border border-border transition-all duration-150 ` +
         (isQuan ? 'h-14 bg-amber-100/60 dark:bg-amber-900/20 ' : 'h-16 ') +
-        (isHighlighted ? 'bg-yellow-300/50 dark:bg-yellow-600/30 ring-2 ring-inset ring-yellow-500 ' : '') +
+        (isHighlighted
+          ? 'bg-yellow-300/50 dark:bg-yellow-600/30 ring-2 ring-inset ring-yellow-500 '
+          : '') +
         (isSelected ? 'ring-2 ring-inset ring-blue-500 bg-blue-100/50 dark:bg-blue-800/30 ' : '') +
-        (!isHighlighted && !isSelected && !isQuan && isActive && player === 0 ? 'bg-rose-50 dark:bg-rose-950/20 ' : '') +
-        (!isHighlighted && !isSelected && !isQuan && isActive && player === 1 ? 'bg-sky-50 dark:bg-sky-950/20 ' : '') +
+        (!isHighlighted && !isSelected && !isQuan && isActive && player === 0
+          ? 'bg-rose-50 dark:bg-rose-950/20 '
+          : '') +
+        (!isHighlighted && !isSelected && !isQuan && isActive && player === 1
+          ? 'bg-sky-50 dark:bg-sky-950/20 '
+          : '') +
         (!isHighlighted && !isSelected && !isQuan && !isActive ? 'bg-muted/30 ' : '') +
         (isClickable ? 'cursor-pointer hover:brightness-95 active:scale-95 ' : '') +
         (count === 0 && !isQuan ? 'opacity-40 ' : '') +
@@ -437,11 +491,13 @@ function CellView({
       onClick={isClickable ? onClick : undefined}
       {...(isClickable ? {} : { role: undefined })}
     >
-      <span className={
-        `font-bold tabular-nums transition-all duration-150 ` +
-        (isQuan ? 'text-lg text-amber-700 dark:text-amber-400 ' : 'text-xl ') +
-        (count === 0 ? 'text-muted-foreground ' : 'text-foreground ')
-      }>
+      <span
+        className={
+          `font-bold tabular-nums transition-all duration-150 ` +
+          (isQuan ? 'text-lg text-amber-700 dark:text-amber-400 ' : 'text-xl ') +
+          (count === 0 ? 'text-muted-foreground ' : 'text-foreground ')
+        }
+      >
         {count}
       </span>
       {isQuan && (

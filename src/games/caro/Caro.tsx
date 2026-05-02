@@ -4,7 +4,13 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu'
 import { Card } from '@/components/ui/card'
 import { ZoomIn, ZoomOut, Undo2, X, Trash2, ArrowLeft, EllipsisVertical } from 'lucide-react'
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -21,9 +27,9 @@ const SIZE = 30
 const WIN_LENGTH = 5
 
 const DIRECTIONS = [
-  [0, 1],  // horizontal
-  [1, 0],  // vertical
-  [1, 1],  // diagonal
+  [0, 1], // horizontal
+  [1, 0], // vertical
+  [1, 1], // diagonal
   [1, -1], // anti-diagonal
 ]
 
@@ -45,13 +51,15 @@ function checkWin(board: Cell[], row: number, col: number, player: Player): numb
           const fc = firstIdx % SIZE
           const br = fr - dr
           const bc = fc - dc
-          const blockedBefore = br < 0 || br >= SIZE || bc < 0 || bc >= SIZE || board[br * SIZE + bc] === opponent
+          const blockedBefore =
+            br < 0 || br >= SIZE || bc < 0 || bc >= SIZE || board[br * SIZE + bc] === opponent
           const lastIdx = cells[cells.length - 1]
           const lr = Math.floor(lastIdx / SIZE)
           const lc = lastIdx % SIZE
           const ar = lr + dr
           const ac = lc + dc
-          const blockedAfter = ar < 0 || ar >= SIZE || ac < 0 || ac >= SIZE || board[ar * SIZE + ac] === opponent
+          const blockedAfter =
+            ar < 0 || ar >= SIZE || ac < 0 || ac >= SIZE || board[ar * SIZE + ac] === opponent
           if (!blockedBefore || !blockedAfter) return cells
           // Both ends blocked — not a win, keep searching
           cells.shift()
@@ -94,24 +102,27 @@ export function Caro() {
     }
   }, [])
 
-  const handleClick = useCallback((index: number) => {
-    if (board[index] || winner) return
-    const next = [...board]
-    next[index] = currentPlayer
-    setBoard(next)
-    setHistory(h => [...h, { index, player: currentPlayer }])
+  const handleClick = useCallback(
+    (index: number) => {
+      if (board[index] || winner) return
+      const next = [...board]
+      next[index] = currentPlayer
+      setBoard(next)
+      setHistory(h => [...h, { index, player: currentPlayer }])
 
-    const row = Math.floor(index / SIZE)
-    const col = index % SIZE
-    const line = checkWin(next, row, col, currentPlayer)
-    if (line) {
-      setWinner(currentPlayer)
-      setWinLine(new Set(line))
-      setScores(s => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
-    } else {
-      setCurrentPlayer(p => p === 'X' ? 'O' : 'X')
-    }
-  }, [board, currentPlayer, winner])
+      const row = Math.floor(index / SIZE)
+      const col = index % SIZE
+      const line = checkWin(next, row, col, currentPlayer)
+      if (line) {
+        setWinner(currentPlayer)
+        setWinLine(new Set(line))
+        setScores(s => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
+      } else {
+        setCurrentPlayer(p => (p === 'X' ? 'O' : 'X'))
+      }
+    },
+    [board, currentPlayer, winner],
+  )
 
   const undo = useCallback(() => {
     if (history.length === 0 || winner) return
@@ -141,7 +152,9 @@ export function Caro() {
   }, [])
 
   return (
-    <div className={`game flex flex-col h-svh overflow-hidden transition-colors duration-300 ${turnClass}`}>
+    <div
+      className={`game flex flex-col h-svh overflow-hidden transition-colors duration-300 ${turnClass}`}
+    >
       <div className="game-nav flex items-center justify-between px-4 h-13 shrink-0 border-b-2 border-border transition-colors duration-300">
         <div className="flex items-center gap-3.5">
           <Tooltip>
@@ -152,7 +165,9 @@ export function Caro() {
             </TooltipTrigger>
             <TooltipContent>Back to menu</TooltipContent>
           </Tooltip>
-          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">Caro</h1>
+          <h1 className="hidden sm:block text-lg font-extrabold tracking-tight text-foreground m-0">
+            Caro
+          </h1>
           <div className="flex items-center gap-1 tabular-nums">
             <Badge
               variant={currentPlayer === 'X' && !winner && !isDraw ? 'secondary' : 'outline'}
@@ -172,7 +187,9 @@ export function Caro() {
           </div>
           <Badge variant="ghost" className="text-muted-foreground">
             {winner ? (
-              <span><strong>{winner}</strong> wins!</span>
+              <span>
+                <strong>{winner}</strong> wins!
+              </span>
             ) : isDraw ? (
               <span>Draw!</span>
             ) : (
@@ -186,10 +203,16 @@ export function Caro() {
               <EllipsisVertical className="size-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" side="bottom" sideOffset={4}>
-              <DropdownMenuItem onClick={() => setCellSize(s => Math.max(20, s - 4))} disabled={cellSize <= 20}>
+              <DropdownMenuItem
+                onClick={() => setCellSize(s => Math.max(20, s - 4))}
+                disabled={cellSize <= 20}
+              >
                 <ZoomOut className="size-4" /> Smaller cells
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setCellSize(s => Math.min(56, s + 4))} disabled={cellSize >= 56}>
+              <DropdownMenuItem
+                onClick={() => setCellSize(s => Math.min(56, s + 4))}
+                disabled={cellSize >= 56}
+              >
                 <ZoomIn className="size-4" /> Larger cells
               </DropdownMenuItem>
               <DropdownMenuSeparator />
@@ -271,9 +294,7 @@ export function Caro() {
               <TooltipContent>New game</TooltipContent>
             </Tooltip>
             <Tooltip>
-              <TooltipTrigger
-                render={<Button variant="ghost" size="icon" onClick={fullReset} />}
-              >
+              <TooltipTrigger render={<Button variant="ghost" size="icon" onClick={fullReset} />}>
                 <Trash2 className="size-4" />
               </TooltipTrigger>
               <TooltipContent>Reset scores</TooltipContent>
@@ -285,7 +306,13 @@ export function Caro() {
       <div className="flex-1 overflow-auto w-full overscroll-contain" ref={boardRef}>
         <div
           className="grid gap-0 mx-auto p-2 box-content"
-          style={{ gridTemplateColumns: `repeat(${SIZE}, 1fr)`, width: `calc(var(--cell) * 30)`, '--cell': `${cellSize}px` } as React.CSSProperties}
+          style={
+            {
+              gridTemplateColumns: `repeat(${SIZE}, 1fr)`,
+              width: `calc(var(--cell) * 30)`,
+              '--cell': `${cellSize}px`,
+            } as React.CSSProperties
+          }
         >
           {board.map((cell, i) => (
             <button
@@ -309,7 +336,12 @@ export function Caro() {
           <Card className="modal-card flex-row items-center justify-between gap-4 px-5 py-3.5 max-w-105 mx-auto">
             <span className="flex items-center gap-2 text-lg font-bold text-foreground">
               {winner ? (
-                <><span className={`inline-block size-4 rounded-full ${winner === 'X' ? 'bg-[radial-gradient(circle_at_35%_35%,#f08080,#c0392b)]' : 'bg-[radial-gradient(circle_at_35%_35%,#87ceeb,#2980b9)]'}`} />{winner === 'X' ? 'Red' : 'Blue'} wins!</>
+                <>
+                  <span
+                    className={`inline-block size-4 rounded-full ${winner === 'X' ? 'bg-[radial-gradient(circle_at_35%_35%,#f08080,#c0392b)]' : 'bg-[radial-gradient(circle_at_35%_35%,#87ceeb,#2980b9)]'}`}
+                  />
+                  {winner === 'X' ? 'Red' : 'Blue'} wins!
+                </>
               ) : (
                 <>Draw!</>
               )}

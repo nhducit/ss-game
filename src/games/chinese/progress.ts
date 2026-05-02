@@ -48,7 +48,11 @@ export function recordWrong(categoryId: string, level: Level, word: string) {
   save(data)
 }
 
-export function getCategoryProgress(categoryId: string, level: Level, words: ChineseWord[]): {
+export function getCategoryProgress(
+  categoryId: string,
+  level: Level,
+  words: ChineseWord[],
+): {
   learned: number
   total: number
 } {
@@ -62,7 +66,11 @@ export function getCategoryProgress(categoryId: string, level: Level, words: Chi
   return { learned, total: words.length }
 }
 
-export function getSmartWordOrder(categoryId: string, level: Level, words: ChineseWord[]): ChineseWord[] {
+export function getSmartWordOrder(
+  categoryId: string,
+  level: Level,
+  words: ChineseWord[],
+): ChineseWord[] {
   const data = load()
   const now = Date.now()
 
@@ -91,7 +99,7 @@ export function getSmartWordOrder(categoryId: string, level: Level, words: Chine
     const key = wordKey(categoryId, level, w.chinese)
     const p = data.words[key]
     if (!p) return true
-    return (now - p.lastSeen > ONE_DAY) || Math.random() < 0.3
+    return now - p.lastSeen > ONE_DAY || Math.random() < 0.3
   })
 
   return [...shuffledNew, ...shuffledWeak, ...learnedForReview]

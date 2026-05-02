@@ -1,6 +1,6 @@
 export function speak(text: string, rate = 0.7): Promise<void> {
   window.speechSynthesis.cancel()
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const u = new SpeechSynthesisUtterance(text)
     u.lang = 'en-US'
     u.rate = rate

@@ -22,7 +22,9 @@ function ProgressBar({ learned, total }: { learned: number; total: number }) {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="text-xs text-muted-foreground tabular-nums">{learned}/{total}</span>
+      <span className="text-xs text-muted-foreground tabular-nums">
+        {learned}/{total}
+      </span>
     </div>
   )
 }
@@ -40,7 +42,9 @@ export function CategoryPicker({ title, subtitle, onSelect }: CategoryPickerProp
     <div className="flex min-h-svh flex-col items-center justify-center gap-8 p-6">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-1.5 text-sm text-muted-foreground">
-        <Link to="/" className="hover:text-foreground transition-colors">Games</Link>
+        <Link to="/" className="hover:text-foreground transition-colors">
+          Games
+        </Link>
         <ChevronRight className="size-3.5" />
         <span className="text-foreground font-medium">{title}</span>
       </nav>
@@ -63,7 +67,10 @@ export function CategoryPicker({ title, subtitle, onSelect }: CategoryPickerProp
                 <div className="flex-1">
                   <CardTitle>{cat.name}</CardTitle>
                   <CardDescription>{cat.words[level].length} words</CardDescription>
-                  <ProgressBar learned={categoryProgress[i].learned} total={categoryProgress[i].total} />
+                  <ProgressBar
+                    learned={categoryProgress[i].learned}
+                    total={categoryProgress[i].total}
+                  />
                 </div>
               </CardHeader>
             </Card>

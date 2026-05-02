@@ -19,14 +19,20 @@ interface Token {
 }
 
 function normalize(word: string): string {
-  return word.replace(/^[^a-zA-Z0-9]+/, '').replace(/[^a-zA-Z0-9]+$/, '').toLowerCase()
+  return word
+    .replace(/^[^a-zA-Z0-9]+/, '')
+    .replace(/[^a-zA-Z0-9]+$/, '')
+    .toLowerCase()
 }
 
 function tokenize(sentence: string): Token[] {
-  return sentence.split(/\s+/).filter(Boolean).map(w => ({
-    original: w,
-    normalized: normalize(w),
-  }))
+  return sentence
+    .split(/\s+/)
+    .filter(Boolean)
+    .map(w => ({
+      original: w,
+      normalized: normalize(w),
+    }))
 }
 
 export function SentenceBuilder() {
@@ -44,7 +50,6 @@ export function SentenceBuilder() {
   const [tokens, setTokens] = useState<Token[]>([])
   const [shuffledIndices, setShuffledIndices] = useState<number[]>([])
   const [placedOrder, setPlacedOrder] = useState<number[]>([]) // indices into shuffledIndices
-
 
   const hasSpoken = useRef(false)
   const { record: recordGame, reset: resetRecordGame } = useRecordGame()
@@ -66,20 +71,23 @@ export function SentenceBuilder() {
     hasSpoken.current = false
   }, [])
 
-  const startCategory = useCallback((cat: Category, lvl: Level) => {
-    const levelWords = getWords(cat, lvl)
-    const shuffledWords = getSmartWordOrder(cat.id, lvl, levelWords)
-    setCategory(cat)
-    setLevel(lvl)
-    setWords(shuffledWords)
-    setWordIndex(0)
-    setScore(0)
-    setStreak(0)
-    setSkipped(0)
-    setScreen('playing')
-    resetRecordGame()
-    setupWord(shuffledWords[0])
-  }, [setupWord, resetRecordGame])
+  const startCategory = useCallback(
+    (cat: Category, lvl: Level) => {
+      const levelWords = getWords(cat, lvl)
+      const shuffledWords = getSmartWordOrder(cat.id, lvl, levelWords)
+      setCategory(cat)
+      setLevel(lvl)
+      setWords(shuffledWords)
+      setWordIndex(0)
+      setScore(0)
+      setStreak(0)
+      setSkipped(0)
+      setScreen('playing')
+      resetRecordGame()
+      setupWord(shuffledWords[0])
+    },
+    [setupWord, resetRecordGame],
+  )
 
   // Speak the sentence when it changes
   useEffect(() => {
@@ -126,11 +134,14 @@ export function SentenceBuilder() {
     }
   }, [wordIndex, words, setupWord, recordGame, level])
 
-  const handleChipTap = useCallback((shuffledIdx: number) => {
-    if (allPlaced || result !== 'pending') return
-    if (placedOrder.includes(shuffledIdx)) return
-    setPlacedOrder(prev => [...prev, shuffledIdx])
-  }, [allPlaced, result, placedOrder])
+  const handleChipTap = useCallback(
+    (shuffledIdx: number) => {
+      if (allPlaced || result !== 'pending') return
+      if (placedOrder.includes(shuffledIdx)) return
+      setPlacedOrder(prev => [...prev, shuffledIdx])
+    },
+    [allPlaced, result, placedOrder],
+  )
 
   const skipWord = useCallback(() => {
     if (!currentWord || result !== 'pending') return
@@ -169,9 +180,7 @@ export function SentenceBuilder() {
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             {score >= total * 8 ? 'Great job! 🌟' : 'Well done! 👏'}
           </h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            {category?.name}
-          </p>
+          <p className="mt-2 text-lg text-muted-foreground">{category?.name}</p>
         </div>
         <div className="flex gap-4 text-center">
           <div className="flex flex-col items-center gap-1">
@@ -179,7 +188,9 @@ export function SentenceBuilder() {
             <span className="text-sm text-muted-foreground">Score</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-bold text-foreground">{answered}/{total}</span>
+            <span className="text-3xl font-bold text-foreground">
+              {answered}/{total}
+            </span>
             <span className="text-sm text-muted-foreground">Words</span>
           </div>
         </div>
@@ -187,9 +198,7 @@ export function SentenceBuilder() {
           <Button variant="outline" onClick={() => startCategory(category!, level)}>
             <RotateCcw className="size-4 mr-2" /> Play again
           </Button>
-          <Button onClick={() => setScreen('categories')}>
-            Other topics
-          </Button>
+          <Button onClick={() => setScreen('categories')}>Other topics</Button>
         </div>
       </div>
     )
@@ -205,7 +214,9 @@ export function SentenceBuilder() {
         <div className="flex items-center gap-3.5">
           <Tooltip>
             <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />}
+              render={
+                <Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />
+              }
             >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>
@@ -253,7 +264,8 @@ export function SentenceBuilder() {
                 // Color based on result
                 let chipClass: string
                 if (result === 'correct') {
-                  chipClass = 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700'
+                  chipClass =
+                    'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 border border-green-300 dark:border-green-700'
                 } else if (result === 'wrong') {
                   const isWordCorrect = placedToken.normalized === token.normalized
                   chipClass = isWordCorrect
@@ -287,7 +299,9 @@ export function SentenceBuilder() {
           {placedOrder.length > 0 && (
             <button
               onClick={() => {
-                const builtText = placedOrder.map(si => tokens[shuffledIndices[si]].original).join(' ')
+                const builtText = placedOrder
+                  .map(si => tokens[shuffledIndices[si]].original)
+                  .join(' ')
                 speak(builtText, 0.8)
               }}
               className={`flex items-center gap-2 text-sm sm:text-base transition-colors cursor-pointer touch-manipulation ${
@@ -299,7 +313,12 @@ export function SentenceBuilder() {
               }`}
             >
               <Volume2 className="size-4 shrink-0" />
-              {result !== 'pending' && <span className="italic">&ldquo;{placedOrder.map(si => tokens[shuffledIndices[si]].original).join(' ')}&rdquo;</span>}
+              {result !== 'pending' && (
+                <span className="italic">
+                  &ldquo;{placedOrder.map(si => tokens[shuffledIndices[si]].original).join(' ')}
+                  &rdquo;
+                </span>
+              )}
             </button>
           )}
 
@@ -352,11 +371,7 @@ export function SentenceBuilder() {
                 >
                   <Undo2 className="size-4" /> Undo
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="text-muted-foreground gap-2"
-                  onClick={skipWord}
-                >
+                <Button variant="ghost" className="text-muted-foreground gap-2" onClick={skipWord}>
                   <SkipForward className="size-4" /> Skip
                 </Button>
               </>

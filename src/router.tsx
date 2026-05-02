@@ -36,10 +36,11 @@ function isWithinSchedule(schedule: AppConfig['schedule']): boolean {
   const now = new Date()
   const day = now.getDay()
   const mins = now.getHours() * 60 + now.getMinutes()
-  return schedule.some(slot =>
-    slot.day === day &&
-    mins >= slot.startHour * 60 + slot.startMin &&
-    mins < slot.endHour * 60 + slot.endMin
+  return schedule.some(
+    slot =>
+      slot.day === day &&
+      mins >= slot.startHour * 60 + slot.startMin &&
+      mins < slot.endHour * 60 + slot.endMin,
   )
 }
 
@@ -64,9 +65,11 @@ function RootComponent() {
 
   // Re-check lock state every 30 seconds + on route change
   const checkLock = useCallback(() => {
-    getAppConfig().then(config => {
-      setLocked(computeLocked(config))
-    }).catch(() => {})
+    getAppConfig()
+      .then(config => {
+        setLocked(computeLocked(config))
+      })
+      .catch(() => {})
   }, [])
 
   useEffect(() => {

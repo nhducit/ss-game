@@ -11,11 +11,7 @@ import { useRecordGame } from '@/games/useRecordGame'
 
 type Screen = 'categories' | 'playing' | 'results'
 
-const KEYBOARD_ROWS = [
-  'QWERTYUIOP'.split(''),
-  'ASDFGHJKL'.split(''),
-  'ZXCVBNM'.split(''),
-]
+const KEYBOARD_ROWS = ['QWERTYUIOP'.split(''), 'ASDFGHJKL'.split(''), 'ZXCVBNM'.split('')]
 const MAX_WRONG = 6
 
 function HangmanDrawing({ wrongCount }: { wrongCount: number }) {
@@ -27,17 +23,29 @@ function HangmanDrawing({ wrongCount }: { wrongCount: number }) {
       <line x1="60" y1="20" x2="140" y2="20" stroke="currentColor" strokeWidth="4" />
       <line x1="140" y1="20" x2="140" y2="50" stroke="currentColor" strokeWidth="4" />
       {/* Head */}
-      {wrongCount >= 1 && <circle cx="140" cy="65" r="15" stroke="currentColor" strokeWidth="4" fill="none" />}
+      {wrongCount >= 1 && (
+        <circle cx="140" cy="65" r="15" stroke="currentColor" strokeWidth="4" fill="none" />
+      )}
       {/* Body */}
-      {wrongCount >= 2 && <line x1="140" y1="80" x2="140" y2="130" stroke="currentColor" strokeWidth="4" />}
+      {wrongCount >= 2 && (
+        <line x1="140" y1="80" x2="140" y2="130" stroke="currentColor" strokeWidth="4" />
+      )}
       {/* Left arm */}
-      {wrongCount >= 3 && <line x1="140" y1="95" x2="115" y2="115" stroke="currentColor" strokeWidth="4" />}
+      {wrongCount >= 3 && (
+        <line x1="140" y1="95" x2="115" y2="115" stroke="currentColor" strokeWidth="4" />
+      )}
       {/* Right arm */}
-      {wrongCount >= 4 && <line x1="140" y1="95" x2="165" y2="115" stroke="currentColor" strokeWidth="4" />}
+      {wrongCount >= 4 && (
+        <line x1="140" y1="95" x2="165" y2="115" stroke="currentColor" strokeWidth="4" />
+      )}
       {/* Left leg */}
-      {wrongCount >= 5 && <line x1="140" y1="130" x2="115" y2="160" stroke="currentColor" strokeWidth="4" />}
+      {wrongCount >= 5 && (
+        <line x1="140" y1="130" x2="115" y2="160" stroke="currentColor" strokeWidth="4" />
+      )}
       {/* Right leg */}
-      {wrongCount >= 6 && <line x1="140" y1="130" x2="165" y2="160" stroke="currentColor" strokeWidth="4" />}
+      {wrongCount >= 6 && (
+        <line x1="140" y1="130" x2="165" y2="160" stroke="currentColor" strokeWidth="4" />
+      )}
     </svg>
   )
 }
@@ -67,23 +75,26 @@ export function Hangman() {
     hasSpoken.current = false
   }, [])
 
-  const startCategory = useCallback((cat: Category, lvl: Level) => {
-    const levelWords = getWords(cat, lvl)
-    const shuffledWords = getSmartWordOrder(cat.id, lvl, levelWords)
-    setCategory(cat)
-    setLevel(lvl)
-    setWords(shuffledWords)
-    setWordIndex(0)
-    setScore(0)
-    setStreak(0)
-    setSkipped(0)
-    setScreen('playing')
-    resetRecordGame()
-    setInputLetters([])
-    setWrongCount(0)
-    setWon(null)
-    hasSpoken.current = false
-  }, [resetRecordGame])
+  const startCategory = useCallback(
+    (cat: Category, lvl: Level) => {
+      const levelWords = getWords(cat, lvl)
+      const shuffledWords = getSmartWordOrder(cat.id, lvl, levelWords)
+      setCategory(cat)
+      setLevel(lvl)
+      setWords(shuffledWords)
+      setWordIndex(0)
+      setScore(0)
+      setStreak(0)
+      setSkipped(0)
+      setScreen('playing')
+      resetRecordGame()
+      setInputLetters([])
+      setWrongCount(0)
+      setWon(null)
+      hasSpoken.current = false
+    },
+    [resetRecordGame],
+  )
 
   // Speak the word when it changes
   useEffect(() => {
@@ -94,11 +105,14 @@ export function Hangman() {
     }
   }, [screen, currentWord, wordIndex])
 
-  const handleLetter = useCallback((letter: string) => {
-    if (!currentWord || won !== null) return
-    if (inputLetters.length >= currentWord.english.length) return
-    setInputLetters(prev => [...prev, letter])
-  }, [currentWord, won, inputLetters])
+  const handleLetter = useCallback(
+    (letter: string) => {
+      if (!currentWord || won !== null) return
+      if (inputLetters.length >= currentWord.english.length) return
+      setInputLetters(prev => [...prev, letter])
+    },
+    [currentWord, won, inputLetters],
+  )
 
   const handleDelete = useCallback(() => {
     if (won !== null) return
@@ -180,9 +194,7 @@ export function Hangman() {
           <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
             {score >= total * 8 ? 'Great job! 🌟' : 'Well done! 👏'}
           </h1>
-          <p className="mt-2 text-lg text-muted-foreground">
-            {category?.name}
-          </p>
+          <p className="mt-2 text-lg text-muted-foreground">{category?.name}</p>
         </div>
         <div className="flex gap-4 text-center">
           <div className="flex flex-col items-center gap-1">
@@ -190,7 +202,9 @@ export function Hangman() {
             <span className="text-sm text-muted-foreground">Score</span>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <span className="text-3xl font-bold text-foreground">{answered}/{total}</span>
+            <span className="text-3xl font-bold text-foreground">
+              {answered}/{total}
+            </span>
             <span className="text-sm text-muted-foreground">Words</span>
           </div>
         </div>
@@ -198,9 +212,7 @@ export function Hangman() {
           <Button variant="outline" onClick={() => startCategory(category!, level)}>
             <RotateCcw className="size-4 mr-2" /> Play again
           </Button>
-          <Button onClick={() => setScreen('categories')}>
-            Other topics
-          </Button>
+          <Button onClick={() => setScreen('categories')}>Other topics</Button>
         </div>
       </div>
     )
@@ -217,7 +229,9 @@ export function Hangman() {
         <div className="flex items-center gap-3.5">
           <Tooltip>
             <TooltipTrigger
-              render={<Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />}
+              render={
+                <Button variant="ghost" size="icon" onClick={() => setScreen('categories')} />
+              }
             >
               <ArrowLeft className="size-4" />
             </TooltipTrigger>
@@ -258,18 +272,21 @@ export function Hangman() {
           <HangmanDrawing wrongCount={wrongCount} />
 
           {/* Word display - filled by user input */}
-          <div className={`text-3xl sm:text-4xl font-bold tracking-[0.3em] uppercase select-none ${shake ? 'spelling-shake' : ''}`}>
+          <div
+            className={`text-3xl sm:text-4xl font-bold tracking-[0.3em] uppercase select-none ${shake ? 'spelling-shake' : ''}`}
+          >
             {wordLetters.map((letter, i) => {
               const filled = inputLetters[i]
               const showFinal = won !== null
               const display = showFinal ? letter : (filled ?? '_')
-              const cls = won === false
-                ? 'text-red-500'
-                : won === true
-                  ? 'text-green-600'
-                  : filled
-                    ? 'text-foreground'
-                    : 'text-muted-foreground'
+              const cls =
+                won === false
+                  ? 'text-red-500'
+                  : won === true
+                    ? 'text-green-600'
+                    : filled
+                      ? 'text-foreground'
+                      : 'text-muted-foreground'
               return (
                 <span key={i} className={cls}>
                   {display}{' '}
@@ -287,7 +304,8 @@ export function Hangman() {
           {won === false && (
             <div className="text-center animate-in fade-in duration-300">
               <p className="text-lg font-bold text-red-500">
-                The word was: <span className="text-2xl uppercase tracking-widest">{currentWord.english}</span>
+                The word was:{' '}
+                <span className="text-2xl uppercase tracking-widest">{currentWord.english}</span>
               </p>
             </div>
           )}
@@ -342,11 +360,7 @@ export function Hangman() {
           <div className="flex gap-3 mt-1">
             {won === null && (
               <>
-                <Button
-                  variant="ghost"
-                  className="text-muted-foreground gap-2"
-                  onClick={skipWord}
-                >
+                <Button variant="ghost" className="text-muted-foreground gap-2" onClick={skipWord}>
                   <SkipForward className="size-4" /> Skip
                 </Button>
                 <Button

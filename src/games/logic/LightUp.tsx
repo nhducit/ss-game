@@ -36,19 +36,31 @@ function variables(e: Expr): string[] {
   const walk = (x: Expr) => {
     if (x.kind === 'var') set.add(x.name)
     else if (x.kind === 'not') walk(x.x)
-    else { walk(x.a); walk(x.b) }
+    else {
+      walk(x.a)
+      walk(x.b)
+    }
   }
   walk(e)
   return Array.from(set).sort()
 }
 
-function RenderExpr({ e, env, depth = 0 }: { e: Expr; env: Record<string, boolean>; depth?: number }) {
+function RenderExpr({
+  e,
+  env,
+  depth = 0,
+}: {
+  e: Expr
+  env: Record<string, boolean>
+  depth?: number
+}) {
   if (e.kind === 'var') return <BoolBlock value={env[e.name] ?? false} label={e.name} size="sm" />
-  if (e.kind === 'not') return (
-    <OperatorBlock op="not" result={evalExpr(e, env)} depth={depth}>
-      <RenderExpr e={e.x} env={env} depth={depth + 1} />
-    </OperatorBlock>
-  )
+  if (e.kind === 'not')
+    return (
+      <OperatorBlock op="not" result={evalExpr(e, env)} depth={depth}>
+        <RenderExpr e={e.x} env={env} depth={depth + 1} />
+      </OperatorBlock>
+    )
   return (
     <OperatorBlock op={e.kind} result={evalExpr(e, env)} depth={depth}>
       <RenderExpr e={e.a} env={env} depth={depth + 1} />
@@ -104,7 +116,13 @@ const LEVELS: { id: 'easy' | 'medium' | 'hard'; exprs: Expr[]; stars: Difficulty
 
 const ROUND_COUNT = 5
 
-export function LightUp({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; onExit: () => void }) {
+export function LightUp({
+  level,
+  onExit,
+}: {
+  level: 'easy' | 'medium' | 'hard'
+  onExit: () => void
+}) {
   const cfg = LEVELS.find(l => l.id === level)!
   const [round, setRound] = useState(0)
   const [score, setScore] = useState(0)
@@ -117,16 +135,19 @@ export function LightUp({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; 
   const vars = useMemo(() => variables(currentExpr), [currentExpr])
   const result = evalExpr(currentExpr, env)
 
-  const toggle = useCallback((name: string) => {
-    if (locked || done) return
-    const newEnv = { ...env, [name]: !(env[name] ?? false) }
-    setEnv(newEnv)
-    const lit = evalExpr(currentExpr, newEnv)
-    if (lit) {
-      setLocked(true)
-      setScore(s => s + 1)
-    }
-  }, [locked, done, env, currentExpr])
+  const toggle = useCallback(
+    (name: string) => {
+      if (locked || done) return
+      const newEnv = { ...env, [name]: !(env[name] ?? false) }
+      setEnv(newEnv)
+      const lit = evalExpr(currentExpr, newEnv)
+      if (lit) {
+        setLocked(true)
+        setScore(s => s + 1)
+      }
+    },
+    [locked, done, env, currentExpr],
+  )
 
   const next = () => {
     if (round + 1 >= ROUND_COUNT) {
@@ -164,10 +185,17 @@ export function LightUp({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; 
       <div className="flex flex-col items-center gap-6 p-6 max-w-md mx-auto">
         <Trophy className="size-16 text-amber-500" />
         <h2 className="text-3xl font-extrabold">Bulb Master!</h2>
-        <p className="text-lg text-muted-foreground">You lit {score}/{ROUND_COUNT} bulbs</p>
+        <p className="text-lg text-muted-foreground">
+          You lit {score}/{ROUND_COUNT} bulbs
+        </p>
         <div className="flex gap-2">
-          <Button onClick={restart}><RotateCcw className="size-4" />Play again</Button>
-          <Button variant="outline" onClick={onExit}>Back</Button>
+          <Button onClick={restart}>
+            <RotateCcw className="size-4" />
+            Play again
+          </Button>
+          <Button variant="outline" onClick={onExit}>
+            Back
+          </Button>
         </div>
       </div>
     )
@@ -176,16 +204,25 @@ export function LightUp({ level, onExit }: { level: 'easy' | 'medium' | 'hard'; 
   return (
     <div className="flex flex-col items-center gap-4 p-4 max-w-3xl mx-auto">
       <div className="flex items-center justify-between w-full">
-        <Button variant="ghost" size="sm" onClick={onExit}>← Back</Button>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ← Back
+        </Button>
         <div className="flex items-center gap-3 text-sm">
-          <span className="font-bold">Round {round + 1}/{ROUND_COUNT}</span>
+          <span className="font-bold">
+            Round {round + 1}/{ROUND_COUNT}
+          </span>
           <span>⭐ {score}</span>
         </div>
-        <Button variant="ghost" size="sm" onClick={skip}><SkipForward className="size-4" />Skip</Button>
+        <Button variant="ghost" size="sm" onClick={skip}>
+          <SkipForward className="size-4" />
+          Skip
+        </Button>
       </div>
 
       <div className="flex items-center justify-center gap-2">
-        <Speaker text={`Light Up. Make the bulb light up by flipping the switches. The expression is: ${speakExpr(currentExpr)}.`} />
+        <Speaker
+          text={`Light Up. Make the bulb light up by flipping the switches. The expression is: ${speakExpr(currentExpr)}.`}
+        />
         <p className="text-sm text-muted-foreground">Make the bulb light up 💡</p>
       </div>
 
