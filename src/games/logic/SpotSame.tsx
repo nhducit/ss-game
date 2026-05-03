@@ -153,7 +153,7 @@ export function SpotSame({
   const pick = (ans: 'yes' | 'no') => {
     if (picked !== null) return
     setPicked(ans)
-    if (ans === correctAns) setScore(s => s + 1)
+    if (ans === correctAns) setScore((s) => s + 1)
   }
 
   const next = () => {
@@ -163,7 +163,7 @@ export function SpotSame({
     } else {
       setPair(pickPair(pool, pair))
       setPicked(null)
-      setRound(r => r + 1)
+      setRound((r) => r + 1)
     }
   }
 
@@ -281,7 +281,7 @@ export function SpotSame({
           {counterExample && (
             <div className="text-xs text-center text-muted-foreground">
               Counter-example: when{' '}
-              {allVars.map(v => `${v}=${counterExample[v] ? 'on' : 'off'}`).join(', ')}, left is{' '}
+              {allVars.map((v) => `${v}=${counterExample[v] ? 'on' : 'off'}`).join(', ')}, left is{' '}
               <strong
                 className={cn(
                   evalExpr(pair.a, counterExample) ? 'text-emerald-600' : 'text-rose-500',

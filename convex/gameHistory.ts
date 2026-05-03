@@ -6,7 +6,7 @@ export const getByDeviceId = query({
   handler: async (ctx, { deviceId }) => {
     return await ctx.db
       .query('gameHistory')
-      .withIndex('by_deviceId', q => q.eq('deviceId', deviceId))
+      .withIndex('by_deviceId', (q) => q.eq('deviceId', deviceId))
       .collect()
   },
 })

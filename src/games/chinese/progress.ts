@@ -95,7 +95,7 @@ export function getSmartWordOrder(
   const shuffledLearned = shuffle(learnedWords)
 
   const ONE_DAY = 24 * 60 * 60 * 1000
-  const learnedForReview = shuffledLearned.filter(w => {
+  const learnedForReview = shuffledLearned.filter((w) => {
     const key = wordKey(categoryId, level, w.chinese)
     const p = data.words[key]
     if (!p) return true

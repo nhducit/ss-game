@@ -92,7 +92,7 @@ export function DotsAndBoxes() {
     return () => observer.disconnect()
   }, [])
 
-  const linesDrawn = lines.filter(l => l !== null).length
+  const linesDrawn = lines.filter((l) => l !== null).length
   const gameOver = linesDrawn === TOTAL_LINES
 
   const turnClass = gameOver ? '' : currentPlayer === 1 ? 'turn-p1' : 'turn-p2'
@@ -132,19 +132,19 @@ export function DotsAndBoxes() {
       setLines(newLines)
       setBoxes(newBoxes)
       setRecentBoxes(newRecent)
-      setMoveHistory(h => [
+      setMoveHistory((h) => [
         ...h,
         { lineIdx, player: currentPlayer, completedBoxes: completedBoxIndices },
       ])
 
       if (boxesCompleted > 0) {
-        setScores(s => {
+        setScores((s) => {
           const next: [number, number] = [...s]
           next[currentPlayer - 1] += boxesCompleted
           return next
         })
       } else {
-        setCurrentPlayer(p => (p === 1 ? 2 : 1))
+        setCurrentPlayer((p) => (p === 1 ? 2 : 1))
       }
     },
     [lines, boxes, currentPlayer, gameOver],
@@ -168,13 +168,13 @@ export function DotsAndBoxes() {
     setLines(newLines)
     setBoxes(newBoxes)
     setScores(newScores)
-    setMoveHistory(h => h.slice(0, -1))
+    setMoveHistory((h) => h.slice(0, -1))
     setRecentBoxes(new Set())
     setCurrentPlayer(last.player)
   }, [moveHistory, lines, boxes, scores, gameOver])
 
   const resetGame = useCallback(() => {
-    setTotalScores(t => [t[0] + scores[0], t[1] + scores[1]])
+    setTotalScores((t) => [t[0] + scores[0], t[1] + scores[1]])
     setLines(Array(TOTAL_LINES).fill(null))
     setBoxes(Array(TOTAL_BOXES).fill(null))
     setScores([0, 0])

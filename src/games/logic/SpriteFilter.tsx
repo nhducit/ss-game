@@ -207,7 +207,7 @@ function buildGrid(level: 'easy' | 'medium' | 'hard'): { sprites: Sprite[]; cond
   for (let attempt = 0; attempt < 30; attempt++) {
     const sprites = Array.from({ length: 9 }, (_, i) => randomSprite(i))
     const condition = randomCondition(level)
-    const hits = sprites.filter(s => matches(condition, s)).length
+    const hits = sprites.filter((s) => matches(condition, s)).length
     if (hits >= 2 && hits <= 6) return { sprites, condition }
   }
   const sprites = Array.from({ length: 9 }, (_, i) => randomSprite(i))
@@ -237,7 +237,7 @@ export function SpriteFilter({
   const { record, reset } = useRecordGame()
 
   const correctIds = useMemo(
-    () => new Set(grid.sprites.filter(s => matches(grid.condition, s)).map(s => s.id)),
+    () => new Set(grid.sprites.filter((s) => matches(grid.condition, s)).map((s) => s.id)),
     [grid],
   )
   const allRight = useMemo(() => {
@@ -249,7 +249,7 @@ export function SpriteFilter({
   const toggle = useCallback(
     (id: number) => {
       if (checked) return
-      setSelected(prev => {
+      setSelected((prev) => {
         const next = new Set(prev)
         if (next.has(id)) next.delete(id)
         else next.add(id)
@@ -262,7 +262,7 @@ export function SpriteFilter({
   const submit = () => {
     if (checked) return
     setChecked(true)
-    if (allRight) setScore(s => s + 1)
+    if (allRight) setScore((s) => s + 1)
   }
 
   const next = () => {
@@ -273,7 +273,7 @@ export function SpriteFilter({
       setGrid(buildGrid(level))
       setSelected(new Set())
       setChecked(false)
-      setRound(r => r + 1)
+      setRound((r) => r + 1)
     }
   }
 
@@ -346,7 +346,7 @@ export function SpriteFilter({
       </div>
 
       <div className="grid grid-cols-3 gap-3 w-full max-w-md">
-        {grid.sprites.map(s => (
+        {grid.sprites.map((s) => (
           <SpriteTile
             key={s.id}
             sprite={s}

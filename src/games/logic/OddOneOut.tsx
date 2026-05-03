@@ -150,8 +150,8 @@ function buildRound(level: 'easy' | 'medium' | 'hard', exclude?: Triple): Round 
     { expr: triple.odd, isOdd: true },
   ]
   shuffle(labelled)
-  const oddIndex = labelled.findIndex(i => i.isOdd)
-  return { items: labelled.map(i => i.expr), oddIndex, triple }
+  const oddIndex = labelled.findIndex((i) => i.isOdd)
+  return { items: labelled.map((i) => i.expr), oddIndex, triple }
 }
 
 function RenderExpr({ e, depth = 0 }: { e: Expr; depth?: number }) {
@@ -189,7 +189,7 @@ export function OddOneOut({
   const pick = (i: number) => {
     if (picked !== null) return
     setPicked(i)
-    if (i === round.oddIndex) setScore(s => s + 1)
+    if (i === round.oddIndex) setScore((s) => s + 1)
   }
 
   const next = () => {
@@ -199,7 +199,7 @@ export function OddOneOut({
     } else {
       setRound(buildRound(level, round.triple))
       setPicked(null)
-      setRoundNum(r => r + 1)
+      setRoundNum((r) => r + 1)
     }
   }
 

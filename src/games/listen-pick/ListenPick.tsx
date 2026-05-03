@@ -19,8 +19,8 @@ interface Round {
 }
 
 function buildRounds(orderedWords: Word[], allWords: Word[]): Round[] {
-  return orderedWords.map(correct => {
-    const distractors = shuffle(allWords.filter(w => w.english !== correct.english)).slice(
+  return orderedWords.map((correct) => {
+    const distractors = shuffle(allWords.filter((w) => w.english !== correct.english)).slice(
       0,
       OPTIONS_COUNT - 1,
     )
@@ -84,7 +84,7 @@ export function ListenPick() {
         const newStreak = streak + 1
         setStreak(newStreak)
         const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
-        setScore(s => s + points)
+        setScore((s) => s + points)
         speak(currentRound.correct.english, 0.8)
       } else {
         setShakeIndex(optionIndex)
@@ -98,7 +98,7 @@ export function ListenPick() {
 
   const advanceRound = useCallback(() => {
     if (roundIndex + 1 < rounds.length) {
-      setRoundIndex(r => r + 1)
+      setRoundIndex((r) => r + 1)
       setCorrect(false)
       setShowWord(false)
       hasSpoken.current = false

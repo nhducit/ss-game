@@ -92,18 +92,18 @@ export function ConnectFour() {
       const row = getLowestEmptyRow(board, col)
       if (row < 0) return
 
-      const next = board.map(r => [...r])
+      const next = board.map((r) => [...r])
       next[row][col] = currentPlayer
       setBoard(next)
-      setHistory(h => [...h, { row, col, player: currentPlayer }])
+      setHistory((h) => [...h, { row, col, player: currentPlayer }])
 
       const line = checkWin(next, row, col)
       if (line) {
         setWinner(currentPlayer)
         setWinCells(new Set(line.map(([r, c]) => `${r},${c}`)))
-        setScores(s => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
+        setScores((s) => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
       } else {
-        setCurrentPlayer(p => (p === 'X' ? 'O' : 'X'))
+        setCurrentPlayer((p) => (p === 'X' ? 'O' : 'X'))
       }
     },
     [board, currentPlayer, winner],
@@ -112,10 +112,10 @@ export function ConnectFour() {
   const undo = useCallback(() => {
     if (history.length === 0 || winner) return
     const last = history[history.length - 1]
-    const next = board.map(r => [...r])
+    const next = board.map((r) => [...r])
     next[last.row][last.col] = null
     setBoard(next)
-    setHistory(h => h.slice(0, -1))
+    setHistory((h) => h.slice(0, -1))
     setCurrentPlayer(last.player)
   }, [history, board, winner])
 

@@ -108,7 +108,7 @@ export function Caro() {
       const next = [...board]
       next[index] = currentPlayer
       setBoard(next)
-      setHistory(h => [...h, { index, player: currentPlayer }])
+      setHistory((h) => [...h, { index, player: currentPlayer }])
 
       const row = Math.floor(index / SIZE)
       const col = index % SIZE
@@ -116,9 +116,9 @@ export function Caro() {
       if (line) {
         setWinner(currentPlayer)
         setWinLine(new Set(line))
-        setScores(s => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
+        setScores((s) => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
       } else {
-        setCurrentPlayer(p => (p === 'X' ? 'O' : 'X'))
+        setCurrentPlayer((p) => (p === 'X' ? 'O' : 'X'))
       }
     },
     [board, currentPlayer, winner],
@@ -130,7 +130,7 @@ export function Caro() {
     const next = [...board]
     next[last.index] = null
     setBoard(next)
-    setHistory(h => h.slice(0, -1))
+    setHistory((h) => h.slice(0, -1))
     setCurrentPlayer(last.player)
   }, [history, board, winner])
 
@@ -204,13 +204,13 @@ export function Caro() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" side="bottom" sideOffset={4}>
               <DropdownMenuItem
-                onClick={() => setCellSize(s => Math.max(20, s - 4))}
+                onClick={() => setCellSize((s) => Math.max(20, s - 4))}
                 disabled={cellSize <= 20}
               >
                 <ZoomOut className="size-4" /> Smaller cells
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => setCellSize(s => Math.min(56, s + 4))}
+                onClick={() => setCellSize((s) => Math.min(56, s + 4))}
                 disabled={cellSize >= 56}
               >
                 <ZoomIn className="size-4" /> Larger cells
@@ -237,7 +237,7 @@ export function Caro() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => setCellSize(s => Math.max(20, s - 4))}
+                      onClick={() => setCellSize((s) => Math.max(20, s - 4))}
                       disabled={cellSize <= 20}
                     />
                   }
@@ -252,7 +252,7 @@ export function Caro() {
                     <Button
                       variant="ghost"
                       size="icon"
-                      onClick={() => setCellSize(s => Math.min(56, s + 4))}
+                      onClick={() => setCellSize((s) => Math.min(56, s + 4))}
                       disabled={cellSize >= 56}
                     />
                   }

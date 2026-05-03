@@ -156,7 +156,7 @@ export function Logic() {
       <LevelPills level={level} onChange={setLevel} />
 
       <div className="grid w-full max-w-2xl grid-cols-2 sm:grid-cols-3 gap-3">
-        {ACTIVITIES.map(a => (
+        {ACTIVITIES.map((a) => (
           <button
             key={a.id}
             type="button"
@@ -196,7 +196,7 @@ export function Logic() {
 function LevelPills({ level, onChange }: { level: Level; onChange: (l: Level) => void }) {
   return (
     <div className="flex gap-2">
-      {LEVELS.map(l => (
+      {LEVELS.map((l) => (
         <button
           key={l.id}
           type="button"

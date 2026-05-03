@@ -73,7 +73,7 @@ export function CharacterMatch() {
       setFlipped(newFlipped)
 
       if (newFlipped.length === 2) {
-        setMoves(m => m + 1)
+        setMoves((m) => m + 1)
         setLocked(true)
         const [first, second] = newFlipped
         const card1 = cards[first]
@@ -83,12 +83,12 @@ export function CharacterMatch() {
           speakChinese(card1.word.chinese, 0.8)
           recordCorrect(category!.id, level, card1.word.chinese)
           setTimeout(() => {
-            setCards(prev =>
+            setCards((prev) =>
               prev.map((c, i) => (i === first || i === second ? { ...c, matched: true } : c)),
             )
             setFlipped([])
             setLocked(false)
-            setMatches(m => m + 1)
+            setMatches((m) => m + 1)
           }, 600)
         } else {
           setTimeout(() => {

@@ -29,7 +29,7 @@ function easyOpBetween(aName: string, bName: string): Puzzle {
   const op: Op = Math.random() < 0.5 ? 'and' : 'or'
   const target = op === 'and' ? AND(V(aName), V(bName)) : OR(V(aName), V(bName))
   return {
-    build: choices => {
+    build: (choices) => {
       const o = choices[0] as Op
       return o === 'and' ? AND(V(aName), V(bName)) : OR(V(aName), V(bName))
     },
@@ -53,7 +53,7 @@ function easyNotThenOp(aName: string, bName: string): Puzzle {
   const left: Expr = useNot === 'not' ? NOT(V(aName)) : V(aName)
   const target = op === 'and' ? AND(left, V(bName)) : OR(left, V(bName))
   return {
-    build: choices => {
+    build: (choices) => {
       const u = choices[0] as UnaryFlag
       const l: Expr = u === 'not' ? NOT(V(aName)) : V(aName)
       return op === 'and' ? AND(l, V(bName)) : OR(l, V(bName))
@@ -71,7 +71,7 @@ function mediumPuzzle(aName: string, bName: string): Puzzle {
   const right: Expr = useNot === 'not' ? NOT(V(bName)) : V(bName)
   const target = op === 'and' ? AND(V(aName), right) : OR(V(aName), right)
   return {
-    build: choices => {
+    build: (choices) => {
       const o = choices[0] as Op
       const u = choices[1] as UnaryFlag
       const r: Expr = u === 'not' ? NOT(V(bName)) : V(bName)
@@ -91,7 +91,7 @@ function hardPuzzle(aName: string, bName: string, cName: string): Puzzle {
   const inner: Expr = op1 === 'and' ? AND(V(aName), V(bName)) : OR(V(aName), V(bName))
   const target = op2 === 'and' ? AND(inner, V(cName)) : OR(inner, V(cName))
   return {
-    build: choices => {
+    build: (choices) => {
       const o1 = choices[0] as Op
       const o2 = choices[1] as Op
       const inn: Expr = o1 === 'and' ? AND(V(aName), V(bName)) : OR(V(aName), V(bName))
@@ -290,7 +290,7 @@ export function BlockBuilder({
   const [done, setDone] = useState(false)
   const { record, reset } = useRecordGame()
 
-  const filled = choices.every(c => c !== null)
+  const filled = choices.every((c) => c !== null)
 
   let correct = false
   let builtExpr: Expr | null = null
@@ -298,13 +298,13 @@ export function BlockBuilder({
     builtExpr = puzzle.build(choices as (Op | UnaryFlag)[])
     const vars = variables(builtExpr)
     correct = allAssignments(vars).every(
-      env => evalExpr(builtExpr!, env) === evalExpr(puzzle.target, env),
+      (env) => evalExpr(builtExpr!, env) === evalExpr(puzzle.target, env),
     )
   }
 
   const setChoice = (i: number, v: Op | UnaryFlag) => {
     if (checked) return
-    setChoices(prev => {
+    setChoices((prev) => {
       const copy = prev.slice()
       copy[i] = v
       return copy
@@ -313,7 +313,7 @@ export function BlockBuilder({
 
   const submit = () => {
     setChecked(true)
-    if (correct) setScore(s => s + 1)
+    if (correct) setScore((s) => s + 1)
   }
 
   const next = () => {
@@ -325,7 +325,7 @@ export function BlockBuilder({
       setPuzzle(p)
       setChoices(p.holes.map(() => null))
       setChecked(false)
-      setRound(r => r + 1)
+      setRound((r) => r + 1)
     }
   }
 
@@ -401,7 +401,7 @@ export function BlockBuilder({
         <table className="font-mono text-xs border-separate border-spacing-0 mt-1">
           <thead>
             <tr className="bg-[#59C059] text-white">
-              {targetVars.map(v => (
+              {targetVars.map((v) => (
                 <th key={v} className="px-2 py-1 border border-[#3a8a3a]">
                   {v}
                 </th>
@@ -412,7 +412,7 @@ export function BlockBuilder({
           <tbody>
             {rows.map((env, i) => (
               <tr key={i} className={i % 2 === 0 ? 'bg-muted/50' : ''}>
-                {targetVars.map(v => (
+                {targetVars.map((v) => (
                   <td key={v} className="px-2 py-1 border border-border text-center">
                     {env[v] ? 'on' : 'off'}
                   </td>

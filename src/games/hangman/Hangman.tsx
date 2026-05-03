@@ -109,14 +109,14 @@ export function Hangman() {
     (letter: string) => {
       if (!currentWord || won !== null) return
       if (inputLetters.length >= currentWord.english.length) return
-      setInputLetters(prev => [...prev, letter])
+      setInputLetters((prev) => [...prev, letter])
     },
     [currentWord, won, inputLetters],
   )
 
   const handleDelete = useCallback(() => {
     if (won !== null) return
-    setInputLetters(prev => prev.slice(0, -1))
+    setInputLetters((prev) => prev.slice(0, -1))
   }, [won])
 
   const handleSubmit = useCallback(() => {
@@ -132,10 +132,10 @@ export function Hangman() {
       const newStreak = streak + 1
       setStreak(newStreak)
       const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
-      setScore(s => s + points)
+      setScore((s) => s + points)
       speakSequence([
         { text: currentWord.english, rate: 0.8 },
-        ...currentWord.sentences.map(s => ({ text: s, rate: 0.75, pause: 400 })),
+        ...currentWord.sentences.map((s) => ({ text: s, rate: 0.75, pause: 400 })),
       ])
     } else {
       const newWrong = wrongCount + 1
@@ -166,7 +166,7 @@ export function Hangman() {
   const skipWord = useCallback(() => {
     if (!currentWord || won !== null) return
     setStreak(0)
-    setSkipped(s => s + 1)
+    setSkipped((s) => s + 1)
     advanceWord()
   }, [currentWord, won, advanceWord])
 
@@ -331,7 +331,7 @@ export function Hangman() {
             <div className="flex flex-col items-center gap-1.5 sm:gap-2 mt-1">
               {KEYBOARD_ROWS.map((row, ri) => (
                 <div key={ri} className="flex gap-1.5 sm:gap-2">
-                  {row.map(letter => (
+                  {row.map((letter) => (
                     <button
                       key={letter}
                       className="font-bold rounded-lg w-9 h-10 sm:w-10 sm:h-11 transition-all duration-150 touch-manipulation select-none bg-muted hover:bg-muted/80 text-foreground cursor-pointer active:scale-95 disabled:opacity-50"

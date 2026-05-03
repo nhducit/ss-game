@@ -57,7 +57,7 @@ export function SetupProfile({ onComplete }: { onComplete: () => void }) {
       <div className="text-7xl">{emoji}</div>
 
       <div className="grid grid-cols-8 gap-2 max-w-xs">
-        {AVATAR_OPTIONS.map(e => (
+        {AVATAR_OPTIONS.map((e) => (
           <button
             key={e}
             onClick={() => setEmoji(e)}
@@ -74,10 +74,10 @@ export function SetupProfile({ onComplete }: { onComplete: () => void }) {
 
       <Input
         value={name}
-        onChange={e => setName(e.target.value)}
+        onChange={(e) => setName(e.target.value)}
         placeholder="Your name"
         className="text-center text-lg font-semibold max-w-xs"
-        onKeyDown={e => e.key === 'Enter' && handleStart()}
+        onKeyDown={(e) => e.key === 'Enter' && handleStart()}
         autoFocus
       />
 

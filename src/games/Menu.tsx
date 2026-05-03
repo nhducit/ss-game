@@ -89,7 +89,7 @@ function LevelPills({
 }) {
   return (
     <div className="flex gap-2">
-      {lvls.map(l => (
+      {lvls.map((l) => (
         <button
           key={l.id}
           onClick={() => onChange(l.id)}
@@ -121,7 +121,7 @@ function GameGrid({
 }) {
   return (
     <div className="grid w-full max-w-2xl grid-cols-2 sm:grid-cols-3 gap-3">
-      {games.map(game => (
+      {games.map((game) => (
         <Link key={game.id} to={game.to} className="no-underline">
           <Card className="cursor-pointer transition-colors hover:bg-muted/50 h-full">
             <CardHeader className="flex flex-col items-center text-center gap-2 p-4">
@@ -154,7 +154,7 @@ export function Menu() {
         <LevelPills
           levels={levels}
           current={engLevel}
-          onChange={id => setEngLevel(id as typeof engLevel)}
+          onChange={(id) => setEngLevel(id as typeof engLevel)}
         />
         <GameGrid games={englishGames} />
       </section>
@@ -175,7 +175,7 @@ export function Menu() {
         <LevelPills
           levels={chineseLevels}
           current={chnLevel}
-          onChange={id => setChnLevel(id as typeof chnLevel)}
+          onChange={(id) => setChnLevel(id as typeof chnLevel)}
         />
         <GameGrid games={chineseGames} />
       </section>

@@ -37,7 +37,7 @@ function isPlayerCell(idx: number, player: Player): boolean {
 }
 
 function sideEmpty(b: number[], p: Player): boolean {
-  return (p === 0 ? P1_CELLS : P2_CELLS).every(i => b[i] === 0)
+  return (p === 0 ? P1_CELLS : P2_CELLS).every((i) => b[i] === 0)
 }
 
 // ── Turn step for animation ──
@@ -124,7 +124,7 @@ function computeTurn(
   return steps
 }
 
-const wait = (ms: number) => new Promise<void>(r => setTimeout(r, ms))
+const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms))
 
 // Visual direction mapping:
 // P1 (top row 1→5 left to right): visual left = -1, visual right = +1
@@ -210,7 +210,7 @@ export function OAnQuan() {
             const newS: [number, number] = [...fs]
             newS[next] -= 5
             const cells = next === 0 ? P1_CELLS : P2_CELLS
-            cells.forEach(i => {
+            cells.forEach((i) => {
               newB[i] = 1
             })
             await wait(300)
@@ -344,7 +344,7 @@ export function OAnQuan() {
 
           {/* Player 1 row */}
           <div className="grid grid-cols-5">
-            {TOP_ROW.map(i => (
+            {TOP_ROW.map((i) => (
               <CellView
                 key={i}
                 count={board[i]}
@@ -362,7 +362,7 @@ export function OAnQuan() {
 
           {/* Player 2 row */}
           <div className="grid grid-cols-5">
-            {BOT_ROW.map(i => (
+            {BOT_ROW.map((i) => (
               <CellView
                 key={i}
                 count={board[i]}

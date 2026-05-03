@@ -29,7 +29,7 @@ function tokenize(sentence: string): Token[] {
   return sentence
     .split(/\s+/)
     .filter(Boolean)
-    .map(w => ({
+    .map((w) => ({
       original: w,
       normalized: normalize(w),
     }))
@@ -103,8 +103,8 @@ export function SentenceBuilder() {
     if (!allPlaced || result !== 'pending' || !currentWord || !category) return
 
     // Build the user's sentence and compare normalized forms
-    const userNormalized = placedOrder.map(si => tokens[shuffledIndices[si]].normalized)
-    const correctNormalized = tokens.map(t => t.normalized)
+    const userNormalized = placedOrder.map((si) => tokens[shuffledIndices[si]].normalized)
+    const correctNormalized = tokens.map((t) => t.normalized)
     const isCorrect = userNormalized.every((w, i) => w === correctNormalized[i])
 
     if (isCorrect) {
@@ -113,7 +113,7 @@ export function SentenceBuilder() {
       const newStreak = streak + 1
       setStreak(newStreak)
       const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
-      setScore(s => s + points)
+      setScore((s) => s + points)
       speak(sentence, 0.8)
     } else {
       setResult('wrong')
@@ -138,7 +138,7 @@ export function SentenceBuilder() {
     (shuffledIdx: number) => {
       if (allPlaced || result !== 'pending') return
       if (placedOrder.includes(shuffledIdx)) return
-      setPlacedOrder(prev => [...prev, shuffledIdx])
+      setPlacedOrder((prev) => [...prev, shuffledIdx])
     },
     [allPlaced, result, placedOrder],
   )
@@ -147,13 +147,13 @@ export function SentenceBuilder() {
     if (!currentWord || result !== 'pending') return
     recordWrong(category!.id, level, currentWord.english)
     setStreak(0)
-    setSkipped(s => s + 1)
+    setSkipped((s) => s + 1)
     advanceWord()
   }, [currentWord, result, category, level, advanceWord])
 
   const undoLastWord = useCallback(() => {
     if (result !== 'pending' || placedOrder.length === 0) return
-    setPlacedOrder(prev => prev.slice(0, -1))
+    setPlacedOrder((prev) => prev.slice(0, -1))
   }, [result, placedOrder])
 
   // Categories screen
@@ -300,7 +300,7 @@ export function SentenceBuilder() {
             <button
               onClick={() => {
                 const builtText = placedOrder
-                  .map(si => tokens[shuffledIndices[si]].original)
+                  .map((si) => tokens[shuffledIndices[si]].original)
                   .join(' ')
                 speak(builtText, 0.8)
               }}
@@ -315,7 +315,7 @@ export function SentenceBuilder() {
               <Volume2 className="size-4 shrink-0" />
               {result !== 'pending' && (
                 <span className="italic">
-                  &ldquo;{placedOrder.map(si => tokens[shuffledIndices[si]].original).join(' ')}
+                  &ldquo;{placedOrder.map((si) => tokens[shuffledIndices[si]].original).join(' ')}
                   &rdquo;
                 </span>
               )}

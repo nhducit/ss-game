@@ -101,7 +101,7 @@ function buildPuzzle(level: 'easy' | 'medium' | 'hard'): Puzzle {
         { a: true, b: true, out: evalGate(answer, true, true) },
       ]
 
-  const distractorsPool = pool.filter(g => g !== answer && (isUnary ? g === 'not' : g !== 'not'))
+  const distractorsPool = pool.filter((g) => g !== answer && (isUnary ? g === 'not' : g !== 'not'))
   shuffle(distractorsPool)
   const choices = shuffle([answer, ...distractorsPool.slice(0, 2)])
   return { answer, choices, rows }
@@ -134,7 +134,7 @@ export function GateGuess({
     (g: Gate) => {
       if (picked !== null) return
       setPicked(g)
-      if (g === puzzle.answer) setScore(s => s + 1)
+      if (g === puzzle.answer) setScore((s) => s + 1)
     },
     [picked, puzzle.answer],
   )
@@ -146,7 +146,7 @@ export function GateGuess({
     } else {
       setPuzzle(buildPuzzle(level))
       setPicked(null)
-      setRound(r => r + 1)
+      setRound((r) => r + 1)
     }
   }
 
@@ -248,7 +248,7 @@ export function GateGuess({
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-        {puzzle.choices.map(g => (
+        {puzzle.choices.map((g) => (
           <GateChip key={g} g={g} state={chipState(g)} onClick={() => pick(g)} />
         ))}
       </div>

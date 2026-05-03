@@ -61,15 +61,15 @@ export function TicTacToe() {
       const next = [...board]
       next[index] = currentPlayer
       setBoard(next)
-      setHistory(h => [...h, { index, player: currentPlayer }])
+      setHistory((h) => [...h, { index, player: currentPlayer }])
 
       const line = checkWin(next)
       if (line) {
         setWinner(currentPlayer)
         setWinLine(new Set(line))
-        setScores(s => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
+        setScores((s) => ({ ...s, [currentPlayer]: s[currentPlayer] + 1 }))
       } else {
-        setCurrentPlayer(p => (p === 'X' ? 'O' : 'X'))
+        setCurrentPlayer((p) => (p === 'X' ? 'O' : 'X'))
       }
     },
     [board, currentPlayer, winner],
@@ -81,7 +81,7 @@ export function TicTacToe() {
     const next = [...board]
     next[last.index] = null
     setBoard(next)
-    setHistory(h => h.slice(0, -1))
+    setHistory((h) => h.slice(0, -1))
     setCurrentPlayer(last.player)
   }, [history, board, winner])
 

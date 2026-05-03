@@ -117,7 +117,7 @@ export function getSmartWordOrder(categoryId: string, level: Level, words: Word[
   // Take all new + weak words, then sprinkle in some learned words
   // Learned words: include ~30% of them for review, skip recently seen ones
   const ONE_DAY = 24 * 60 * 60 * 1000
-  const learnedForReview = shuffledLearned.filter(w => {
+  const learnedForReview = shuffledLearned.filter((w) => {
     const key = wordKey(categoryId, level, w.english)
     const p = data.words[key]
     if (!p) return true

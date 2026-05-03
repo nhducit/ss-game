@@ -118,7 +118,7 @@ export function BulbQuiz({
   const pick = (v: boolean) => {
     if (picked !== null) return
     setPicked(v)
-    if (v === answer) setScore(s => s + 1)
+    if (v === answer) setScore((s) => s + 1)
   }
 
   const next = () => {
@@ -128,7 +128,7 @@ export function BulbQuiz({
     } else {
       setPuzzle(buildPuzzle(level, puzzle))
       setPicked(null)
-      setRound(r => r + 1)
+      setRound((r) => r + 1)
     }
   }
 
@@ -162,7 +162,7 @@ export function BulbQuiz({
     )
   }
 
-  const envSpeech = vars.map(v => `${v} is ${puzzle.env[v] ? 'on' : 'off'}`).join(', ')
+  const envSpeech = vars.map((v) => `${v} is ${puzzle.env[v] ? 'on' : 'off'}`).join(', ')
 
   return (
     <div className="flex flex-col items-center gap-5 p-4 max-w-3xl mx-auto">
@@ -187,7 +187,7 @@ export function BulbQuiz({
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-6 py-2">
-        {vars.map(v => (
+        {vars.map((v) => (
           <div key={v} className="flex flex-col items-center gap-1">
             <span className="font-bold text-base">{v}</span>
             <span

@@ -145,10 +145,10 @@ export function Reversi() {
         const count = countDiscs(board)
         if (count.X > count.O) {
           setGameResult('X')
-          setScores(s => ({ ...s, X: s.X + 1 }))
+          setScores((s) => ({ ...s, X: s.X + 1 }))
         } else if (count.O > count.X) {
           setGameResult('O')
-          setScores(s => ({ ...s, O: s.O + 1 }))
+          setScores((s) => ({ ...s, O: s.O + 1 }))
         } else {
           setGameResult('draw')
         }
@@ -172,10 +172,10 @@ export function Reversi() {
       setGameOver(true)
       if (count.X > count.O) {
         setGameResult('X')
-        setScores(s => ({ ...s, X: s.X + 1 }))
+        setScores((s) => ({ ...s, X: s.X + 1 }))
       } else if (count.O > count.X) {
         setGameResult('O')
-        setScores(s => ({ ...s, O: s.O + 1 }))
+        setScores((s) => ({ ...s, O: s.O + 1 }))
       } else {
         setGameResult('draw')
       }

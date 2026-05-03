@@ -98,11 +98,11 @@ export function TruthFill({
 
   const vars = useMemo(() => variables(expr), [expr])
   const rows = useMemo(() => allAssignments(vars), [vars])
-  const correctOutputs = useMemo(() => rows.map(env => evalExpr(expr, env)), [rows, expr])
+  const correctOutputs = useMemo(() => rows.map((env) => evalExpr(expr, env)), [rows, expr])
 
   const cycle = (i: number) => {
     if (checked) return
-    setAnswers(a => {
+    setAnswers((a) => {
       const copy = a.slice()
       const cur = copy[i]
       copy[i] = cur === null ? true : cur === true ? false : null
@@ -110,12 +110,12 @@ export function TruthFill({
     })
   }
 
-  const filled = answers.every(a => a !== null)
+  const filled = answers.every((a) => a !== null)
   const allCorrect = answers.every((a, i) => a === correctOutputs[i])
 
   const submit = () => {
     setChecked(true)
-    if (allCorrect) setScore(s => s + 1)
+    if (allCorrect) setScore((s) => s + 1)
   }
 
   const next = () => {
@@ -127,7 +127,7 @@ export function TruthFill({
       setExpr(e)
       setAnswers(Array.from<Cell>({ length: allAssignments(variables(e)).length }).fill(null))
       setChecked(false)
-      setRound(r => r + 1)
+      setRound((r) => r + 1)
     }
   }
 
@@ -195,7 +195,7 @@ export function TruthFill({
         <table className="mx-auto font-mono text-sm border-separate border-spacing-0 shadow-md rounded-lg overflow-hidden">
           <thead>
             <tr className="bg-[#59C059] text-white">
-              {vars.map(v => (
+              {vars.map((v) => (
                 <th key={v} className="px-4 py-2 border border-[#3a8a3a]">
                   {v}
                 </th>
@@ -212,7 +212,7 @@ export function TruthFill({
               const missed = checked && ans === null
               return (
                 <tr key={i} className={i % 2 === 0 ? 'bg-muted/50' : ''}>
-                  {vars.map(v => (
+                  {vars.map((v) => (
                     <td key={v} className="px-3 py-2 border border-border text-center">
                       <BoolBlock value={env[v]} label={v} size="sm" />
                     </td>

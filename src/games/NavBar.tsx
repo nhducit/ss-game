@@ -61,7 +61,7 @@ export function NavBar() {
 
   const refresh = useCallback(() => {
     getPlayer()
-      .then(player => {
+      .then((player) => {
         if (player) {
           setData({
             stars: player.totalStars,

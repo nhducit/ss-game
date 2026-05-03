@@ -5,10 +5,10 @@ const CONFIG_KEY = 'global'
 
 export const get = query({
   args: {},
-  handler: async ctx => {
+  handler: async (ctx) => {
     return await ctx.db
       .query('appConfig')
-      .withIndex('by_key', q => q.eq('key', CONFIG_KEY))
+      .withIndex('by_key', (q) => q.eq('key', CONFIG_KEY))
       .first()
   },
 })
@@ -18,7 +18,7 @@ export const setLocked = mutation({
   handler: async (ctx, { locked }) => {
     const existing = await ctx.db
       .query('appConfig')
-      .withIndex('by_key', q => q.eq('key', CONFIG_KEY))
+      .withIndex('by_key', (q) => q.eq('key', CONFIG_KEY))
       .first()
 
     if (existing) {
@@ -48,7 +48,7 @@ export const setSchedule = mutation({
   handler: async (ctx, { schedule }) => {
     const existing = await ctx.db
       .query('appConfig')
-      .withIndex('by_key', q => q.eq('key', CONFIG_KEY))
+      .withIndex('by_key', (q) => q.eq('key', CONFIG_KEY))
       .first()
 
     if (existing) {

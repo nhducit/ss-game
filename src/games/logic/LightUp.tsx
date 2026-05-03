@@ -123,7 +123,7 @@ export function LightUp({
   level: 'easy' | 'medium' | 'hard'
   onExit: () => void
 }) {
-  const cfg = LEVELS.find(l => l.id === level)!
+  const cfg = LEVELS.find((l) => l.id === level)!
   const [round, setRound] = useState(0)
   const [score, setScore] = useState(0)
   const [currentExpr, setCurrentExpr] = useState<Expr>(() => pickExpr(cfg.exprs))
@@ -143,7 +143,7 @@ export function LightUp({
       const lit = evalExpr(currentExpr, newEnv)
       if (lit) {
         setLocked(true)
-        setScore(s => s + 1)
+        setScore((s) => s + 1)
       }
     },
     [locked, done, env, currentExpr],
@@ -157,7 +157,7 @@ export function LightUp({
       const nextExpr = pickExpr(cfg.exprs, currentExpr)
       setCurrentExpr(nextExpr)
       setEnv(initEnv(nextExpr))
-      setRound(r => r + 1)
+      setRound((r) => r + 1)
       setLocked(false)
     }
   }
@@ -234,7 +234,7 @@ export function LightUp({
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-4">
-        {vars.map(v => (
+        {vars.map((v) => (
           <Switch key={v} on={env[v] ?? false} label={v} onToggle={() => toggle(v)} />
         ))}
       </div>

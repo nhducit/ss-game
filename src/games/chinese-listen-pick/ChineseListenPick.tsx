@@ -25,8 +25,8 @@ interface Round {
 }
 
 function buildRounds(orderedWords: ChineseWord[], allWords: ChineseWord[]): Round[] {
-  return orderedWords.map(correct => {
-    const distractors = shuffle(allWords.filter(w => w.chinese !== correct.chinese)).slice(
+  return orderedWords.map((correct) => {
+    const distractors = shuffle(allWords.filter((w) => w.chinese !== correct.chinese)).slice(
       0,
       OPTIONS_COUNT - 1,
     )
@@ -90,7 +90,7 @@ export function ChineseListenPick() {
         const newStreak = streak + 1
         setStreak(newStreak)
         const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
-        setScore(s => s + points)
+        setScore((s) => s + points)
         speakChinese(currentRound.correct.chinese, 0.8)
       } else {
         setShakeIndex(optionIndex)
@@ -104,7 +104,7 @@ export function ChineseListenPick() {
 
   const advanceRound = useCallback(() => {
     if (roundIndex + 1 < rounds.length) {
-      setRoundIndex(r => r + 1)
+      setRoundIndex((r) => r + 1)
       setCorrect(false)
       setShowWord(false)
       hasSpoken.current = false

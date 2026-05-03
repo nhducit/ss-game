@@ -82,7 +82,7 @@ export function GamesMenu() {
             type="password"
             inputMode="numeric"
             value={input}
-            onChange={e => {
+            onChange={(e) => {
               setInput(e.target.value)
               setError(false)
             }}
@@ -115,7 +115,7 @@ export function GamesMenu() {
         <p className="mt-1 text-muted-foreground">Pick a game to play</p>
       </div>
       <div className="grid w-full max-w-2xl grid-cols-2 sm:grid-cols-3 gap-3">
-        {games.map(game => (
+        {games.map((game) => (
           <Link key={game.id} to={game.to} className="no-underline">
             <Card className="cursor-pointer transition-colors hover:bg-muted/50 h-full">
               <CardHeader className="flex flex-col items-center text-center gap-2 p-4">

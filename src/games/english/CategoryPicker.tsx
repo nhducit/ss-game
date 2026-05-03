@@ -31,9 +31,9 @@ function ProgressBar({ learned, total }: { learned: number; total: number }) {
 
 export function CategoryPicker({ title, subtitle, onSelect }: CategoryPickerProps) {
   const [level] = useLevel()
-  const levelInfo = levels.find(l => l.id === level)!
+  const levelInfo = levels.find((l) => l.id === level)!
 
-  const categoryProgress = categories.map(cat => {
+  const categoryProgress = categories.map((cat) => {
     const words = cat.words[level]
     return getCategoryProgress(cat.id, level, words)
   })

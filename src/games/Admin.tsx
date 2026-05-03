@@ -56,7 +56,7 @@ function ScheduleEditor({
           <div key={i} className="flex items-center gap-2 flex-wrap">
             <select
               value={slot.day}
-              onChange={e => updateSlot(i, 'day', Number(e.target.value))}
+              onChange={(e) => updateSlot(i, 'day', Number(e.target.value))}
               className="rounded-md border bg-background px-2 py-1.5 text-sm"
             >
               {DAY_NAMES.map((name, d) => (
@@ -68,7 +68,7 @@ function ScheduleEditor({
             <Input
               type="time"
               value={`${pad(slot.startHour)}:${pad(slot.startMin)}`}
-              onChange={e => {
+              onChange={(e) => {
                 const [h, m] = e.target.value.split(':').map(Number)
                 updateSlot(i, 'startHour', h)
                 updateSlot(i, 'startMin', m)
@@ -79,7 +79,7 @@ function ScheduleEditor({
             <Input
               type="time"
               value={`${pad(slot.endHour)}:${pad(slot.endMin)}`}
-              onChange={e => {
+              onChange={(e) => {
                 const [h, m] = e.target.value.split(':').map(Number)
                 updateSlot(i, 'endHour', h)
                 updateSlot(i, 'endMin', m)
@@ -105,7 +105,7 @@ function AdminPanel() {
 
   useEffect(() => {
     getAppConfig()
-      .then(config => {
+      .then((config) => {
         setLocked(config.locked)
         setSchedule(config.schedule)
       })
@@ -214,13 +214,13 @@ export function Admin() {
         <Input
           type="password"
           value={password}
-          onChange={e => {
+          onChange={(e) => {
             setPassword(e.target.value)
             setError(false)
           }}
           placeholder="Enter password"
           className="text-center text-lg"
-          onKeyDown={e => e.key === 'Enter' && handleLogin()}
+          onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
           autoFocus
         />
         {error && <p className="text-sm text-red-500 text-center">Wrong password</p>}

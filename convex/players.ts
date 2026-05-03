@@ -12,12 +12,12 @@ const ALL_ACHIEVEMENT_CHECKS: [
   (p: { totalStars: number; currentStreak: number }) => boolean,
 ][] = [
   ['first-game', () => true],
-  ['streak-3', p => p.currentStreak >= 3],
-  ['streak-7', p => p.currentStreak >= 7],
-  ['streak-30', p => p.currentStreak >= 30],
-  ['stars-50', p => p.totalStars >= 50],
-  ['stars-200', p => p.totalStars >= 200],
-  ['stars-1000', p => p.totalStars >= 1000],
+  ['streak-3', (p) => p.currentStreak >= 3],
+  ['streak-7', (p) => p.currentStreak >= 7],
+  ['streak-30', (p) => p.currentStreak >= 30],
+  ['stars-50', (p) => p.totalStars >= 50],
+  ['stars-200', (p) => p.totalStars >= 200],
+  ['stars-1000', (p) => p.totalStars >= 1000],
 ]
 
 function todayStr(): string {
@@ -35,7 +35,7 @@ export const getByDeviceId = query({
   handler: async (ctx, { deviceId }) => {
     return await ctx.db
       .query('players')
-      .withIndex('by_deviceId', q => q.eq('deviceId', deviceId))
+      .withIndex('by_deviceId', (q) => q.eq('deviceId', deviceId))
       .first()
   },
 })
@@ -53,7 +53,7 @@ export const createProfile = mutation({
 
     const existing = await ctx.db
       .query('players')
-      .withIndex('by_deviceId', q => q.eq('deviceId', deviceId))
+      .withIndex('by_deviceId', (q) => q.eq('deviceId', deviceId))
       .first()
 
     if (existing) {
@@ -86,7 +86,7 @@ export const updateProfile = mutation({
     const trimmedName = name.trim().slice(0, 50)
     const player = await ctx.db
       .query('players')
-      .withIndex('by_deviceId', q => q.eq('deviceId', deviceId))
+      .withIndex('by_deviceId', (q) => q.eq('deviceId', deviceId))
       .first()
 
     if (!player) throw new Error('Player not found')
@@ -107,7 +107,7 @@ export const recordGameCompletion = mutation({
   handler: async (ctx, { deviceId, game, level }) => {
     const player = await ctx.db
       .query('players')
-      .withIndex('by_deviceId', q => q.eq('deviceId', deviceId))
+      .withIndex('by_deviceId', (q) => q.eq('deviceId', deviceId))
       .first()
 
     if (!player) throw new Error('Player not found')

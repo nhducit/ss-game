@@ -16,5 +16,5 @@
   "semi": false,
   "singleQuote": true,
   "jsxSingleQuote": false,
-  "arrowParens": "avoid"
+  "arrowParens": "always"
 }

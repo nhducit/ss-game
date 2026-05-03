@@ -31,9 +31,9 @@ function ProgressBar({ learned, total }: { learned: number; total: number }) {
 
 export function ChineseCategoryPicker({ title, subtitle, onSelect }: CategoryPickerProps) {
   const [level] = useChineseLevel()
-  const levelInfo = levels.find(l => l.id === level)!
+  const levelInfo = levels.find((l) => l.id === level)!
 
-  const categoryProgress = chineseCategories.map(cat => {
+  const categoryProgress = chineseCategories.map((cat) => {
     const words = cat.words[level]
     return getCategoryProgress(cat.id, level, words)
   })

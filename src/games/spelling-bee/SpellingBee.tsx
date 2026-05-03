@@ -72,18 +72,18 @@ export function SpellingBee() {
   useEffect(() => {
     if (!currentWord || result !== 'pending') return
     if (selected.length === currentWord.english.length) {
-      const userAnswer = selected.map(si => scrambled[availableIndices[si]]).join('')
+      const userAnswer = selected.map((si) => scrambled[availableIndices[si]]).join('')
       if (userAnswer === currentWord.english) {
         setResult('correct')
         recordCorrect(category!.id, level, currentWord.english)
         const newStreak = streak + 1
         setStreak(newStreak)
         const points = 10 + (newStreak > 1 ? newStreak * 2 : 0)
-        setScore(s => s + points)
+        setScore((s) => s + points)
         setNextDisabled(true)
         speakSequence([
           { text: currentWord.english, rate: 0.8 },
-          ...currentWord.sentences.map(s => ({ text: s, rate: 0.75, pause: 400 })),
+          ...currentWord.sentences.map((s) => ({ text: s, rate: 0.75, pause: 400 })),
         ])
         setTimeout(() => setNextDisabled(false), 3000)
       } else {
@@ -101,14 +101,14 @@ export function SpellingBee() {
       if (!currentWord || result !== 'pending') return
       if (selected.includes(scrambledIdx)) return
       if (selected.length >= currentWord.english.length) return
-      setSelected(prev => [...prev, scrambledIdx])
+      setSelected((prev) => [...prev, scrambledIdx])
     },
     [currentWord, result, selected],
   )
 
   const undoLetter = useCallback(() => {
     if (result !== 'pending' || selected.length === 0) return
-    setSelected(prev => prev.slice(0, -1))
+    setSelected((prev) => prev.slice(0, -1))
   }, [result, selected])
 
   const advanceWord = useCallback(() => {
@@ -130,7 +130,7 @@ export function SpellingBee() {
   const skipWord = useCallback(() => {
     if (!currentWord || result !== 'pending') return
     setStreak(0)
-    setSkipped(s => s + 1)
+    setSkipped((s) => s + 1)
     advanceWord()
   }, [currentWord, result, advanceWord])
 
@@ -184,7 +184,7 @@ export function SpellingBee() {
   const answerSlots = currentWord ? currentWord.english.split('') : []
   const selectedSet = new Set(selected)
   // Build user's current answer
-  const userLetters = selected.map(si => scrambled[availableIndices[si]])
+  const userLetters = selected.map((si) => scrambled[availableIndices[si]])
 
   return (
     <div className="game flex flex-col h-svh overflow-hidden">

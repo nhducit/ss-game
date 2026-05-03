@@ -22,7 +22,7 @@ export function useChineseLevel(): [Level, (level: Level) => void] {
 
   const setLevel = useCallback((newLevel: Level) => {
     localStorage.setItem(STORAGE_KEY, newLevel)
-    listeners.forEach(cb => cb())
+    listeners.forEach((cb) => cb())
   }, [])
 
   return [level, setLevel]

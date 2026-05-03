@@ -137,7 +137,7 @@ function ContributionChart({ history }: { history: GameHistoryEntry[] }) {
                     Array.from({ length: week[0].dayOfWeek }).map((_, pi) => (
                       <div key={`pad-${pi}`} style={{ width: CELL, height: CELL }} />
                     ))}
-                  {week.map(day => (
+                  {week.map((day) => (
                     <div
                       key={day.date}
                       className={`rounded-sm ${getColor(day.stars)}`}
@@ -265,11 +265,11 @@ export function Profile() {
         <div className="flex gap-2 w-full max-w-xs">
           <Input
             value={editName}
-            onChange={e => setEditName(e.target.value)}
+            onChange={(e) => setEditName(e.target.value)}
             placeholder="Your name"
             className="text-center text-lg font-semibold"
             onBlur={handleSaveName}
-            onKeyDown={e => e.key === 'Enter' && handleSaveName()}
+            onKeyDown={(e) => e.key === 'Enter' && handleSaveName()}
           />
         </div>
       </div>
@@ -277,7 +277,7 @@ export function Profile() {
       <div className="w-full">
         <h3 className="text-sm font-semibold text-foreground mb-2">Choose avatar</h3>
         <div className="grid grid-cols-8 gap-2">
-          {AVATAR_OPTIONS.map(emoji => (
+          {AVATAR_OPTIONS.map((emoji) => (
             <button
               key={emoji}
               onClick={() => handlePickEmoji(emoji)}
@@ -349,7 +349,7 @@ export function Profile() {
       <div className="w-full">
         <h3 className="text-sm font-semibold text-foreground mb-3">Achievements</h3>
         <div className="grid grid-cols-2 gap-2">
-          {ALL_ACHIEVEMENTS.map(a => {
+          {ALL_ACHIEVEMENTS.map((a) => {
             const earned = player.achievements.includes(a.id)
             return (
               <div
