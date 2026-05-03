@@ -94,7 +94,7 @@ export function SpellingBee() {
         setTimeout(() => setNextDisabled(false), 3000)
       }
     }
-  }, [selected, currentWord, result, availableIndices, scrambled, streak])
+  }, [selected, currentWord, result, availableIndices, scrambled, streak, category, level])
 
   const handleLetterTap = useCallback(
     (scrambledIdx: number) => {

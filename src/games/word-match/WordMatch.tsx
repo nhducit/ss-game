@@ -92,7 +92,7 @@ export function WordMatch() {
         }
       }
     },
-    [cards, flipped, locked],
+    [cards, flipped, locked, category, level],
   )
 
   useEffect(() => {
@@ -100,7 +100,7 @@ export function WordMatch() {
       recordGame(level, 'Word Match')
       setTimeout(() => setScreen('results'), 500)
     }
-  }, [matches, moves])
+  }, [matches, level, recordGame])
 
   if (screen === 'categories') {
     return (

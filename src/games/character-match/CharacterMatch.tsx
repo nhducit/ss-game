@@ -106,7 +106,7 @@ export function CharacterMatch() {
       recordGame(level, 'Character Match')
       setTimeout(() => setScreen('results'), 500)
     }
-  }, [matches, level])
+  }, [matches, level, recordGame])
 
   if (screen === 'categories') {
     return (

@@ -90,7 +90,7 @@ export function TruthFill({
   const [round, setRound] = useState(0)
   const [score, setScore] = useState(0)
   const [answers, setAnswers] = useState<Cell[]>(() =>
-    new Array(1 << variables(initial).length).fill(null),
+    Array.from<Cell>({ length: 1 << variables(initial).length }).fill(null),
   )
   const [checked, setChecked] = useState(false)
   const [done, setDone] = useState(false)
@@ -125,7 +125,7 @@ export function TruthFill({
     } else {
       const e = pickExpr(pool, expr)
       setExpr(e)
-      setAnswers(new Array(allAssignments(variables(e)).length).fill(null))
+      setAnswers(Array.from<Cell>({ length: allAssignments(variables(e)).length }).fill(null))
       setChecked(false)
       setRound(r => r + 1)
     }
@@ -135,7 +135,7 @@ export function TruthFill({
     reset()
     const e = pickExpr(pool)
     setExpr(e)
-    setAnswers(new Array(allAssignments(variables(e)).length).fill(null))
+    setAnswers(Array.from<Cell>({ length: allAssignments(variables(e)).length }).fill(null))
     setChecked(false)
     setRound(0)
     setScore(0)
