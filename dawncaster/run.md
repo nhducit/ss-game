@@ -64,6 +64,7 @@ Bloodhound (32), Crimson Collector (52).
 | # | Node | Outcome |
 |---|------|---------|
 | 20 | **Level-up** | Picked Arcane Mastery talent |
+| 22 | **Bandit Den (event)** | Chose: Approach quietly. Entering Garvin Greaves fight. |
 | 21 | **Crimson Collector (52) ×2** | Defeated (took 6 dmg). Picked Spellcraft (+ free copy via Arcane Mastery). Gold +2. |
 | 20 | **Level-up** | Picked Arcane Mastery talent |
 | 19 | **Crimson Collector (52) ×1** | Defeated. Picked Mindblast (+ free copy). Level-up triggered. |
