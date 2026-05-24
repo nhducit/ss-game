@@ -1,0 +1,23 @@
+{
+  "name": "Garvin Greaves",
+  "slug": "garvin-greaves",
+  "hp": 64,
+  "type": ["Bandit", "Boss"],
+  "area": "Bandit Camp (Canto 3)",
+  "quest_related": "Consul Evelaine's Bandit Quest — final target",
+  "abilities": [
+    { "name": "Outlaw Alchemy", "effect": "Unknown — needs blightbane lookup", "value": null },
+    { "name": "Action 1 (flame icon)", "effect": "Unknown — possible self-buff or AoE", "value": null },
+    { "name": "Action 2 (sword icon)", "effect": "Physical attack", "value": null },
+    { "name": "Action 3 (red face icon)", "effect": "Unknown — possible debuff on player", "value": null }
+  ],
+  "observed": {
+    "action_queue_size": 3,
+    "has_skull_shield": true,
+    "notes": "Skull shield visible — may have armor/block at HP threshold. 3 actions queued visible at fight start."
+  },
+  "drops": [],
+  "notes": "Approached quietly via Bandit Den event. Fight started at player 48/70 HP.",
+  "source": "observed_in_run",
+  "fetched_at": "2026-05-24"
+}
