@@ -15,10 +15,17 @@
     { "name": "Portrait (top)", "cost": 125, "type": "cosmetic", "recommended": false },
     { "name": "Portrait (bottom)", "cost": 125, "type": "cosmetic", "recommended": false }
   ],
-  "spend_plan": {
-    "immediate": ["Extra Experience (10)", "Bonus Health (10)", "Talent (25)"],
-    "total_spend": 45,
-    "crystals_remaining": 131
+  "purchases": [
+    { "name": "Extra Experience", "cost": 10, "date": "2026-05-24" },
+    { "name": "Bonus Health (top row)", "cost": 10, "date": "2026-05-24" },
+    { "name": "Weapon (staff/wand, right)", "cost": 50, "date": "2026-05-24", "notes": "Art shows twisted brown staff with blue orb — unknown effect, keep Forcewand for now" },
+    { "name": "Talent (right)", "cost": 25, "date": "2026-05-24" }
+  ],
+  "crystals_after_purchases": 81,
+  "next_spend_plan": {
+    "recommended": ["Talent left (25)", "Bonus Income (10)", "Bonus Health bottom (10)"],
+    "total": 45,
+    "crystals_remaining_after": 36
   },
-  "notes": "Seen after run 2026-05-24 defeat vs Garvin Greaves. Glowing chest top-left may be a free claim."
+  "notes": "Glowing chest top-left = free claim chest. New staff weapon unlocked but unknown stats — stick with Forcewand until effect is known."
 }
