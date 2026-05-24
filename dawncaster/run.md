@@ -42,6 +42,7 @@
 
 | # | Node | Outcome |
 |---|------|---------|
+| 5 | **Map choice** | Campsite chosen over Traveler + Direwolf (28). Removing Block. |
 | 4 | **Card Reward** | Skipped (Bat Familiar/Surgestone/Cauterize — all off-theme). |
 | 3 | **Purple Shrine (Mirror)** | Mirrored Sageblast → 2× Sageblast, 8 Magic Actions in deck, each does 8 dmg. |
 | 2 | **Card Reward** | Picked Sageblast. Dmg = Magic Actions in deck (7 after adding). Discard: Gain 🔵. |
