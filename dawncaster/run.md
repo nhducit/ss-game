@@ -91,9 +91,9 @@ Bloodhound (32), Crimson Collector (52).
 
 ## Current Options
 
-- **Matriarch Daisy (54)** — red skull elite, unknown abilities. Skip — don't burn HP before boss.
-- **Blacksmith** — 7g, can't afford anything. Skip.
-- **Bandit Camp** ← RECOMMENDED. Quest objective. Garvin Greaves is here. Take it.
+- **Blacksmith** — 7g. Skip.
+- **Matriarch Daisy (54)** — red skull elite inside Bandit Camp. Skip, fighting before boss is too risky.
+- **Garvin Greaves** ← NEXT. Quest boss. Crossed swords, no HP preview (boss). Take it.
 
 ---
 
