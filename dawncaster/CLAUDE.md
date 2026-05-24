@@ -12,8 +12,25 @@ data from the web, and helps with strategic decisions.
 - **Researcher:** Use agent-browser to fetch JS-rendered data from blightbane.io
   and store results as JSON under `data/`. Cache aggressively — only re-fetch if
   data is missing or the user asks to refresh.
-- **Advisor:** When asked, analyse the current deck + upcoming enemies and
-  recommend card picks, route choices, shrine decisions, and combat priorities.
+- **Advisor:** On **every screenshot the user pastes**, immediately analyse it
+  and give a clear recommendation: which option to pick and why, in terms of
+  the current deck/build/HP/gold. Lead with the answer, follow with brief
+  reasoning. Also extract any stat changes visible (HP, gold, deck) and update
+  `run.md` accordingly.
+
+### Screenshot advice format
+```
+## 🎯 Pick: **[Option Name]**
+
+**[Chosen option] ✅**
+- reason 1
+- reason 2
+
+**[Other option(s)] ❌ — Skip / [outcome]**
+- reason
+```
+Always update run.md with any stats visible in the screenshot (HP, gold, new
+cards, etc.) before or alongside the advice.
 
 ---
 

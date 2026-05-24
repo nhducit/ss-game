@@ -5,7 +5,7 @@
 | Field    | Value                                        |
 |----------|----------------------------------------------|
 | HP       | 54 / 70 (~77%)                               |
-| Gold     | 4g                                           |
+| Gold     | 5g                                           |
 | Potions  | 0                                            |
 | Level    | 2+ (just levelled up, Arcane Mastery picked) |
 | Weapon   | Forcewand — heals per Magic Action in deck   |
