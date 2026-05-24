@@ -1,0 +1,24 @@
+{
+  "class": "Arcanist",
+  "crystals_after_run_2026-05-24": 176,
+  "unlocks_available": [
+    { "name": "Extra Experience", "cost": 10, "type": "bonus", "recommended": true, "priority": 1, "reason": "Level up faster = Arcane Mastery earlier in run" },
+    { "name": "Bonus Health (top row)", "cost": 10, "type": "bonus", "recommended": true, "priority": 2, "reason": "More HP buffer for boss fights; died at 48 HP" },
+    { "name": "Talent (left)", "cost": 25, "type": "talent", "recommended": true, "priority": 3, "reason": "Unlocks build diversity" },
+    { "name": "Talent (right)", "cost": 25, "type": "talent", "recommended": true, "priority": 4 },
+    { "name": "Weapon (left, highlighted)", "cost": 50, "type": "weapon", "recommended": false, "reason": "Unknown effect; Forcewand is already good for build" },
+    { "name": "Weapon (right)", "cost": 50, "type": "weapon", "recommended": false },
+    { "name": "Starting Card (left)", "cost": 50, "type": "starting_card", "recommended": false, "reason": "Only worthwhile if it's a Magic Action" },
+    { "name": "Starting Card (right)", "cost": 50, "type": "starting_card", "recommended": false },
+    { "name": "Bonus Income", "cost": 10, "type": "bonus", "recommended": false, "reason": "Gold income is secondary to HP and levels" },
+    { "name": "Bonus Health (bottom row)", "cost": 10, "type": "bonus", "recommended": false },
+    { "name": "Portrait (top)", "cost": 125, "type": "cosmetic", "recommended": false },
+    { "name": "Portrait (bottom)", "cost": 125, "type": "cosmetic", "recommended": false }
+  ],
+  "spend_plan": {
+    "immediate": ["Extra Experience (10)", "Bonus Health (10)", "Talent (25)"],
+    "total_spend": 45,
+    "crystals_remaining": 131
+  },
+  "notes": "Seen after run 2026-05-24 defeat vs Garvin Greaves. Glowing chest top-left may be a free claim."
+}
