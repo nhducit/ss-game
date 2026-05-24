@@ -18,7 +18,7 @@
 | Card | Copies | Cost | Notes |
 |------|--------|------|-------|
 | Shocking Grasp | 1 | 1 blue | Magic Lightning Action. Unlocked starting card. Dmg = Chain count; 5+ Chain → 2 Shocked + Chain |
-| Block | 2 | 0 gray | Basic defense. **Remove ASAP** — not a Magic Action |
+| Block | 1 | 0 gray | Basic defense. **Remove next Campsite** — 1 removed already |
 | Forcewand | 5 | 0 gray | Magic Lightning Basic Attack. **Remove 3-4 ASAP** — too many basics dilute deck |
 | Surge of Intellect | 2 | — | Arcanist starting card. Effect unknown — needs logging |
 | Sageblast | 2 | 2 blue | Magic Action. Dmg = Magic Actions in deck (8 after mirror). Discard: Gain 🔵. Mirrored at purple shrine. |
@@ -42,7 +42,7 @@
 
 | # | Node | Outcome |
 |---|------|---------|
-| 5 | **Map choice** | Campsite chosen over Traveler + Direwolf (28). Removing Block. |
+| 5 | **Campsite** | Removed Block ×1. Deck now 12 cards. 1 Block remains — remove next Campsite. |
 | 4 | **Card Reward** | Skipped (Bat Familiar/Surgestone/Cauterize — all off-theme). |
 | 3 | **Purple Shrine (Mirror)** | Mirrored Sageblast → 2× Sageblast, 8 Magic Actions in deck, each does 8 dmg. |
 | 2 | **Card Reward** | Picked Sageblast. Dmg = Magic Actions in deck (7 after adding). Discard: Gain 🔵. |
