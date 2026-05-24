@@ -23,7 +23,7 @@
 | Stormbolt | 2 | 1 blue / **0** (free) | 2nd copy is free via Arcane Mastery. Dmg = Magic Actions played this turn. Chain. |
 | Call the Storm | 2 | — | AoE lightning, scales with Intellect |
 | Mindblast | 2 | — | Gain 1 Focus; deal 2× Focus dmg |
-| Spellcraft | 2 | 1 blue / **0** (free) | Conjure a Magic Action. With Focus → conjure 2. 2nd copy free via Arcane Mastery. |
+| Spellcraft | 2 | 1 blue / **0** (free) | Conjure a Magic Action. With Focus → conjure 2. 2nd copy free via Arcane Mastery. ✓ added |
 | ~~Basic Attack~~ | 0 | — | Both removed (Blacksmith + Campsite) |
 
 > **Arcane Mastery note:** every future non-unique Magic Action pickup also adds
@@ -90,11 +90,9 @@ Bloodhound (32), Crimson Collector (52).
 
 ## Current Options
 
-- **Blacksmith** — 4g on hand; can't afford anything useful. Skip.
-- **Crimson Collector (52)** — second spawn. Gold + quest? But quest already
-  complete for bandits; this one doesn't count toward Garvin. Decide: fight or skip.
-- **Matriarch Daisy (54)** — unknown abilities, not a bandit, skipped multiple
-  times. Needs blightbane lookup before committing. ⚠️
+- **Matriarch Daisy (54)** — red skull elite, unknown abilities. Skip — don't burn HP before boss.
+- **Blacksmith** — 7g, can't afford anything. Skip.
+- **Bandit Camp** ← RECOMMENDED. Quest objective. Garvin Greaves is here. Take it.
 
 ---
 
