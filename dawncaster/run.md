@@ -4,8 +4,8 @@
 
 | Field    | Value                                          |
 |----------|------------------------------------------------|
-| HP       | 66 / ? (took some damage early)                |
-| Gold     | 40g                                            |
+| HP       | 54 / ? (took 12 dmg since run start)           |
+| Gold     | 42g                                            |
 | Potions  | 0                                              |
 | Level    | 1 (no level-up yet)                            |
 | Weapon   | Forcewand — Deal 2 dmg, Gain 2 Chain. Chain. / Heals per Magic Action in deck |
@@ -42,6 +42,7 @@
 
 | # | Node | Outcome |
 |---|------|---------|
+| 4 | **Card Reward** | Skipped (Bat Familiar/Surgestone/Cauterize — all off-theme). |
 | 3 | **Purple Shrine (Mirror)** | Mirrored Sageblast → 2× Sageblast, 8 Magic Actions in deck, each does 8 dmg. |
 | 2 | **Card Reward** | Picked Sageblast. Dmg = Magic Actions in deck (7 after adding). Discard: Gain 🔵. |
 | 1 | **Start** | Arcanist, Forcewand, 2 Intellect. Starting deck: Shocking Grasp ×1, Block ×2, Forcewand ×5, Surge of Intellect ×2 |
