@@ -21,7 +21,7 @@
 | Block | 2 | 0 gray | Basic defense. **Remove ASAP** — not a Magic Action |
 | Forcewand | 5 | 0 gray | Magic Lightning Basic Attack. **Remove 3-4 ASAP** — too many basics dilute deck |
 | Surge of Intellect | 2 | — | Arcanist starting card. Effect unknown — needs logging |
-| Sageblast | +1 (pending) | 2 blue | Magic Action. Dmg = Magic Actions in deck (6 now). Discard: Gain 🔵. Just picked. |
+| Sageblast | 2 | 2 blue | Magic Action. Dmg = Magic Actions in deck (8 after mirror). Discard: Gain 🔵. Mirrored at purple shrine. |
 
 > **Deck thinning priority:** Remove Blocks first, then excess Forcewands. Target 6-7 pure Magic Action cards.
 
@@ -42,7 +42,8 @@
 
 | # | Node | Outcome |
 |---|------|---------|
-| 2 | **Card Reward** | Picked Sageblast. Dmg = Magic Actions in deck (6). Discard: Gain 🔵. |
+| 3 | **Purple Shrine (Mirror)** | Mirrored Sageblast → 2× Sageblast, 8 Magic Actions in deck, each does 8 dmg. |
+| 2 | **Card Reward** | Picked Sageblast. Dmg = Magic Actions in deck (7 after adding). Discard: Gain 🔵. |
 | 1 | **Start** | Arcanist, Forcewand, 2 Intellect. Starting deck: Shocking Grasp ×1, Block ×2, Forcewand ×5, Surge of Intellect ×2 |
 
 ---
