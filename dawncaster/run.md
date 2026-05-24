@@ -4,7 +4,7 @@
 
 | Field    | Value                                          |
 |----------|------------------------------------------------|
-| HP       | 55 / ? (healed significantly since node 6)    |
+| HP       | 50 / ? (lost 5 HP from stew sampling)          |
 | Gold     | 20g (spent ~58g — shop/blacksmith?)            |
 | Potions  | 0                                              |
 | Level    | 2 (levelled up — talent picked)               |
@@ -13,7 +13,7 @@
 
 ---
 
-## Deck (16 cards)
+## Deck (17 cards)
 
 | Card | Copies | Cost | Notes |
 |------|--------|------|-------|
@@ -26,6 +26,7 @@
 | Gathering Storm | 1 | ? | Magic Lightning Action. Deal 4 dmg. Echo per turn in hand (0). Persistent. |
 | Sanguine Scrying | 1 | ? | Action. Draw 2 cards. Gain 2 Bleeding. |
 | Spellcraft | 1 | ? | Magic Action (picked node 2 of run 1 context — verify) |
+| Vampirism | 1 | ? | Corruption Action. Deal 0 dmg + foe's Bleeding. Bloodlust: Lifedrain. **REMOVE FIRST — no Bleeding setup, does 0 damage.** |
 
 > **Note:** Deck count confirmed 16 from screenshot. Card list is approximate — confirm exact contents.
 
@@ -49,7 +50,8 @@
 
 | # | Node | Outcome |
 |---|------|---------|
-| 11 | **Event: The Stew** | Options: Inspect / Kick the pot / Sample the stew / Leave. **Pending decision.** |
+| 12 | **Event: The Stew — Result** | Sampled stew → VAMPIRISM force-added (Corruption Action, 0 dmg without enemy Bleeding). HP 55→50 (-5). Deck now 17. Remove at next Campsite. |
+| 11 | **Event: The Stew** | Chose: Sample the stew. HP 55, Gold 20, Deck 16. |
 | 10 | **Unknown** | HP recovered from 27→55 (+28). Gold dropped 78→20 (-58). Deck grew to 16 cards. Likely Campsite + Shop/Blacksmith. |
 | 9 | **Card Reward** | Offered: Call the Storm / Fan the Flames / Gathering Storm. Rec: pick Gathering Storm. HP 27, Gold 78, Deck 14. |
 | 8 | **Card Reward** | Offered: Frostlance / Fleeting Thoughts / Sanguine Scrying. Rec: pick Sanguine Scrying. HP 27, Gold 73, Deck 14. |
