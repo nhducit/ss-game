@@ -4,8 +4,8 @@
 
 | Field    | Value                                        |
 |----------|----------------------------------------------|
-| HP       | 54 / 70 (~77%)                               |
-| Gold     | 5g                                           |
+| HP       | 48 / 70 (~69%)                               |
+| Gold     | 7g                                           |
 | Potions  | 0                                            |
 | Level    | 2+ (just levelled up, Arcane Mastery picked) |
 | Weapon   | Forcewand — heals per Magic Action in deck   |
@@ -23,6 +23,7 @@
 | Stormbolt | 2 | 1 blue / **0** (free) | 2nd copy is free via Arcane Mastery. Dmg = Magic Actions played this turn. Chain. |
 | Call the Storm | 2 | — | AoE lightning, scales with Intellect |
 | Mindblast | 2 | — | Gain 1 Focus; deal 2× Focus dmg |
+| Spellcraft | 2 | 1 blue / **0** (free) | Conjure a Magic Action. With Focus → conjure 2. 2nd copy free via Arcane Mastery. |
 | ~~Basic Attack~~ | 0 | — | Both removed (Blacksmith + Campsite) |
 
 > **Arcane Mastery note:** every future non-unique Magic Action pickup also adds
@@ -63,7 +64,9 @@ Bloodhound (32), Crimson Collector (52).
 | # | Node | Outcome |
 |---|------|---------|
 | 20 | **Level-up** | Picked Arcane Mastery talent |
-| 19 | **Crimson Collector (52)** | Defeated. Picked Mindblast (+ free copy). Level-up triggered. |
+| 21 | **Crimson Collector (52) ×2** | Defeated (took 6 dmg). Picked Spellcraft (+ free copy via Arcane Mastery). Gold +2. |
+| 20 | **Level-up** | Picked Arcane Mastery talent |
+| 19 | **Crimson Collector (52) ×1** | Defeated. Picked Mindblast (+ free copy). Level-up triggered. |
 | 18 | **Crimson Bloodhound (32)** | Defeated. Picked Mindblast. |
 | 17 | **Crimson Tracker (26)** | Defeated. Picked Stormbolt (+ free copy via Arcane Mastery? — pre-talent, check). |
 | 16 | **Bandit Looter (42)** | Defeated. Picked Call the Storm. |
