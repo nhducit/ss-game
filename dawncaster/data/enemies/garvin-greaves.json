@@ -17,7 +17,16 @@
     "notes": "Skull shield visible — may have armor/block at HP threshold. 3 actions queued visible at fight start."
   },
   "drops": [],
-  "notes": "Approached quietly via Bandit Den event. Fight started at player 48/70 HP.",
+  "run_outcomes": [
+    {
+      "date": "2026-05-24",
+      "result": "player_defeated",
+      "player_hp_entering": "48/70",
+      "player_class": "Arcanist",
+      "notes": "Approached quietly. Entered at 69% HP with no potions. Not enough burst to win."
+    }
+  ],
+  "notes": "64 HP boss. Requires ~60+ burst damage in 2 turns to reliably beat. Needs full HP and a potion entering.",
   "source": "observed_in_run",
   "fetched_at": "2026-05-24"
 }
