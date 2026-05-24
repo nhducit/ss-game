@@ -42,7 +42,8 @@
 
 | # | Node | Outcome |
 |---|------|---------|
-| 5 | **Campsite** | Removed Block ×1. Deck now 12 cards. 1 Block remains — remove next Campsite. |
+| 6 | **Card Reward** | Skipped (Aura of Winter/Drake Familiar/First Aid Kit — all off-theme). Deck 11 cards. |
+| 5 | **Campsite** | Removed Block ×1. Deck now 11 cards. 1 Block remains — remove next Campsite. |
 | 4 | **Card Reward** | Skipped (Bat Familiar/Surgestone/Cauterize — all off-theme). |
 | 3 | **Purple Shrine (Mirror)** | Mirrored Sageblast → 2× Sageblast, 8 Magic Actions in deck, each does 8 dmg. |
 | 2 | **Card Reward** | Picked Sageblast. Dmg = Magic Actions in deck (7 after adding). Discard: Gain 🔵. |
