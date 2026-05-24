@@ -1,0 +1,15 @@
+{
+  "name": "Torch",
+  "slug": "torch",
+  "type": "Magic Fire Basic Attack",
+  "basic_attack": {
+    "effect": "Foretell 3. Bury a card and inflict Burning equal to its cost.",
+    "cost": "free (basic attack)"
+  },
+  "weapon_power": "Unknown — needs blightbane lookup",
+  "synergies": ["Burn synergy cards", "Fire-type deck", "Foretell/deck manipulation builds"],
+  "anti_synergy": ["Magic Action builds", "Chain builds", "Arcanist without burn cards"],
+  "build_fit": "Only useful in a dedicated Burn/Fire deck. Foretell 3 is solid deck manipulation but Burn effect wasted without burn cards.",
+  "notes": "Skip for Magic Action Arcanist. Torch rewards Burn-stacking builds.",
+  "source": "screenshot_2026-05-24"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "Wintersprig",
+  "slug": "wintersprig",
+  "type": "Magic Frost Basic Attack",
+  "basic_attack": {
+    "effect": "Deal 2 damage. Flow (0/3): Attack again. Inflict Frozen for each hit.",
+    "cost": "free (basic attack)"
+  },
+  "weapon_power": "Unknown — needs blightbane lookup",
+  "flow_mechanic": "Flow (0/3) = charges up over 3 plays, then triggers 'attack again' bonus",
+  "synergies": ["Frozen/Frost synergy cards", "Flow-scaling builds", "Multi-hit builds"],
+  "anti_synergy": ["Magic Action builds", "Chain builds — Frozen is off-theme"],
+  "build_fit": "Skip for Magic Action Arcanist. Flow requires 3 activations to pay off and Frozen is anti-synergy with chain build.",
+  "notes": "Could be strong in a dedicated Frost build. Not for our Arcanist.",
+  "source": "screenshot_2026-05-24"
+}
