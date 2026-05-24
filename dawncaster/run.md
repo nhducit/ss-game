@@ -1,103 +1,40 @@
-# Dawncaster Run — Arcanist (Canto 3) — ☠️ DEFEATED
-
-> **Result:** DEFEAT vs Garvin Greaves, Canto 3 Bandit Camp
-> **Score:** 650 (NEW HIGHSCORE 🏆)
-> **Run Duration:** 2h 48m 48s
-> **Crystals Earned:** 26
-
-## Score Breakdown
-
-| Category | Rank | Value | Points |
-|----------|------|-------|--------|
-| Bosses Defeated | — | 1 | 100 |
-| Damage | Rank I | 21 | 100 |
-| Versatility | Rank III | 13 | 250 |
-| Wealth | Rank II | 132g total | 200 |
-| Daily Bonus | — | ×2 | — |
-| **Total** | | | **650** |
-
-## Post-Mortem
-
-**What killed us:** Garvin Greaves (64 HP boss) — entered fight at 48/70 HP (69%).
-
-**What went right:**
-- Arcane Mastery level-up talent was the right pick — doubled Magic Action value
-- Spellcraft addition created a strong conjure engine
-- Bandit quest fully cleared (4 bandits + reached Garvin)
-- Deck thinned early (removed both basics)
-
-**What went wrong:**
-- Entered boss fight at 69% HP with no potions — no margin for error
-- Should have prioritised healing (Inn/Campsite) before Bandit Camp
-- Damage score Rank I [21] = burst wasn't high enough to outrace Garvin's attacks
-- Garvin Greaves has 64 HP — higher than expected, needed more burst in deck
-
-**Lessons for next run:**
-1. **Heal before boss** — never enter a Canto boss fight below ~85% HP
-2. **Keep at least 1 potion** for emergencies going into Bandit Camp
-3. **Arcane Mastery** is S-tier — always take it if offered as Arcanist
-4. **Spellcraft** is excellent — prioritise it for the Focus→conjure 2 engine
-5. **Stormbolt** damage scales with Magic Actions played — needs more Magic Actions in deck earlier to hit hard enough for boss fights
-6. **Garvin Greaves is 64 HP** — need reliable 60+ burst damage, ideally in 2 turns
-
-
+# Dawncaster Run 2 — Arcanist (Canto 1)
 
 ## Quick Status
 
-| Field    | Value                                        |
-|----------|----------------------------------------------|
-| HP       | 48 / 70 (~69%)                               |
-| Gold     | 7g                                           |
-| Potions  | 0                                            |
-| Level    | 2+ (just levelled up, Arcane Mastery picked) |
-| Weapon   | Forcewand — heals per Magic Action in deck   |
-| Energy   | 2 blue / turn (2 Intellect)                  |
+| Field    | Value                                          |
+|----------|------------------------------------------------|
+| HP       | 66 / ? (took some damage early)                |
+| Gold     | 40g                                            |
+| Potions  | 0                                              |
+| Level    | 1 (no level-up yet)                            |
+| Weapon   | Forcewand — Deal 2 dmg, Gain 2 Chain. Chain. / Heals per Magic Action in deck |
+| Energy   | 2 blue / turn (2 Intellect)                    |
 
 ---
 
-## Deck
+## Deck (10 cards — starting)
 
 | Card | Copies | Cost | Notes |
 |------|--------|------|-------|
-| Fireball | 2 | 1 gray (upgraded) / base | One upgraded to 9 dmg, gray cost |
-| Cryolance | 1 | — | Channeled ice, scales with Intellect |
-| Electroflare | 1 | — | Lightning + Shock debuff, generates chain |
-| Stormbolt | 2 | 1 blue / **0** (free) | 2nd copy is free via Arcane Mastery. Dmg = Magic Actions played this turn. Chain. |
-| Call the Storm | 2 | — | AoE lightning, scales with Intellect |
-| Mindblast | 2 | — | Gain 1 Focus; deal 2× Focus dmg |
-| Spellcraft | 2 | 1 blue / **0** (free) | Conjure a Magic Action. With Focus → conjure 2. 2nd copy free via Arcane Mastery. ✓ added |
-| ~~Basic Attack~~ | 0 | — | Both removed (Blacksmith + Campsite) |
+| Shocking Grasp | 1 | 1 blue | Magic Lightning Action. Unlocked starting card. Dmg = Chain count; 5+ Chain → 2 Shocked + Chain |
+| Block | 2 | 0 gray | Basic defense. **Remove ASAP** — not a Magic Action |
+| Forcewand | 5 | 0 gray | Magic Lightning Basic Attack. **Remove 3-4 ASAP** — too many basics dilute deck |
+| Surge of Intellect | 2 | — | Arcanist starting card. Effect unknown — needs logging |
+| Sageblast | +1 (pending) | 2 blue | Magic Action. Dmg = Magic Actions in deck (6 now). Discard: Gain 🔵. Just picked. |
 
-> **Arcane Mastery note:** every future non-unique Magic Action pickup also adds
-> a free 0-cost base copy. Doubles the value of each card reward choice.
+> **Deck thinning priority:** Remove Blocks first, then excess Forcewands. Target 6-7 pure Magic Action cards.
 
 ---
 
 ## Talents
-
-- **Conjurer** — +2 damage to conjured cards (stackable)
-- **Compassionate** — healing effects heal +1 HP (gained: Wounded Animal event)
-- **Arcane Mastery** — whenever you add a non-unique Magic Action to your deck,
-  also add a base copy that costs 0 energy (level-up talent pick)
+*(none yet — level-up pending)*
 
 ---
 
-## Quests
-
-| Quest | Status | Reward |
-|-------|--------|--------|
-| Consul Evelaine's Bandit Quest (Brightcandle C2) | 4/5 done — Garvin Greaves pending | 50g on return in Canto 4; +50g if bandits surrender |
-
-**Bandits defeated:** Bandit Looter (42), Crimson Tracker (26), Crimson
-Bloodhound (32), Crimson Collector (52).
-
----
-
-## Allies
-
-| Ally | How recruited | When returns |
-|------|---------------|--------------|
-| Julian Bellthorp (merchant) | Freed at Talking Tree (Canto 3) | This run + Brightcandle Canto 4 |
+## Meta Upgrades Active
+- **Extra Experience** — level up faster → Arcane Mastery sooner
+- **Bonus Health** — extra starting HP
 
 ---
 
@@ -105,78 +42,32 @@ Bloodhound (32), Crimson Collector (52).
 
 | # | Node | Outcome |
 |---|------|---------|
-| 20 | **Level-up** | Picked Arcane Mastery talent |
-| 22 | **Bandit Den (event)** | Chose: Approach quietly. Entering Garvin Greaves fight. |
-| 21 | **Crimson Collector (52) ×2** | Defeated (took 6 dmg). Picked Spellcraft (+ free copy via Arcane Mastery). Gold +2. |
-| 20 | **Level-up** | Picked Arcane Mastery talent |
-| 19 | **Crimson Collector (52) ×1** | Defeated. Picked Mindblast (+ free copy). Level-up triggered. |
-| 18 | **Crimson Bloodhound (32)** | Defeated. Picked Mindblast. |
-| 17 | **Crimson Tracker (26)** | Defeated. Picked Stormbolt (+ free copy via Arcane Mastery? — pre-talent, check). |
-| 16 | **Bandit Looter (42)** | Defeated. Picked Call the Storm. |
-| 15 | **Wounded Animal** | Used Healing Potion → gained **Compassionate** talent. |
-| 14 | **Alchemist (in-area)** | Bought Healing Potion (20g). |
-| 13 | **Julian Bellthorp's shop** | Browsed, no purchase. |
-| 12 | **Talking Tree** | Freed Julian Bellthorp. |
-| 11 | **Alchemic Table** | Red potion → Healing Potion. |
-| 10 | **Campsite #2** | Heal (Compassionate gave +1 — wait, talent not yet? verify order). |
-| 9  | **Campsite #1** | Removed a card. |
-| 8  | **Shrine of Radiance** | "Infuse the energy of a card" → Fireball upgraded to 9 dmg, gray cost. |
-| 7  | **Shrine (purple — sacrifice)** | Sacrificed basic attack → got another basic attack (bad outcome). |
-| 6  | **Strange Carvings** | Followed once → unlocked Bandit Camp path. |
-| 5  | **Fortress Gates** | Passed through to Canto 3. |
-| 4  | **Inn (Brightcandle C2)** | Healed 20% for 20g. |
-| 3  | **Blacksmith (Brightcandle C2)** | Removed 1 basic attack for 30g. |
-| 2  | **Consul Evelaine (Brightcandle C2)** | Accepted Bandit Quest (free). |
-| 1  | **Start** | Arcanist, Forcewand, 2 Intellect. |
+| 2 | **Card Reward** | Picked Sageblast. Dmg = Magic Actions in deck (6). Discard: Gain 🔵. |
+| 1 | **Start** | Arcanist, Forcewand, 2 Intellect. Starting deck: Shocking Grasp ×1, Block ×2, Forcewand ×5, Surge of Intellect ×2 |
 
 ---
 
 ## Current Options
-
-- **Blacksmith** — 7g. Skip.
-- **Matriarch Daisy (54)** — red skull elite inside Bandit Camp. Skip, fighting before boss is too risky.
-- **Garvin Greaves** ← NEXT. Quest boss. Crossed swords, no HP preview (boss). Take it.
+*(paste next screenshot)*
 
 ---
 
 ## Build Notes
 
-**Direction:** Intellect-based burst/AoE with chain + Magic Action synergies.
+**Direction:** Magic Action burst + Sageblast scaling. Every new Magic Action = +1 damage to all Sageblasts.
 
-**Core loops:**
-1. Stormbolt scales with Magic Actions played → play free copies first to pump its damage.
-2. Arcane Mastery doubles deck density on every future Magic Action pickup.
-3. Forcewand heals per Magic Action in deck → more Magic Actions = more sustain.
-4. Compassionate gives +1 to all healing → stacks with Forcewand.
-5. Mindblast × 2 = reliable Focus stacking for burst.
+**Priority list:**
+1. Get Arcane Mastery at first level-up (doubles Magic Action pickups)
+2. Remove Blocks + excess Forcewands at every Campsite/Blacksmith
+3. Add Magic Actions liberally — each one buffs Sageblast
+4. Keep 1-2 Forcewands for Chain building (they feed Shocking Grasp)
+5. **Heal to ≥85% before any boss** — lesson from run 1
 
-**Avoid:** Holy, Frozen, Burn synergy cards — nothing in the current deck supports them.
-
-**Wants next:** more Magic Actions (especially ones with useful effects), possibly
-a defensive card or two if sustain is lacking vs the Garvin Greaves boss fight.
+**Avoid:** Burn, Frozen, Holy card types.
 
 ---
 
 ## Open Questions
-
-- [ ] **Matriarch Daisy (54 HP)** — abilities, attack pattern, expansion (likely Synthesis). Fetch from blightbane.
-- [ ] **Crimson Collector** — full ability deck and drops for the second spawn.
-- [ ] **Garvin Greaves** — HP, "Outlaw Alchemy" mechanic, attack pattern, recommended strategy.
-- [ ] **Forcewand** — exact chain mechanics and healing formula.
-- [ ] **Shrines** — full name→effect map for colour-only previews in Canto 4.
-- [ ] **Julian Bellthorp stock refresh cost** — pricing details.
-- [ ] **Eastern Blightwoods encounter pool** — remaining nodes available.
-
----
-
-## Reference Sites
-
-| Resource | URL |
-|----------|-----|
-| Blightbane (JS) | `https://blightbane.io/monster/{Name}` |
-| Blightbane events | `https://blightbane.io/event/{Name}` |
-| Blightbane cards | `https://blightbane.io/card/{Name}` |
-| Blightbane talents | `https://blightbane.io/talents` |
-| Fandom wiki | `https://dawncasterrpg.fandom.com/wiki/{Page}` |
-| Shrines list | `https://dawncasterrpg.fandom.com/wiki/Shrines` |
-| Dawn-Dash maps | `https://www.dawn-dash.com/eventmaps` |
+- [ ] What does **Surge of Intellect** do?
+- [ ] Starting max HP this run (Bonus Health active)?
+- [ ] What is Forcewand's exact weapon power formula?
