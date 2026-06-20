@@ -9,7 +9,7 @@ import { listChurches, seedChurches } from './convexClient'
 import { ChurchMap } from './ChurchMap'
 import { ChurchFilters } from './ChurchFilters'
 import { haversineKm, formatDistance } from './distance'
-import { isInBucket, timeToMinutes } from './filters'
+import { isInBucket, normalizeForSearch, timeToMinutes } from './filters'
 import { MOCK_CHURCHES } from './mockChurches'
 import type { Church, MassTime } from './types'
 
@@ -108,10 +108,10 @@ export function MassSchedule() {
 
   const filtered = useMemo(() => {
     if (!churches) return []
-    const q = search.trim().toLowerCase()
+    const q = normalizeForSearch(search.trim())
     return churches
       .filter((c) => !city || c.city === city)
-      .filter((c) => !q || `${c.name} ${c.address} ${c.city}`.toLowerCase().includes(q))
+      .filter((c) => !q || normalizeForSearch(`${c.name} ${c.address} ${c.city}`).includes(q))
       .map((c) => ({ church: c, massTimes: matchingMassTimes(c, weekday, timeBucket) }))
       .filter((entry) => entry.massTimes.length > 0)
       .map((entry) =>
