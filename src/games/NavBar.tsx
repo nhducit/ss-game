@@ -105,6 +105,7 @@ export function NavBar() {
     '/dots-and-boxes',
     '/reversi',
     '/games',
+    '/mass-schedule',
   ]
   if (hiddenPaths.includes(location.pathname)) return null
 
