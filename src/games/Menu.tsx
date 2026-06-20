@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { BookOpen, Brain, Ear, Puzzle, Skull, Blocks } from 'lucide-react'
+import { BookOpen, Brain, Church, Ear, Puzzle, Skull, Blocks } from 'lucide-react'
 import { levels } from '@/games/english/words'
 import { levels as chineseLevels } from '@/games/chinese/words'
 import { useLevel } from '@/games/english/use-level'
@@ -179,6 +179,14 @@ export function Menu() {
         />
         <GameGrid games={chineseGames} />
       </section>
+
+      <Link
+        to="/mass-schedule"
+        className="flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-sm font-medium text-muted-foreground no-underline transition-colors hover:bg-muted/80 hover:text-foreground"
+      >
+        <Church className="size-4" />
+        Giờ lễ nhà thờ
+      </Link>
 
       <p className="text-xs text-muted-foreground/50 mt-4 pb-6">
         Updated{' '}
