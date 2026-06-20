@@ -1,0 +1,226 @@
+interface SeedMassTime {
+  daysOfWeek: number[]
+  time: string
+  note?: string
+}
+
+interface SeedChurch {
+  name: string
+  slug: string
+  address: string
+  city: string
+  lat: number
+  lng: number
+  phone?: string
+  sourceUrl?: string
+  massTimes: SeedMassTime[]
+}
+
+const WEEKDAYS = [1, 2, 3, 4, 5]
+const SUNDAY = [0]
+const SATURDAY = [6]
+
+export const SEED_CHURCHES: SeedChurch[] = [
+  {
+    name: 'Nhà thờ Đức Bà Sài Gòn',
+    slug: 'duc-ba-sai-gon',
+    address: '1 Công xã Paris, Bến Nghé, Quận 1, TP.HCM',
+    city: 'TP. Hồ Chí Minh',
+    lat: 10.7797,
+    lng: 106.699,
+    phone: '028 3822 0477',
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-duc-ba-sai-gon/',
+    massTimes: [
+      { daysOfWeek: WEEKDAYS.concat(SATURDAY), time: '05:30' },
+      { daysOfWeek: WEEKDAYS.concat(SATURDAY), time: '17:30' },
+      { daysOfWeek: SUNDAY, time: '05:30' },
+      { daysOfWeek: SUNDAY, time: '06:45' },
+      { daysOfWeek: SUNDAY, time: '08:00' },
+      { daysOfWeek: SUNDAY, time: '09:30', note: 'Tiếng Anh' },
+      { daysOfWeek: SUNDAY, time: '16:00' },
+      { daysOfWeek: SUNDAY, time: '17:30' },
+      { daysOfWeek: SUNDAY, time: '18:30' },
+    ],
+  },
+  {
+    name: 'Nhà thờ Tân Định',
+    slug: 'tan-dinh',
+    address: '289 Hai Bà Trưng, Phường 8, Quận 3, TP.HCM',
+    city: 'TP. Hồ Chí Minh',
+    lat: 10.7906,
+    lng: 106.6883,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-tan-dinh-quan/',
+    massTimes: [
+      { daysOfWeek: WEEKDAYS, time: '05:00' },
+      { daysOfWeek: WEEKDAYS, time: '06:15' },
+      { daysOfWeek: WEEKDAYS, time: '17:30' },
+      { daysOfWeek: WEEKDAYS, time: '19:00' },
+      { daysOfWeek: SUNDAY, time: '05:00' },
+      { daysOfWeek: SUNDAY, time: '06:15' },
+      { daysOfWeek: SUNDAY, time: '07:30' },
+      { daysOfWeek: SUNDAY, time: '09:00' },
+      { daysOfWeek: SUNDAY, time: '16:00' },
+      { daysOfWeek: SUNDAY, time: '17:30' },
+      { daysOfWeek: SUNDAY, time: '19:00' },
+    ],
+  },
+  {
+    name: 'Nhà thờ Huyện Sỹ (Chợ Đũi)',
+    slug: 'huyen-sy',
+    address: '1 Tôn Thất Tùng, Quận 1, TP.HCM',
+    city: 'TP. Hồ Chí Minh',
+    lat: 10.772,
+    lng: 106.6912,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-huyen-si-nha-tho-cho-dui/',
+    massTimes: [
+      { daysOfWeek: WEEKDAYS.concat(SATURDAY), time: '05:00' },
+      { daysOfWeek: WEEKDAYS.concat(SATURDAY), time: '17:30' },
+      { daysOfWeek: SUNDAY, time: '05:00' },
+      { daysOfWeek: SUNDAY, time: '06:30' },
+      { daysOfWeek: SUNDAY, time: '08:00' },
+      { daysOfWeek: SUNDAY, time: '09:30' },
+      { daysOfWeek: SUNDAY, time: '16:30' },
+      { daysOfWeek: SUNDAY, time: '18:00' },
+      { daysOfWeek: SUNDAY, time: '19:30' },
+    ],
+  },
+  {
+    name: 'Nhà thờ Giáo xứ Gia Định',
+    slug: 'gia-dinh',
+    address: '280 Bùi Hữu Nghĩa, Phường 2, Bình Thạnh, TP.HCM',
+    city: 'TP. Hồ Chí Minh',
+    lat: 10.8013,
+    lng: 106.6963,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-gia-dinh/',
+    massTimes: [
+      { daysOfWeek: WEEKDAYS.concat(SATURDAY), time: '04:45' },
+      { daysOfWeek: WEEKDAYS.concat(SATURDAY), time: '17:30' },
+      { daysOfWeek: SUNDAY, time: '04:30' },
+      { daysOfWeek: SUNDAY, time: '05:30' },
+      { daysOfWeek: SUNDAY, time: '07:00' },
+      { daysOfWeek: SUNDAY, time: '08:30' },
+      { daysOfWeek: SUNDAY, time: '16:30' },
+      { daysOfWeek: SUNDAY, time: '18:30' },
+    ],
+  },
+  {
+    name: 'Nhà thờ Fatima Bình Triệu',
+    slug: 'fatima-binh-trieu',
+    address: '69/5 Bình Triệu, Hiệp Bình Chánh, Thủ Đức, TP.HCM',
+    city: 'TP. Hồ Chí Minh',
+    lat: 10.827,
+    lng: 106.7257,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-fatima-binh-trieu/',
+    massTimes: [
+      { daysOfWeek: WEEKDAYS, time: '05:00' },
+      { daysOfWeek: WEEKDAYS, time: '17:30' },
+      { daysOfWeek: SATURDAY, time: '18:00', note: 'Lễ vọng Chúa Nhật' },
+      { daysOfWeek: SUNDAY, time: '05:00' },
+      { daysOfWeek: SUNDAY, time: '07:30' },
+      { daysOfWeek: SUNDAY, time: '15:00' },
+      { daysOfWeek: SUNDAY, time: '17:00' },
+      { daysOfWeek: SUNDAY, time: '19:00' },
+    ],
+  },
+  {
+    name: 'Nhà thờ Chính tòa Hà Nội (Nhà thờ Lớn)',
+    slug: 'chinh-toa-ha-noi',
+    address: '40 Nhà Chung, Hoàn Kiếm, Hà Nội',
+    city: 'Hà Nội',
+    lat: 21.0286,
+    lng: 105.8497,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-lon-ha-noi/',
+    massTimes: [
+      { daysOfWeek: SUNDAY, time: '05:00' },
+      { daysOfWeek: SUNDAY, time: '07:00' },
+      { daysOfWeek: SUNDAY, time: '09:00' },
+      { daysOfWeek: SUNDAY, time: '11:00' },
+      { daysOfWeek: SUNDAY, time: '16:00', note: 'Lễ thiếu nhi' },
+      { daysOfWeek: SUNDAY, time: '18:00' },
+      { daysOfWeek: SUNDAY, time: '20:00', note: 'Lễ giới trẻ' },
+    ],
+  },
+  {
+    name: 'Nhà thờ Cửa Bắc',
+    slug: 'cua-bac',
+    address: '56 Phan Đình Phùng, Ba Đình, Hà Nội',
+    city: 'Hà Nội',
+    lat: 21.0438,
+    lng: 105.8412,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-cua-bac/',
+    massTimes: [
+      { daysOfWeek: WEEKDAYS, time: '19:00' },
+      { daysOfWeek: SATURDAY, time: '06:30' },
+      { daysOfWeek: SATURDAY, time: '19:00', note: 'Lễ vọng Chúa Nhật' },
+      { daysOfWeek: SUNDAY, time: '06:30' },
+      { daysOfWeek: SUNDAY, time: '08:30', note: 'Lễ thiếu nhi' },
+      { daysOfWeek: SUNDAY, time: '10:30', note: 'Tiếng Anh' },
+      { daysOfWeek: SUNDAY, time: '19:00' },
+    ],
+  },
+  {
+    name: 'Nhà thờ Chính tòa Đà Nẵng (Con Gà)',
+    slug: 'chinh-toa-da-nang',
+    address: '156 Trần Phú, Hải Châu I, Hải Châu, Đà Nẵng',
+    city: 'Đà Nẵng',
+    lat: 16.0678,
+    lng: 108.2208,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-chanh-toa-da-nang/',
+    massTimes: [
+      { daysOfWeek: SUNDAY, time: '05:15' },
+      { daysOfWeek: SUNDAY, time: '08:00' },
+      { daysOfWeek: SUNDAY, time: '10:00', note: 'Tiếng Anh' },
+      { daysOfWeek: SUNDAY, time: '15:00' },
+      { daysOfWeek: SUNDAY, time: '17:00' },
+      { daysOfWeek: SUNDAY, time: '18:30' },
+    ],
+  },
+  {
+    name: 'Nhà thờ Chánh tòa Nha Trang (Núi)',
+    slug: 'chanh-toa-nha-trang',
+    address: '31 Thái Nguyên, Phước Tân, Nha Trang',
+    city: 'Nha Trang',
+    lat: 12.2459,
+    lng: 109.1925,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-chanh-toa-nha-trang/',
+    massTimes: [
+      { daysOfWeek: SATURDAY, time: '17:00', note: 'Lễ vọng Chúa Nhật' },
+      { daysOfWeek: SUNDAY, time: '05:00' },
+      { daysOfWeek: SUNDAY, time: '07:00' },
+      { daysOfWeek: SUNDAY, time: '09:30' },
+      { daysOfWeek: SUNDAY, time: '16:30' },
+      { daysOfWeek: SUNDAY, time: '18:30' },
+    ],
+  },
+  {
+    name: 'Nhà thờ Chính tòa Phủ Cam',
+    slug: 'chinh-toa-phu-cam',
+    address: '1 Đoàn Hữu Trưng, Phước Vĩnh, TP. Huế',
+    city: 'Huế',
+    lat: 16.4528,
+    lng: 107.5847,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-chanh-toa-phu-cam/',
+    massTimes: [
+      { daysOfWeek: WEEKDAYS.concat(SATURDAY), time: '05:00' },
+      { daysOfWeek: WEEKDAYS.concat(SATURDAY), time: '18:30' },
+      { daysOfWeek: SUNDAY, time: '05:30' },
+      { daysOfWeek: SUNDAY, time: '08:00' },
+      { daysOfWeek: SUNDAY, time: '15:00' },
+      { daysOfWeek: SUNDAY, time: '18:30' },
+    ],
+  },
+  {
+    name: 'Nhà thờ đá Phát Diệm',
+    slug: 'phat-diem',
+    address: 'Thị trấn Phát Diệm, Kim Sơn, Ninh Bình',
+    city: 'Ninh Bình',
+    lat: 19.9577,
+    lng: 106.0879,
+    sourceUrl: 'https://giothanhle.net/gio-le/nha-tho-da-phat-diem/',
+    massTimes: [
+      { daysOfWeek: SUNDAY, time: '05:00', note: 'Mùa đông 04:45' },
+      { daysOfWeek: SUNDAY, time: '08:00' },
+      { daysOfWeek: SUNDAY, time: '19:00' },
+    ],
+  },
+]

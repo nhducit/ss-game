@@ -30,6 +30,9 @@ import { Hangman } from '@/games/hangman/Hangman'
 import { Logic } from '@/games/logic/Logic'
 import { Profile } from '@/games/Profile'
 import { Admin } from '@/games/Admin'
+import { MassSchedule } from '@/mass-schedule/MassSchedule'
+
+const UNGATED_PATHS = ['/admin', '/mass-schedule']
 
 function isWithinSchedule(schedule: AppConfig['schedule']): boolean {
   if (schedule.length === 0) return true // no schedule = always allowed
@@ -54,14 +57,20 @@ function RootComponent() {
   const [locked, setLocked] = useState(true) // locked by default until proven otherwise
   const location = useLocation()
 
+  const isUngatedPage = UNGATED_PATHS.includes(location.pathname)
+
   useEffect(() => {
+    if (isUngatedPage) {
+      setState('ready')
+      return
+    }
     Promise.all([getPlayer(), getAppConfig()])
       .then(([player, config]) => {
         setLocked(computeLocked(config))
         setState(player?.name ? 'ready' : 'setup')
       })
       .catch(() => setState('setup'))
-  }, [])
+  }, [isUngatedPage])
 
   // Re-check lock state every 30 seconds + on route change
   const checkLock = useCallback(() => {
@@ -77,9 +86,6 @@ function RootComponent() {
     const interval = setInterval(checkLock, 30_000)
     return () => clearInterval(interval)
   }, [checkLock, location.pathname])
-
-  // Admin page bypasses lock
-  const isAdminPage = location.pathname === '/admin'
 
   if (state === 'loading') {
     return (
@@ -101,7 +107,7 @@ function RootComponent() {
 
   return (
     <TooltipProvider>
-      {locked && !isAdminPage && <LockScreen />}
+      {locked && !isUngatedPage && <LockScreen />}
       <NavBar />
       <Outlet />
     </TooltipProvider>
@@ -226,6 +232,12 @@ const adminRoute = createRoute({
   component: Admin,
 })
 
+const massScheduleRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/mass-schedule',
+  component: MassSchedule,
+})
+
 const routeTree = rootRoute.addChildren([
   menuRoute,
   gamesMenuRoute,
@@ -246,6 +258,7 @@ const routeTree = rootRoute.addChildren([
   logicRoute,
   profileRoute,
   adminRoute,
+  massScheduleRoute,
 ])
 
 export const router = createRouter({ routeTree })

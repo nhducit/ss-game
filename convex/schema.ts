@@ -36,4 +36,23 @@ export default defineSchema({
     level: v.union(v.literal('starters'), v.literal('movers'), v.literal('flyers')),
     stars: v.number(),
   }).index('by_deviceId', ['deviceId']),
+
+  churches: defineTable({
+    name: v.string(),
+    slug: v.string(),
+    address: v.string(),
+    city: v.string(),
+    lat: v.number(),
+    lng: v.number(),
+    phone: v.optional(v.string()),
+    sourceUrl: v.optional(v.string()),
+    // Recurring weekly mass times. daysOfWeek: 0=Sun..6=Sat.
+    massTimes: v.array(
+      v.object({
+        daysOfWeek: v.array(v.number()),
+        time: v.string(), // "HH:MM", 24h
+        note: v.optional(v.string()),
+      }),
+    ),
+  }).index('by_slug', ['slug']),
 })
