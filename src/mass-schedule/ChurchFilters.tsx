@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { TIME_BUCKETS } from './filters'
+import { locationPermissionGuideSteps } from './locationPermissionGuide'
 
 const ALL = '__all__'
 
@@ -29,6 +30,7 @@ export function ChurchFilters({
   onUseLocation,
   locating,
   locationError,
+  locationPermissionDenied,
 }: {
   search: string
   onSearchChange: (value: string) => void
@@ -42,6 +44,7 @@ export function ChurchFilters({
   onUseLocation: () => void
   locating: boolean
   locationError: string | null
+  locationPermissionDenied: boolean
 }) {
   return (
     <div className="flex flex-col gap-3">
@@ -132,6 +135,14 @@ export function ChurchFilters({
       </div>
 
       {locationError && <p className="text-xs text-destructive">{locationError}</p>}
+
+      {locationError && locationPermissionDenied && (
+        <ol className="list-decimal space-y-0.5 pl-4 text-xs text-muted-foreground">
+          {locationPermissionGuideSteps().map((step, i) => (
+            <li key={i}>{step}</li>
+          ))}
+        </ol>
+      )}
     </div>
   )
 }

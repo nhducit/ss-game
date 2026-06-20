@@ -52,6 +52,7 @@ export function MassSchedule() {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
   const [locating, setLocating] = useState(false)
   const [locationError, setLocationError] = useState<string | null>(null)
+  const [locationPermissionDenied, setLocationPermissionDenied] = useState(false)
 
   const loadChurches = useCallback(() => {
     listChurches()
@@ -86,6 +87,7 @@ export function MassSchedule() {
     }
     setLocating(true)
     setLocationError(null)
+    setLocationPermissionDenied(false)
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
@@ -93,6 +95,7 @@ export function MassSchedule() {
       },
       (err) => {
         setLocationError(geolocationErrorMessage(err))
+        setLocationPermissionDenied(err.code === err.PERMISSION_DENIED)
         setLocating(false)
       },
       { timeout: 10000, maximumAge: 60000 },
@@ -195,6 +198,7 @@ export function MassSchedule() {
         onUseLocation={handleUseLocation}
         locating={locating}
         locationError={locationError}
+        locationPermissionDenied={locationPermissionDenied}
       />
 
       <div className="flex flex-col gap-4 md:flex-row md:items-start">
