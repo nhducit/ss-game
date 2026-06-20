@@ -40,7 +40,7 @@ export function MassSchedule() {
 
   const loadChurches = useCallback(() => {
     listChurches()
-      .then(setChurches)
+      .then((result) => setChurches(Array.isArray(result) ? result : []))
       .catch(() => setChurches([]))
   }, [])
 

@@ -6,26 +6,36 @@ function getConvexUrl(): string {
   return url
 }
 
-async function convexQuery<T>(path: string, args: Record<string, unknown> = {}): Promise<T> {
-  const res = await fetch(`${getConvexUrl()}/api/query`, {
+interface ConvexResponse {
+  status: 'success' | 'error'
+  value?: unknown
+  errorMessage?: string
+}
+
+async function callConvex<T>(
+  endpoint: 'query' | 'mutation',
+  path: string,
+  args: Record<string, unknown>,
+): Promise<T> {
+  const res = await fetch(`${getConvexUrl()}/api/${endpoint}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ path, args, format: 'json' }),
   })
-  if (!res.ok) throw new Error(`Convex query failed: ${res.status}`)
-  const data = await res.json()
-  return data.value
+  if (!res.ok) throw new Error(`Convex ${endpoint} failed: ${res.status}`)
+  const data: ConvexResponse = await res.json()
+  if (data.status === 'error') {
+    throw new Error(data.errorMessage ?? `Convex ${endpoint} ${path} failed`)
+  }
+  return data.value as T
+}
+
+async function convexQuery<T>(path: string, args: Record<string, unknown> = {}): Promise<T> {
+  return await callConvex<T>('query', path, args)
 }
 
 async function convexMutation<T>(path: string, args: Record<string, unknown> = {}): Promise<T> {
-  const res = await fetch(`${getConvexUrl()}/api/mutation`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ path, args, format: 'json' }),
-  })
-  if (!res.ok) throw new Error(`Convex mutation failed: ${res.status}`)
-  const data = await res.json()
-  return data.value
+  return await callConvex<T>('mutation', path, args)
 }
 
 export async function listChurches(): Promise<Church[]> {
