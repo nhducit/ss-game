@@ -25,6 +25,19 @@ function matchingMassTimes(church: Church, weekday: number, timeBucket: string |
     .sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time))
 }
 
+function geolocationErrorMessage(error: GeolocationPositionError): string {
+  switch (error.code) {
+    case error.PERMISSION_DENIED:
+      return 'Bạn chưa cho phép truy cập vị trí. Hãy cấp quyền vị trí cho trình duyệt rồi thử lại.'
+    case error.POSITION_UNAVAILABLE:
+      return 'Không xác định được vị trí hiện tại. Hãy thử lại ở nơi có tín hiệu GPS/Wi-Fi tốt hơn.'
+    case error.TIMEOUT:
+      return 'Lấy vị trí quá lâu, vui lòng thử lại.'
+    default:
+      return 'Không thể lấy vị trí của bạn'
+  }
+}
+
 export function MassSchedule() {
   const navigate = useNavigate()
   const [churches, setChurches] = useState<Church[] | null>(null)
@@ -78,11 +91,11 @@ export function MassSchedule() {
         setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude })
         setLocating(false)
       },
-      () => {
-        setLocationError('Không thể lấy vị trí của bạn')
+      (err) => {
+        setLocationError(geolocationErrorMessage(err))
         setLocating(false)
       },
-      { timeout: 8000 },
+      { timeout: 10000, maximumAge: 60000 },
     )
   }, [])
 
