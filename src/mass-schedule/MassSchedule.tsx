@@ -10,6 +10,7 @@ import { ChurchMap } from './ChurchMap'
 import { ChurchFilters } from './ChurchFilters'
 import { haversineKm, formatDistance } from './distance'
 import { isInBucket, timeToMinutes } from './filters'
+import { MOCK_CHURCHES } from './mockChurches'
 import type { Church, MassTime } from './types'
 
 interface UserLocation {
@@ -41,8 +42,11 @@ export function MassSchedule() {
 
   const loadChurches = useCallback(() => {
     listChurches()
-      .then((result) => setChurches(Array.isArray(result) ? result : []))
-      .catch(() => setChurches([]))
+      .then((result) => {
+        const list = Array.isArray(result) ? result : []
+        setChurches(list.length > 0 ? list : MOCK_CHURCHES)
+      })
+      .catch(() => setChurches(MOCK_CHURCHES))
   }, [])
 
   useEffect(() => {
