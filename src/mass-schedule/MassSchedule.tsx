@@ -28,6 +28,7 @@ export function MassSchedule() {
   const navigate = useNavigate()
   const [churches, setChurches] = useState<Church[] | null>(null)
   const [seeding, setSeeding] = useState(false)
+  const [seedError, setSeedError] = useState<string | null>(null)
   const [selected, setSelected] = useState<Church | null>(null)
 
   const [search, setSearch] = useState('')
@@ -50,9 +51,12 @@ export function MassSchedule() {
 
   const handleSeed = useCallback(async () => {
     setSeeding(true)
+    setSeedError(null)
     try {
       await seedChurches()
       loadChurches()
+    } catch (err) {
+      setSeedError(err instanceof Error ? err.message : 'Nạp dữ liệu mẫu thất bại')
     } finally {
       setSeeding(false)
     }
@@ -146,6 +150,7 @@ export function MassSchedule() {
           <Button onClick={handleSeed} disabled={seeding}>
             {seeding ? 'Đang nạp...' : 'Nạp dữ liệu mẫu'}
           </Button>
+          {seedError && <p className="text-xs text-destructive">{seedError}</p>}
         </Empty>
       </div>
     )
