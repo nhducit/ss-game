@@ -185,7 +185,7 @@ export function MassSchedule() {
       />
 
       <div className="flex flex-col gap-4 md:flex-row md:items-start">
-        <div className="h-72 w-full shrink-0 md:h-[calc(100svh-13rem)] md:w-1/2 md:sticky md:top-4">
+        <div className="isolate h-72 w-full shrink-0 md:h-[calc(100svh-13rem)] md:w-1/2 md:sticky md:top-4">
           <ChurchMap
             churches={mapChurches}
             selected={selected}

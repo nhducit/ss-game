@@ -92,6 +92,10 @@ export function ChurchFilters({
 
       <div className="flex flex-wrap items-center gap-2">
         <Select
+          items={{
+            [ALL]: 'Mọi giờ trong ngày',
+            ...Object.fromEntries(TIME_BUCKETS.map((b) => [b.id, b.label])),
+          }}
           value={timeBucket ?? ALL}
           onValueChange={(v) => onTimeBucketChange(v === ALL ? null : (v as string))}
         >
@@ -109,6 +113,7 @@ export function ChurchFilters({
         </Select>
 
         <Select
+          items={{ [ALL]: 'Mọi thành phố', ...Object.fromEntries(cities.map((c) => [c, c])) }}
           value={city ?? ALL}
           onValueChange={(v) => onCityChange(v === ALL ? null : (v as string))}
         >
