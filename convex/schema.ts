@@ -1,5 +1,6 @@
 import { defineSchema, defineTable } from 'convex/server'
 import { v } from 'convex/values'
+import { massTimeValidator } from './churchValidators'
 
 export default defineSchema({
   players: defineTable({
@@ -46,13 +47,23 @@ export default defineSchema({
     lng: v.number(),
     phone: v.optional(v.string()),
     sourceUrl: v.optional(v.string()),
+    lastCrawledAt: v.optional(v.number()),
     // Recurring weekly mass times. daysOfWeek: 0=Sun..6=Sat.
-    massTimes: v.array(
-      v.object({
-        daysOfWeek: v.array(v.number()),
-        time: v.string(), // "HH:MM", 24h
-        note: v.optional(v.string()),
-      }),
-    ),
+    massTimes: v.array(massTimeValidator),
   }).index('by_slug', ['slug']),
+
+  // Staged updates produced by crawling a church's sourceUrl. Nothing here
+  // touches the live church record until an admin approves it.
+  crawlProposals: defineTable({
+    churchId: v.id('churches'),
+    sourceUrl: v.string(),
+    status: v.union(v.literal('pending'), v.literal('approved'), v.literal('rejected')),
+    fetchedAt: v.number(),
+    excerpt: v.string(), // plain-text snippet pulled from the page, for human review
+    proposedMassTimes: v.array(massTimeValidator), // best-effort guess, editable before approval
+    reviewedAt: v.optional(v.number()),
+    reviewNote: v.optional(v.string()),
+  })
+    .index('by_church', ['churchId'])
+    .index('by_status', ['status']),
 })

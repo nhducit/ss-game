@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
 import { ArrowLeft, Lock, Unlock, Plus, Trash2 } from 'lucide-react'
 import { getAppConfig, setAppLocked, setAppSchedule, type ScheduleSlot } from '@/games/convex-sync'
+import { CrawlerAdmin } from '@/mass-schedule/CrawlerAdmin'
 
 const ADMIN_PASSWORD = '88664422'
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -184,6 +185,8 @@ function AdminPanel() {
         When schedule is set and global lock is off, the app is only available during the scheduled
         times.
       </p>
+
+      <CrawlerAdmin />
     </div>
   )
 }

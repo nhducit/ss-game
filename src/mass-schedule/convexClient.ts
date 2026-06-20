@@ -1,4 +1,4 @@
-import type { Church } from './types'
+import type { Church, CrawlProposal, MassTime } from './types'
 
 function getConvexUrl(): string {
   const url = import.meta.env.VITE_CONVEX_URL
@@ -13,7 +13,7 @@ interface ConvexResponse {
 }
 
 async function callConvex<T>(
-  endpoint: 'query' | 'mutation',
+  endpoint: 'query' | 'mutation' | 'action',
   path: string,
   args: Record<string, unknown>,
 ): Promise<T> {
@@ -38,10 +38,30 @@ async function convexMutation<T>(path: string, args: Record<string, unknown> = {
   return await callConvex<T>('mutation', path, args)
 }
 
+async function convexAction<T>(path: string, args: Record<string, unknown> = {}): Promise<T> {
+  return await callConvex<T>('action', path, args)
+}
+
 export async function listChurches(): Promise<Church[]> {
   return await convexQuery<Church[]>('churches:list')
 }
 
 export async function seedChurches(): Promise<{ inserted: number }> {
   return await convexMutation<{ inserted: number }>('churches:seed')
+}
+
+export async function recrawlChurch(churchId: string): Promise<{ proposalId: string }> {
+  return await convexAction<{ proposalId: string }>('crawl:recrawlChurch', { churchId })
+}
+
+export async function listPendingProposals(): Promise<CrawlProposal[]> {
+  return await convexQuery<CrawlProposal[]>('crawlProposals:listPending')
+}
+
+export async function approveProposal(proposalId: string, massTimes?: MassTime[]): Promise<void> {
+  await convexMutation('crawlProposals:approve', { proposalId, massTimes })
+}
+
+export async function rejectProposal(proposalId: string): Promise<void> {
+  await convexMutation('crawlProposals:reject', { proposalId })
 }

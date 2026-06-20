@@ -1,10 +1,18 @@
-import { mutation, query } from './_generated/server'
+import { v } from 'convex/values'
+import { internalQuery, mutation, query } from './_generated/server'
 import { SEED_CHURCHES } from './churchSeedData'
 
 export const list = query({
   args: {},
   handler: async (ctx) => {
     return await ctx.db.query('churches').collect()
+  },
+})
+
+export const getInternal = internalQuery({
+  args: { churchId: v.id('churches') },
+  handler: async (ctx, { churchId }) => {
+    return await ctx.db.get(churchId)
   },
 })
 
